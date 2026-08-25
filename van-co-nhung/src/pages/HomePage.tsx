@@ -3,11 +3,10 @@ import { useAuth } from "../hooks/useAuth";
 import styles from "./HomePage.module.css";
 
 function HomePage() {
-  const { isLoggedIn, userName, role } = useAuth();
+  const { isLoggedIn, userName, role, logout } = useAuth();
 
   function handleLogout() {
-    localStorage.removeItem("userName");
-    localStorage.removeItem("role");
+    logout();
   }
 
   return (
@@ -27,7 +26,7 @@ function HomePage() {
           {isLoggedIn ? (
             <>
               <span className={styles.userGreeting}>Xin chào, {userName}</span>
-              {role === "Admin" ? (
+              {role === "TEACHER" ? (
                 <a href="/admin" className={styles.btnBrand}>
                   Vào trang quản lý
                 </a>
