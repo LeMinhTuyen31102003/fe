@@ -1,0 +1,23 @@
+:root {
+  --brand-yellow: #f9d423;
+  --brand-yellow-dark: #e5c100;
+  --ink: #1a1a1a;
+  --muted: #6b6b6b;
+  --cream: #faf6ec;
+  --border: #ececec;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  margin: 0;
+}
+
+a {
+  transition: all 0.2s ease;
+}
