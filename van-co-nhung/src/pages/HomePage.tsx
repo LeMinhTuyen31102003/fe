@@ -27,9 +27,9 @@ function HomePage() {
             <>
               <span className={styles.userGreeting}>Xin chào, {userName}</span>
               {role === "TEACHER" ? (
-                <a href="/admin" className={styles.btnBrand}>
+                <Link to="/admin" className={styles.btnBrand}>
                   Vào trang quản lý
-                </a>
+                </Link>
               ) : (
                 <a href="/student" className={styles.btnBrand}>
                   Vào trang học tập
@@ -308,9 +308,7 @@ function HomePage() {
         <div className={styles.brandMini}>
           <img src="/images/logo.jpg" alt="Văn Cô Nhung" />
         </div>
-        <div>
-          © {new Date().getFullYear()} Văn Cô Nhung. Đã đăng ký bản quyền.
-        </div>
+        <div>© {new Date().getFullYear()} Văn Cô Nhung. Học Là Vui!</div>
       </footer>
     </div>
   );

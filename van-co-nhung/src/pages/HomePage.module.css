@@ -148,7 +148,7 @@
   font-style: italic;
 }
 .heroLeft p {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 28px;
@@ -160,7 +160,7 @@
   flex-wrap: wrap;
 }
 .heroNote {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 0.9rem;
   display: flex;
   align-items: center;
@@ -228,7 +228,7 @@
   margin-bottom: 12px;
 }
 .sectionHeader p {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 1.05rem;
 }
 
@@ -245,7 +245,7 @@
   background: var(--cream);
   border-radius: 16px;
   padding: 26px 22px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--brand-border);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -272,7 +272,7 @@
   margin-bottom: 8px;
 }
 .gradeCard p {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 0.9rem;
   line-height: 1.5;
   margin: 0;
@@ -286,7 +286,7 @@
 }
 .priceCard {
   background: #fff;
-  border: 1px solid var(--border);
+  border: 1px solid var(--brand-border);
   border-radius: 16px;
   padding: 32px 28px;
   text-align: center;
@@ -330,10 +330,10 @@
 .planPrice small {
   font-size: 0.9rem;
   font-weight: 400;
-  color: var(--muted);
+  color: var(--brand-muted);
 }
 .planDesc {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 0.88rem;
   margin-bottom: 20px;
 }
@@ -385,7 +385,7 @@
   margin-bottom: 8px;
 }
 .guideStep p {
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 0.88rem;
   line-height: 1.5;
   margin: 0;
@@ -432,14 +432,14 @@
 /* ===== FOOTER ===== */
 .footer {
   background: #fff;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--brand-border);
   padding: 32px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
-  color: var(--muted);
+  color: var(--brand-muted);
   font-size: 0.85rem;
 }
 .brandMini {

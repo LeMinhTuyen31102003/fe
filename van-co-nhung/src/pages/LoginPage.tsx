@@ -50,7 +50,7 @@ function LoginPage() {
       localStorage.setItem('token', data.token)
       localStorage.setItem('userName', data.userName)
       localStorage.setItem('role', data.role)
-      navigate('/')
+      navigate(data.role === 'TEACHER' ? '/admin' : '/')
     } catch {
       setFormError('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.')
     } finally {
@@ -75,7 +75,9 @@ function LoginPage() {
           {formError && <div className={styles.formError}>{formError}</div>}
 
           <div className={styles.field}>
-            <label htmlFor="username">Tên đăng nhập</label>
+            <label htmlFor="username">
+              Tên đăng nhập <span className={styles.required}>*</span>
+            </label>
             <div className={styles.inputWrap}>
               <input
                 id="username"
@@ -93,7 +95,9 @@ function LoginPage() {
           </div>
 
           <div className={styles.field}>
-            <label htmlFor="password">Mật khẩu</label>
+            <label htmlFor="password">
+              Mật khẩu <span className={styles.required}>*</span>
+            </label>
             <div className={styles.inputWrap}>
               <input
                 id="password"
