@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { authHeaders } from "../teacher/apiClient";
+import { apiUrl, authHeaders } from "../teacher/apiClient";
 
 export interface ScheduleSlot {
   id: number;
@@ -51,19 +51,19 @@ export function formatTime(value: string): string {
 }
 
 export async function fetchMySchedule(): Promise<MySchedule> {
-  const res = await fetch("/api/me/schedule", { headers: authHeaders() });
+  const res = await fetch(apiUrl("/api/me/schedule"), { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function fetchMyClassmates(): Promise<MyClassmates> {
-  const res = await fetch("/api/me/classmates", { headers: authHeaders() });
+  const res = await fetch(apiUrl("/api/me/classmates"), { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function fetchMyTeacher(): Promise<TeacherContact | null> {
-  const res = await fetch("/api/me/teacher", { headers: authHeaders() });
+  const res = await fetch(apiUrl("/api/me/teacher"), { headers: authHeaders() });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();

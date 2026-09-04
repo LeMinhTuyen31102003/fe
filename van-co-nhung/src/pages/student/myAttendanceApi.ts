@@ -1,4 +1,4 @@
-import { authHeaders } from "../teacher/apiClient";
+import { apiUrl, authHeaders } from "../teacher/apiClient";
 import type { AttendanceStatus } from "../teacher/attendanceApi";
 
 export interface MySessionEntry {
@@ -25,7 +25,7 @@ export interface MyAttendance {
 }
 
 export async function fetchMyAttendance(year: number, month: number): Promise<MyAttendance> {
-  const res = await fetch(`/api/me/attendance?year=${year}&month=${month}`, {
+  const res = await fetch(apiUrl(`/api/me/attendance?year=${year}&month=${month}`), {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("LOAD_FAILED");

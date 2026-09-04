@@ -1,4 +1,4 @@
-import { authHeaders } from "./apiClient";
+import { apiUrl, authHeaders } from "./apiClient";
 import type { Student } from "./studentsApi";
 
 export interface ScheduleSlot {
@@ -60,20 +60,20 @@ export async function fetchClasses(params: FetchClassesParams = {}): Promise<Cla
   if (params.sortBy) qs.set("sortBy", params.sortBy);
   if (params.sortDir) qs.set("sortDir", params.sortDir);
   const query = qs.toString();
-  const url = query ? `/api/classes?${query}` : "/api/classes";
+  const url = apiUrl(query ? `/api/classes?${query}` : "/api/classes");
   const res = await fetch(url, { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function fetchClassDetail(id: number): Promise<ClassDetail> {
-  const res = await fetch(`/api/classes/${id}`, { headers: authHeaders() });
+  const res = await fetch(apiUrl(`/api/classes/${id}`), { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function createClass(input: ClassInput): Promise<ClassSummary> {
-  const res = await fetch("/api/classes", {
+  const res = await fetch(apiUrl("/api/classes"), {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(input),
@@ -83,7 +83,7 @@ export async function createClass(input: ClassInput): Promise<ClassSummary> {
 }
 
 export async function updateClass(id: number, input: ClassInput): Promise<ClassSummary> {
-  const res = await fetch(`/api/classes/${id}`, {
+  const res = await fetch(apiUrl(`/api/classes/${id}`), {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify(input),
@@ -93,7 +93,7 @@ export async function updateClass(id: number, input: ClassInput): Promise<ClassS
 }
 
 export async function setClassActive(id: number, active: boolean): Promise<ClassSummary> {
-  const res = await fetch(`/api/classes/${id}/active`, {
+  const res = await fetch(apiUrl(`/api/classes/${id}/active`), {
     method: "PATCH",
     headers: authHeaders(),
     body: JSON.stringify({ active }),
@@ -103,7 +103,7 @@ export async function setClassActive(id: number, active: boolean): Promise<Class
 }
 
 export async function deleteClass(id: number): Promise<void> {
-  const res = await fetch(`/api/classes/${id}`, {
+  const res = await fetch(apiUrl(`/api/classes/${id}`), {
     method: "DELETE",
     headers: authHeaders(),
   });
@@ -121,7 +121,7 @@ export class ClassConflictError extends Error {
 }
 
 export async function addStudentToClass(classId: number, studentId: number): Promise<ClassDetail> {
-  const res = await fetch(`/api/classes/${classId}/students/${studentId}`, {
+  const res = await fetch(apiUrl(`/api/classes/${classId}/students/${studentId}`), {
     method: "POST",
     headers: authHeaders(),
   });
@@ -136,7 +136,7 @@ export async function addStudentToClass(classId: number, studentId: number): Pro
 }
 
 export async function removeStudentFromClass(classId: number, studentId: number): Promise<ClassDetail> {
-  const res = await fetch(`/api/classes/${classId}/students/${studentId}`, {
+  const res = await fetch(apiUrl(`/api/classes/${classId}/students/${studentId}`), {
     method: "DELETE",
     headers: authHeaders(),
   });
