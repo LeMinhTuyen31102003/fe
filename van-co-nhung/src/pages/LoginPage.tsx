@@ -50,7 +50,7 @@ function LoginPage() {
       localStorage.setItem('userName', data.userName)
       localStorage.setItem('fullName', data.fullName ?? '')
       localStorage.setItem('role', data.role)
-      navigate(data.role === 'TEACHER' ? '/admin' : '/')
+      navigate(data.role === 'TEACHER' ? '/admin' : '/student')
     } catch {
       setFormError(t('connectionError'))
     } finally {

@@ -29,7 +29,7 @@ function HomePage() {
     return <Navigate to="/admin" replace />;
   }
   if (isLoggedIn && role === "STUDENT") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/student" replace />;
   }
 
   const grades = t("grades.items", { returnObjects: true }) as GradeItem[];
