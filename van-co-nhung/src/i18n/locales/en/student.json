@@ -1,0 +1,74 @@
+{
+  "nav": {
+    "home": "Home",
+    "schedule": "Schedule",
+    "class": "Class"
+  },
+  "days": {
+    "MONDAY": "Monday",
+    "TUESDAY": "Tuesday",
+    "WEDNESDAY": "Wednesday",
+    "THURSDAY": "Thursday",
+    "FRIDAY": "Friday",
+    "SATURDAY": "Saturday",
+    "SUNDAY": "Sunday"
+  },
+  "home": {
+    "title": "My Learning",
+    "subtitle": "Attendance and tuition by month",
+    "emptyState": "You haven't been assigned to any class yet.",
+    "attendanceSection": "Attendance",
+    "tuitionSection": "Tuition",
+    "attendanceCard": {
+      "sessionsLearned": "{{count}} sessions attended",
+      "noSessions": "No sessions have been marked yet this month."
+    },
+    "tuitionCard": {
+      "status": {
+        "PAID": "Paid",
+        "PENDING": "Awaiting confirmation",
+        "UNPAID": "Unpaid"
+      },
+      "sessionCount": "Sessions",
+      "sessionCountValue": "{{count}} sessions",
+      "feePerSession": "Rate",
+      "feePerSessionValue": "{{amount}}/session",
+      "amount": "Tuition",
+      "paidNote": "Thanks for paying this month's tuition.",
+      "paidNoteWithDate": "Thanks for paying this month's tuition ({{date}}).",
+      "pendingNote": "Payment confirmation sent at {{date}}. Waiting for your teacher to review it.",
+      "noFeeThisMonth": "No sessions have been billed yet this month.",
+      "rejectedNotePrefix": "Your teacher declined the previous payment confirmation. Reason:",
+      "rejectedNoteSuffix": "Please double-check and transfer again.",
+      "noBankConfigured": "Your teacher hasn't set up a payment account yet. Please contact them directly to pay.",
+      "qrAlt": "Payment QR code for {{className}} tuition",
+      "qrInstructions": "Scan to transfer {{amount}} to {{accountName}} ({{bankName}})",
+      "confirmButton": "I've made the transfer",
+      "confirmDialog": "Confirm that you've transferred {{amount}} for {{className}}? Your teacher will review it before confirming.",
+      "confirmSuccess": "Confirmation sent. Please wait for your teacher to review it.",
+      "confirmError": "Couldn't send the confirmation. Please try again."
+    },
+    "loadError": "Couldn't load your learning data."
+  },
+  "schedule": {
+    "title": "Schedule",
+    "subtitle": "Timetable and attendance status by month",
+    "emptyState": "You haven't been assigned to any class yet.",
+    "mobileHint": "Swipe sideways to see the full timetable.",
+    "weekdayHeaders": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "notMarked": "Not marked",
+    "updatingAttendance": "Updating attendance...",
+    "loadScheduleError": "Couldn't load your schedule.",
+    "loadAttendanceError": "Couldn't load attendance."
+  },
+  "class": {
+    "title": "Class",
+    "subtitle": "Your teacher and classmates",
+    "loadError": "Couldn't load class information.",
+    "teacherSection": "Teacher in charge",
+    "noContactInfo": "Your teacher hasn't added contact information yet.",
+    "myClassesSection": "My Classes",
+    "emptyState": "You haven't been assigned to any class yet.",
+    "noClassmates": "No other classmates in this class yet."
+  }
+}

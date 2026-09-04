@@ -1,6 +1,6 @@
-import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,9 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import { fetchClasses, type ClassSummary } from "./classesApi";
-import { compareGrade, displayGrade } from "./gradeOptions";
+import { displayGrade } from "./gradeOptions";
+import { SortableTableHead, type SortDir } from "./SortableTableHead";
 import StudentDetailModal from "./StudentDetailModal";
 import StudentFormModal from "./StudentFormModal";
 import {
@@ -32,49 +32,25 @@ import {
 } from "./studentsApi";
 
 const PAGE_SIZE = 10;
+const SEARCH_DEBOUNCE_MS = 300;
 
 type StatusFilter = "all" | "active" | "inactive";
 type SortKey = "fullName" | "grade" | "username" | "active" | "createdAt";
-type SortDir = "asc" | "desc";
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null, locale: string) {
   if (!value) return "—";
-  return new Date(value).toLocaleDateString("vi-VN");
-}
-
-interface SortableHeadProps {
-  label: string;
-  sortKey: SortKey;
-  activeKey: SortKey;
-  dir: SortDir;
-  onSort: (key: SortKey) => void;
-  className?: string;
-}
-
-function SortableHead({ label, sortKey, activeKey, dir, onSort, className }: SortableHeadProps) {
-  const isActive = activeKey === sortKey;
-  const Icon = isActive ? (dir === "asc" ? ArrowUp : ArrowDown) : ArrowUpDown;
-  return (
-    <TableHead className={className}>
-      <button
-        type="button"
-        className="inline-flex items-center gap-1 hover:text-foreground"
-        onClick={() => onSort(sortKey)}
-      >
-        {label}
-        <Icon className={cn("size-3.5", isActive ? "text-foreground" : "text-muted-foreground")} />
-      </button>
-    </TableHead>
-  );
+  return new Date(value).toLocaleDateString(locale);
 }
 
 function StudentsSection() {
+  const { t, i18n } = useTranslation(["teacher", "common"]);
   const [students, setStudents] = useState<Student[]>([]);
   const [classes, setClasses] = useState<ClassSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [classFilter, setClassFilter] = useState("all");
@@ -83,16 +59,39 @@ function StudentsSection() {
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   useEffect(() => {
+    const trimmed = searchInput.trim();
+    if (trimmed === search) return;
+    const handle = setTimeout(() => {
+      setIsLoading(true);
+      setSearch(trimmed);
+      setPage(1);
+    }, SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
+
+  useEffect(() => {
+    fetchClasses()
+      .then(setClasses)
+      .catch(() => toast.error(t("teacher:students.loadError")));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
-    Promise.all([fetchStudents(), fetchClasses()])
-      .then(([studentData, classData]) => {
-        if (cancelled) return;
-        setStudents(studentData);
-        setClasses(classData);
+    fetchStudents({
+      search,
+      status: statusFilter,
+      classId: classFilter === "all" ? null : Number(classFilter),
+      sortBy: sortKey,
+      sortDir,
+    })
+      .then((data) => {
+        if (!cancelled) setStudents(data);
       })
       .catch(() => {
-        if (!cancelled) toast.error("Không thể tải danh sách học sinh.");
+        if (!cancelled) toast.error(t("teacher:students.loadError"));
       })
       .finally(() => {
         if (!cancelled) setIsLoading(false);
@@ -101,24 +100,24 @@ function StudentsSection() {
     return () => {
       cancelled = true;
     };
-  }, []);
-
-  function handleSearchChange(value: string) {
-    setSearch(value);
-    setPage(1);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, statusFilter, classFilter, sortKey, sortDir]);
 
   function handleStatusFilterChange(value: StatusFilter) {
+    setIsLoading(true);
     setStatusFilter(value);
     setPage(1);
   }
 
   function handleClassFilterChange(value: string) {
+    setIsLoading(true);
     setClassFilter(value);
     setPage(1);
   }
 
   function handleSort(key: SortKey) {
+    setIsLoading(true);
+    setPage(1);
     if (key === sortKey) {
       setSortDir((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -134,76 +133,41 @@ function StudentsSection() {
       setStudents((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
       setSelectedStudent((prev) => (prev?.id === updated.id ? updated : prev));
     } catch {
-      toast.error("Không thể cập nhật trạng thái học sinh.");
+      toast.error(t("teacher:students.toggleActiveError"));
     }
   }
 
   async function handleRemove(student: Student, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!window.confirm(`Xoá tài khoản của "${student.fullName}"?`)) return;
+    if (!window.confirm(t("teacher:students.deleteConfirm", { name: student.fullName }))) return;
     try {
       await deleteStudent(student.id);
       setStudents((prev) => prev.filter((s) => s.id !== student.id));
     } catch {
-      toast.error("Không thể xoá học sinh.");
+      toast.error(t("teacher:students.deleteError"));
     }
   }
 
   async function handleCreated() {
     setIsModalOpen(false);
     try {
-      setStudents(await fetchStudents());
+      setStudents(
+        await fetchStudents({
+          search,
+          status: statusFilter,
+          classId: classFilter === "all" ? null : Number(classFilter),
+          sortBy: sortKey,
+          sortDir,
+        }),
+      );
     } catch {
-      toast.error("Không thể tải lại danh sách học sinh.");
+      toast.error(t("teacher:students.reloadError"));
     }
   }
 
-  const filtered = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
-    return students.filter((s) => {
-      const matchesKeyword =
-        !keyword ||
-        s.fullName.toLowerCase().includes(keyword) ||
-        s.username.toLowerCase().includes(keyword);
-      const matchesStatus =
-        statusFilter === "all" ||
-        (statusFilter === "active" && s.active) ||
-        (statusFilter === "inactive" && !s.active);
-      const matchesClass =
-        classFilter === "all" || s.classes.some((c) => String(c.id) === classFilter);
-      return matchesKeyword && matchesStatus && matchesClass;
-    });
-  }, [students, search, statusFilter, classFilter]);
-
-  const sorted = useMemo(() => {
-    const arr = [...filtered];
-    arr.sort((a, b) => {
-      let cmp = 0;
-      switch (sortKey) {
-        case "fullName":
-          cmp = a.fullName.localeCompare(b.fullName, "vi");
-          break;
-        case "grade":
-          cmp = compareGrade(a.grade ?? "", b.grade ?? "");
-          break;
-        case "username":
-          cmp = a.username.localeCompare(b.username);
-          break;
-        case "active":
-          cmp = Number(a.active) - Number(b.active);
-          break;
-        case "createdAt":
-          cmp = (a.createdAt ?? "").localeCompare(b.createdAt ?? "");
-          break;
-      }
-      return sortDir === "asc" ? cmp : -cmp;
-    });
-    return arr;
-  }, [filtered, sortKey, sortDir]);
-
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(students.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
-  const pageItems = sorted.slice(
+  const pageItems = students.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE,
   );
@@ -212,15 +176,15 @@ function StudentsSection() {
     <div className="rounded-xl border border-border bg-background p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">
-          Danh sách học sinh
+          {t("teacher:students.listTitle")}
         </h2>
         <div className="flex flex-wrap items-center gap-2.5">
           <Input
             type="search"
-            placeholder="Tìm theo họ tên hoặc tên đăng nhập..."
+            placeholder={t("teacher:students.searchPlaceholder")}
             className="w-[280px]"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
           <Select
             value={statusFilter}
@@ -230,9 +194,9 @@ function StudentsSection() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tất cả trạng thái</SelectItem>
-              <SelectItem value="active">Đã kích hoạt</SelectItem>
-              <SelectItem value="inactive">Chưa kích hoạt</SelectItem>
+              <SelectItem value="all">{t("teacher:students.statusFilterAll")}</SelectItem>
+              <SelectItem value="active">{t("teacher:studentStatus.active")}</SelectItem>
+              <SelectItem value="inactive">{t("teacher:studentStatus.inactive")}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={classFilter} onValueChange={handleClassFilterChange}>
@@ -240,7 +204,7 @@ function StudentsSection() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Tất cả lớp</SelectItem>
+              <SelectItem value="all">{t("teacher:students.classFilterAll")}</SelectItem>
               {classes.map((c) => (
                 <SelectItem key={c.id} value={String(c.id)}>
                   {c.name}
@@ -249,29 +213,27 @@ function StudentsSection() {
             </SelectContent>
           </Select>
           <Button type="button" onClick={() => setIsModalOpen(true)}>
-            + Thêm học sinh
+            {t("teacher:students.add")}
           </Button>
         </div>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-muted-foreground">Đang tải...</p>
+        <p className="text-sm text-muted-foreground">{t("common:status.loading")}</p>
       ) : students.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Chưa có học sinh nào.</p>
-      ) : sorted.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Không tìm thấy học sinh phù hợp.</p>
+        <p className="text-sm text-muted-foreground">{t("teacher:students.noResults")}</p>
       ) : (
         <>
           <Table>
             <TableHeader>
               <TableRow>
-                <SortableHead label="Họ tên" sortKey="fullName" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
-                <SortableHead label="Khối lớp" sortKey="grade" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
-                <SortableHead label="Tên đăng nhập" sortKey="username" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
-                <TableHead>Phụ huynh</TableHead>
-                <SortableHead label="Trạng thái" sortKey="active" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
-                <SortableHead label="Ngày tạo" sortKey="createdAt" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
-                <TableHead className="text-right">Thao tác</TableHead>
+                <SortableTableHead label={t("teacher:students.table.fullName")} sortKey="fullName" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortableTableHead label={t("teacher:students.table.grade")} sortKey="grade" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortableTableHead label={t("teacher:students.table.username")} sortKey="username" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
+                <TableHead>{t("teacher:students.table.parent")}</TableHead>
+                <SortableTableHead label={t("teacher:students.table.status")} sortKey="active" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
+                <SortableTableHead label={t("teacher:students.table.createdAt")} sortKey="createdAt" activeKey={sortKey} dir={sortDir} onSort={handleSort} />
+                <TableHead className="text-right">{t("teacher:students.table.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -283,7 +245,7 @@ function StudentsSection() {
                 >
                   <TableCell className="font-medium">{student.fullName}</TableCell>
                   <TableCell className="text-muted-foreground">
-                    {student.grade ? displayGrade(student.grade) : "—"}
+                    {student.grade ? displayGrade(student.grade, t) : "—"}
                   </TableCell>
                   <TableCell>{student.username}</TableCell>
                   <TableCell className="text-muted-foreground">
@@ -293,11 +255,11 @@ function StudentsSection() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={student.active ? "default" : "secondary"}>
-                      {student.active ? "Đã kích hoạt" : "Chưa kích hoạt"}
+                      {student.active ? t("teacher:studentStatus.active") : t("teacher:studentStatus.inactive")}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatDate(student.createdAt)}
+                    {formatDate(student.createdAt, i18n.language === "en" ? "en-US" : "vi-VN")}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-4">
@@ -306,14 +268,14 @@ function StudentsSection() {
                         className="text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
                         onClick={(e) => handleToggleActive(student, e)}
                       >
-                        {student.active ? "Vô hiệu hoá" : "Kích hoạt"}
+                        {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
                       </button>
                       <button
                         type="button"
                         className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
                         onClick={(e) => handleRemove(student, e)}
                       >
-                        Xoá
+                        {t("common:actions.delete")}
                       </button>
                     </div>
                   </TableCell>
@@ -331,10 +293,10 @@ function StudentsSection() {
                 disabled={currentPage === 1}
                 onClick={() => setPage(currentPage - 1)}
               >
-                ‹ Trước
+                {t("teacher:pagination.prev")}
               </Button>
               <span className="text-sm text-muted-foreground">
-                Trang {currentPage}/{totalPages}
+                {t("teacher:pagination.pageOf", { current: currentPage, total: totalPages })}
               </span>
               <Button
                 type="button"
@@ -343,7 +305,7 @@ function StudentsSection() {
                 disabled={currentPage === totalPages}
                 onClick={() => setPage(currentPage + 1)}
               >
-                Sau ›
+                {t("teacher:pagination.next")}
               </Button>
             </div>
           )}

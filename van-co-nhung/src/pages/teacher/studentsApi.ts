@@ -37,8 +37,26 @@ export interface UpdateStudentInput {
   parentPhone: string;
 }
 
-export async function fetchStudents(): Promise<Student[]> {
-  const res = await fetch("/api/users/students", { headers: authHeaders() });
+export interface FetchStudentsParams {
+  search?: string;
+  status?: "all" | "active" | "inactive";
+  classId?: number | null;
+  assignableToClassId?: number | null;
+  sortBy?: "fullName" | "grade" | "username" | "active" | "createdAt";
+  sortDir?: "asc" | "desc";
+}
+
+export async function fetchStudents(params: FetchStudentsParams = {}): Promise<Student[]> {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set("search", params.search);
+  if (params.status && params.status !== "all") qs.set("status", params.status);
+  if (params.classId != null) qs.set("classId", String(params.classId));
+  if (params.assignableToClassId != null) qs.set("assignableToClassId", String(params.assignableToClassId));
+  if (params.sortBy) qs.set("sortBy", params.sortBy);
+  if (params.sortDir) qs.set("sortDir", params.sortDir);
+  const query = qs.toString();
+  const url = query ? `/api/users/students?${query}` : "/api/users/students";
+  const res = await fetch(url, { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }

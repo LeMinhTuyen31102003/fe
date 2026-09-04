@@ -1,0 +1,74 @@
+{
+  "nav": {
+    "home": "Trang chủ",
+    "schedule": "Lịch học",
+    "class": "Lớp học"
+  },
+  "days": {
+    "MONDAY": "Thứ Hai",
+    "TUESDAY": "Thứ Ba",
+    "WEDNESDAY": "Thứ Tư",
+    "THURSDAY": "Thứ Năm",
+    "FRIDAY": "Thứ Sáu",
+    "SATURDAY": "Thứ Bảy",
+    "SUNDAY": "Chủ Nhật"
+  },
+  "home": {
+    "title": "Học tập của tôi",
+    "subtitle": "Điểm danh và học phí theo từng tháng",
+    "emptyState": "Bạn chưa được xếp vào lớp học nào.",
+    "attendanceSection": "Điểm danh",
+    "tuitionSection": "Học phí",
+    "attendanceCard": {
+      "sessionsLearned": "{{count}} buổi đã học",
+      "noSessions": "Chưa có buổi học nào được điểm danh trong tháng này."
+    },
+    "tuitionCard": {
+      "status": {
+        "PAID": "Đã thanh toán",
+        "PENDING": "Chờ xác nhận",
+        "UNPAID": "Chưa thanh toán"
+      },
+      "sessionCount": "Số buổi",
+      "sessionCountValue": "{{count}} buổi",
+      "feePerSession": "Đơn giá",
+      "feePerSessionValue": "{{amount}}/buổi",
+      "amount": "Học phí",
+      "paidNote": "Cảm ơn bạn đã đóng học phí tháng này.",
+      "paidNoteWithDate": "Cảm ơn bạn đã đóng học phí tháng này ({{date}}).",
+      "pendingNote": "Đã gửi xác nhận chuyển khoản lúc {{date}}. Đang chờ giáo viên kiểm tra lại.",
+      "noFeeThisMonth": "Chưa có buổi học nào được tính học phí trong tháng này.",
+      "rejectedNotePrefix": "Giáo viên đã từ chối yêu cầu xác nhận trước đó. Lý do:",
+      "rejectedNoteSuffix": "Vui lòng kiểm tra lại và chuyển khoản lại.",
+      "noBankConfigured": "Giáo viên chưa cấu hình tài khoản nhận học phí. Vui lòng liên hệ trực tiếp để thanh toán.",
+      "qrAlt": "Mã QR thanh toán học phí lớp {{className}}",
+      "qrInstructions": "Quét mã để chuyển khoản {{amount}} đến {{accountName}} ({{bankName}})",
+      "confirmButton": "Tôi đã chuyển khoản",
+      "confirmDialog": "Xác nhận bạn đã chuyển khoản {{amount}} cho lớp {{className}}? Giáo viên sẽ kiểm tra lại trước khi xác nhận.",
+      "confirmSuccess": "Đã gửi xác nhận. Vui lòng chờ giáo viên kiểm tra lại.",
+      "confirmError": "Không thể gửi xác nhận. Vui lòng thử lại."
+    },
+    "loadError": "Không thể tải dữ liệu học tập."
+  },
+  "schedule": {
+    "title": "Lịch học",
+    "subtitle": "Thời khóa biểu và tình trạng điểm danh theo tháng",
+    "emptyState": "Bạn chưa được xếp vào lớp học nào.",
+    "mobileHint": "Vuốt ngang để xem đầy đủ thời khóa biểu.",
+    "weekdayHeaders": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
+    "notMarked": "Chưa điểm danh",
+    "updatingAttendance": "Đang cập nhật điểm danh...",
+    "loadScheduleError": "Không thể tải lịch học.",
+    "loadAttendanceError": "Không thể tải điểm danh."
+  },
+  "class": {
+    "title": "Lớp học",
+    "subtitle": "Giáo viên phụ trách và các bạn cùng lớp",
+    "loadError": "Không thể tải thông tin lớp học.",
+    "teacherSection": "Giáo viên phụ trách",
+    "noContactInfo": "Giáo viên chưa cập nhật thông tin liên hệ.",
+    "myClassesSection": "Lớp học của tôi",
+    "emptyState": "Bạn chưa được xếp vào lớp học nào.",
+    "noClassmates": "Chưa có bạn học nào khác trong lớp."
+  }
+}

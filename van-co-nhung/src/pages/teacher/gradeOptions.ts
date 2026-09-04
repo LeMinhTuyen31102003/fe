@@ -1,7 +1,10 @@
-export const GRADE_OPTIONS = ["5", "6", "7", "8", "9", "10", "11", "Bổ trợ riêng"];
+import type { TFunction } from "i18next";
 
-export function displayGrade(grade: string) {
-  return /^\d+$/.test(grade) ? `Lớp ${grade}` : grade;
+export const GRADE_OPTIONS = ["5", "6", "7", "8", "9", "10", "11", "SUPPLEMENTARY"];
+
+export function displayGrade(grade: string, t: TFunction) {
+  if (grade === "SUPPLEMENTARY") return t("teacher:grade.supplementary");
+  return /^\d+$/.test(grade) ? t("teacher:grade.prefix", { grade }) : grade;
 }
 
 export function compareGrade(a: string, b: string) {

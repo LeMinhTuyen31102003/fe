@@ -1,0 +1,310 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "students": "Students",
+    "classes": "Classes",
+    "attendance": "Attendance",
+    "tuition": "Tuition",
+    "settings": "Bank"
+  },
+  "classStatus": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "classConflict": "This student is already in the active class \"{{className}}\". Remove them from that class or deactivate it before adding them to a new one.",
+  "studentStatus": {
+    "active": "Activated",
+    "inactive": "Not activated"
+  },
+  "pagination": {
+    "prev": "‹ Previous",
+    "next": "Next ›",
+    "pageOf": "Page {{current}} of {{total}}"
+  },
+  "grade": {
+    "prefix": "Grade {{grade}}",
+    "supplementary": "Private tutoring"
+  },
+  "schedule": {
+    "label": "Schedule",
+    "dayLabel": "Day",
+    "dayPlaceholder": "Select day",
+    "startTimeLabel": "Start time",
+    "endTimeLabel": "End time",
+    "days": {
+      "MONDAY": { "label": "Monday", "short": "Mon" },
+      "TUESDAY": { "label": "Tuesday", "short": "Tue" },
+      "WEDNESDAY": { "label": "Wednesday", "short": "Wed" },
+      "THURSDAY": { "label": "Thursday", "short": "Thu" },
+      "FRIDAY": { "label": "Friday", "short": "Fri" },
+      "SATURDAY": { "label": "Saturday", "short": "Sat" },
+      "SUNDAY": { "label": "Sunday", "short": "Sun" }
+    }
+  },
+  "overview": {
+    "title": "Overview",
+    "greeting": "Hello, {{name}}",
+    "stats": {
+      "classes": "Classes taught",
+      "students": "Students",
+      "sessionsThisWeek": "Sessions this week"
+    },
+    "placeholder": "Class, attendance, and tuition management tools will appear here."
+  },
+  "studentFields": {
+    "username": "Username",
+    "password": "Password",
+    "fullName": "Student's full name",
+    "grade": "Grade",
+    "gradePlaceholder": "Select grade",
+    "school": "School",
+    "parentName": "Parent's name",
+    "parentPhone": "Parent's phone"
+  },
+  "students": {
+    "pageTitle": "Manage students",
+    "pageSubtitle": "Create and manage student accounts",
+    "listTitle": "Student list",
+    "searchPlaceholder": "Search by name or username...",
+    "statusFilterAll": "All statuses",
+    "classFilterAll": "All classes",
+    "add": "+ Add student",
+    "loadError": "Couldn't load the student list.",
+    "empty": "No students yet.",
+    "noResults": "No matching students found.",
+    "table": {
+      "fullName": "Full name",
+      "grade": "Grade",
+      "username": "Username",
+      "parent": "Parent",
+      "status": "Status",
+      "createdAt": "Created",
+      "actions": "Actions"
+    },
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "deleteConfirm": "Delete the account for \"{{name}}\"?",
+    "toggleActiveError": "Couldn't update the student's status.",
+    "deleteError": "Couldn't delete the student.",
+    "reloadError": "Couldn't reload the student list."
+  },
+  "studentForm": {
+    "title": "Create student account",
+    "description": "Enter the student's registration details. By default the account stays inactive until it's added to a class, unless you choose to activate it now.",
+    "loadClassesError": "Couldn't load the class list.",
+    "classesLabel": "Class (optional)",
+    "classPlaceholder": "Select class",
+    "classPickerTitle": "Select a class",
+    "classSearchPlaceholder": "Search by class name...",
+    "noClasses": "No classes yet.",
+    "oneClassHint": "Each student can only belong to one active class at a time.",
+    "activateNow": "Activate account now",
+    "submit": "Create account",
+    "submitting": "Creating...",
+    "requiredFieldsError": "Please enter both a username and the student's full name.",
+    "passwordTooShort": "Password must be at least 6 characters.",
+    "addToClassFailed": "Account created, but adding it to the class failed.",
+    "createSuccess": "Student account created.",
+    "duplicateUsername": "This username is already taken.",
+    "createError": "Couldn't create the account. Please try again."
+  },
+  "studentDetail": {
+    "titleView": "Student details",
+    "titleEdit": "Edit student",
+    "loadClassesError": "Couldn't load the class list.",
+    "requiredNameError": "Please enter the student's full name.",
+    "updateSuccess": "Student details updated.",
+    "updateError": "Couldn't save changes. Please try again.",
+    "labelFullName": "Full name",
+    "labelStatus": "Status",
+    "addedToClassAutoActivated": "Added to the class and the account was activated automatically.",
+    "addedToClass": "Added to the class.",
+    "addToClassError": "Couldn't add the student to the class.",
+    "removedFromClass": "Removed from the class.",
+    "removeFromClassError": "Couldn't remove the student from the class.",
+    "classesTitle": "Classes",
+    "noClasses": "Not enrolled in any class yet.",
+    "classPlaceholder": "Select class",
+    "addClassLabel": "+ Add to class",
+    "addClassDialogTitle": "Add student to a class",
+    "addClassSearchPlaceholder": "Search by class name...",
+    "noClassesToAdd": "No more classes available to add."
+  },
+  "classes": {
+    "pageTitle": "Manage classes",
+    "pageSubtitle": "Create classes and enroll students",
+    "listTitle": "Class list",
+    "searchPlaceholder": "Search by class name...",
+    "statusFilterAll": "All statuses",
+    "add": "+ Add class",
+    "loadError": "Couldn't load the class list.",
+    "empty": "No classes yet.",
+    "noResults": "No matching classes found.",
+    "table": {
+      "name": "Class name",
+      "grade": "Grade",
+      "schedule": "Schedule",
+      "studentCount": "Students",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "activate": "Activate",
+    "deleteConfirm": "Delete the class \"{{name}}\"?",
+    "toggleActiveError": "Couldn't update the class's status.",
+    "deleteError": "Couldn't delete the class.",
+    "createSuccess": "Class created."
+  },
+  "classForm": {
+    "createTitle": "Create class",
+    "fields": {
+      "name": "Class name",
+      "grade": "Grade",
+      "gradePlaceholder": "Select grade",
+      "feePerSession": "Fee per session (VND)",
+      "feePerSessionPlaceholder": "e.g. 60000",
+      "note": "Note"
+    },
+    "nameRequiredError": "Please enter a class name.",
+    "createError": "Couldn't create the class. Please try again.",
+    "submit": "Create class",
+    "submitting": "Creating..."
+  },
+  "classDetail": {
+    "titleView": "Class details",
+    "titleEdit": "Edit class",
+    "loadError": "Couldn't load the class details.",
+    "updateSuccess": "Class details updated.",
+    "updateError": "Couldn't save changes. Please try again.",
+    "labels": {
+      "name": "Class name",
+      "grade": "Grade",
+      "schedule": "Schedule",
+      "feePerSession": "Fee per session",
+      "note": "Note",
+      "status": "Status"
+    },
+    "studentsTitle": "Students in class ({{count}})",
+    "noStudents": "No students in this class yet.",
+    "addStudentLabel": "+ Add student",
+    "addStudentDialogTitle": "Add student to class",
+    "addStudentSearchPlaceholder": "Search by name or username...",
+    "studentPlaceholder": "Select student",
+    "addingStudent": "Adding...",
+    "noStudentsToAdd": "No more students available to add.",
+    "addedStudentAutoActivated": "Student added to the class and their account was activated automatically.",
+    "addedStudent": "Student added to the class.",
+    "addStudentError": "Couldn't add the student to the class.",
+    "removedStudent": "Student removed from the class.",
+    "removeStudentError": "Couldn't remove the student from the class."
+  },
+  "attendance": {
+    "pageSubtitle": "Track student attendance month by month",
+    "title": "Monthly attendance",
+    "classPlaceholder": "Select class",
+    "loadClassesError": "Couldn't load the class list.",
+    "inactiveLockBanner": "This class is inactive — you can review past attendance but can't make changes.",
+    "noClasses": "No classes yet. Create a class first.",
+    "loadError": "Couldn't load attendance data.",
+    "noStudents": "This class has no students yet.",
+    "addSessionLabel": "Add attendance session",
+    "addSession": "+ Add session",
+    "dateOutOfMonthError": "The date must fall within the month you're viewing.",
+    "restoredPending": "Restored {{count}} unsaved attendance change(s) from before.",
+    "discardChanges": "Discard changes",
+    "saveChanges": "Save changes ({{count}})",
+    "noSessionsInMonth": "No sessions this month yet. Add a class schedule or add an attendance session manually.",
+    "table": {
+      "fullName": "Full name",
+      "present": "Present",
+      "absent": "Absent",
+      "late": "Late",
+      "excused": "Excused"
+    },
+    "notMarked": "Not marked",
+    "unsavedSuffix": "unsaved",
+    "saveDialog": {
+      "title": "Confirm attendance save",
+      "before": "You have",
+      "middle": "unsaved attendance change(s) for class",
+      "after": "Save them now?"
+    },
+    "confirmSave": "Confirm save",
+    "saveSuccess": "Attendance saved.",
+    "saveError": "Some changes couldn't be saved. Please try again."
+  },
+  "tuition": {
+    "pageSubtitle": "Track student tuition month by month",
+    "title": "Monthly tuition",
+    "classPlaceholder": "Select class",
+    "loadClassesError": "Couldn't load the class list.",
+    "inactiveLockBanner": "This class is inactive — you can review past tuition but can't make changes.",
+    "noClasses": "No classes yet. Create a class first.",
+    "loadError": "Couldn't load tuition data.",
+    "noStudents": "This class has no students yet.",
+    "feeInfoBefore": "Fee per session:",
+    "feeNotSet": "not set",
+    "feeInfoMiddle": "· Each student's tuition is calculated automatically from their",
+    "presentWord": "Present",
+    "lateWord": "Late",
+    "feeInfoAfter": "sessions this month, and can be adjusted manually when needed.",
+    "summary": {
+      "totalDue": "Total due",
+      "totalCollected": "Collected",
+      "totalOutstanding": "Outstanding",
+      "pendingCount": "Awaiting confirmation",
+      "pendingCountSuffix": "students",
+      "paidCount": "Paid",
+      "paidCountSuffix": "students"
+    },
+    "table": {
+      "fullName": "Full name",
+      "sessionCount": "Sessions",
+      "amount": "Tuition (VND)",
+      "status": "Status",
+      "time": "Time",
+      "note": "Note"
+    },
+    "status": {
+      "UNPAID": "Unpaid",
+      "PENDING": "Awaiting confirmation",
+      "PAID": "Paid"
+    },
+    "reject": "Reject",
+    "paidBadgeTitle": "Already confirmed, status can't be reverted",
+    "requestedAt": "Requested at {{time}}",
+    "markPaidConfirm": "Confirm you've received the payment of {{amount}} from {{name}}?",
+    "updateError": "Couldn't update tuition.",
+    "rejectReasonRequired": "Please enter a reason for rejecting.",
+    "rejectSuccess": "Request rejected and the reason was sent to the student.",
+    "rejectError": "Couldn't reject the request.",
+    "rejectDialog": {
+      "title": "Reject payment confirmation",
+      "before": "Student",
+      "middle": "confirmed a bank transfer of",
+      "after": "Please enter a reason so the student knows to double-check.",
+      "reasonLabel": "Reason for rejecting",
+      "reasonPlaceholder": "e.g. Payment not received yet, wrong amount, wrong transfer note..."
+    }
+  },
+  "settings": {
+    "pageTitle": "Settings",
+    "pageSubtitle": "Configure the bank account used to generate the tuition payment QR code"
+  },
+  "bankSettings": {
+    "title": "Tuition payment account",
+    "description": "This information is used to generate the transfer QR code shown to students on their learning page.",
+    "loadError": "Couldn't load the bank settings.",
+    "fields": {
+      "bank": "Bank",
+      "bankPlaceholder": "Select bank",
+      "accountNumber": "Account number",
+      "accountNumberPlaceholder": "e.g. 0123456789",
+      "accountName": "Account holder name",
+      "accountNamePlaceholder": "e.g. NGUYEN THI NHUNG"
+    },
+    "requiredError": "Please fill in all bank account details.",
+    "saveSuccess": "Bank settings saved.",
+    "saveError": "Couldn't save the bank settings.",
+    "submit": "Save"
+  }
+}

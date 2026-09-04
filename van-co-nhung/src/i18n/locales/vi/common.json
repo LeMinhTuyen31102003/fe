@@ -1,0 +1,67 @@
+{
+  "appName": "Văn Cô Nhung",
+  "genericUser": "Người dùng",
+  "role": {
+    "TEACHER": "Giáo viên",
+    "STUDENT": "Học sinh"
+  },
+  "actions": {
+    "save": "Lưu",
+    "saveChanges": "Lưu thay đổi",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "confirm": "Xác nhận",
+    "delete": "Xoá",
+    "edit": "Chỉnh sửa",
+    "back": "Quay lại",
+    "add": "Thêm",
+    "clear": "Bỏ chọn",
+    "logout": "Đăng xuất"
+  },
+  "status": {
+    "loading": "Đang tải...",
+    "saving": "Đang lưu...",
+    "sending": "Đang gửi...",
+    "loadError": "Không thể tải dữ liệu."
+  },
+  "header": {
+    "notifications": "Thông báo",
+    "noNotifications": "Bạn chưa có thông báo nào.",
+    "profileInfo": "Thông tin cá nhân",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
+    "toggleTheme": "Đổi giao diện sáng/tối",
+    "toggleLanguage": "Đổi ngôn ngữ"
+  },
+  "attendanceStatus": {
+    "PRESENT": { "label": "Có mặt", "short": "P" },
+    "ABSENT": { "label": "Vắng", "short": "V" },
+    "LATE": { "label": "Trễ", "short": "T" },
+    "EXCUSED": { "label": "Có phép", "short": "CP" }
+  },
+  "months": {
+    "1": "Tháng 1",
+    "2": "Tháng 2",
+    "3": "Tháng 3",
+    "4": "Tháng 4",
+    "5": "Tháng 5",
+    "6": "Tháng 6",
+    "7": "Tháng 7",
+    "8": "Tháng 8",
+    "9": "Tháng 9",
+    "10": "Tháng 10",
+    "11": "Tháng 11",
+    "12": "Tháng 12"
+  },
+  "selectMonth": "Chọn tháng",
+  "selectYear": "Chọn năm",
+  "weekdaysShort": {
+    "sun": "CN",
+    "mon": "T2",
+    "tue": "T3",
+    "wed": "T4",
+    "thu": "T5",
+    "fri": "T6",
+    "sat": "T7"
+  }
+}

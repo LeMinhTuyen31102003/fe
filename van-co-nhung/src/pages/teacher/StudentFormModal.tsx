@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -19,8 +20,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import RequiredMark from "@/components/RequiredMark";
-import { addStudentToClass, fetchClasses, type ClassSummary } from "./classesApi";
-import { GRADE_OPTIONS } from "./gradeOptions";
+import { addStudentToClass, ClassConflictError, type ClassSummary } from "./classesApi";
+import ClassPickerDialog from "./ClassPickerDialog";
+import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
 import { createStudent } from "./studentsApi";
 
 interface StudentFormModalProps {
@@ -30,6 +32,7 @@ interface StudentFormModalProps {
 }
 
 function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalProps) {
+  const { t } = useTranslation(["teacher", "common"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -40,24 +43,8 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
   const [activateNow, setActivateNow] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [classes, setClasses] = useState<ClassSummary[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState("");
-  const [pendingClasses, setPendingClasses] = useState<ClassSummary[]>([]);
-
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    fetchClasses()
-      .then((data) => {
-        if (!cancelled) setClasses(data);
-      })
-      .catch(() => {
-        if (!cancelled) toast.error("Không thể tải danh sách lớp học.");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open]);
+  const [selectedClass, setSelectedClass] = useState<ClassSummary | null>(null);
+  const [isClassPickerOpen, setIsClassPickerOpen] = useState(false);
 
   function resetForm() {
     setUsername("");
@@ -68,31 +55,18 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
     setParentName("");
     setParentPhone("");
     setActivateNow(false);
-    setSelectedClassId("");
-    setPendingClasses([]);
-  }
-
-  function handleAddPendingClass() {
-    if (!selectedClassId) return;
-    const classRoom = classes.find((c) => c.id === Number(selectedClassId));
-    if (!classRoom) return;
-    setPendingClasses((prev) => [...prev, classRoom]);
-    setSelectedClassId("");
-  }
-
-  function handleRemovePendingClass(classId: number) {
-    setPendingClasses((prev) => prev.filter((c) => c.id !== classId));
+    setSelectedClass(null);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     if (!username.trim() || !fullName.trim()) {
-      toast.error("Vui lòng nhập đầy đủ tên đăng nhập và họ tên học sinh.");
+      toast.error(t("teacher:studentForm.requiredFieldsError"));
       return;
     }
     if (password.length < 6) {
-      toast.error("Mật khẩu phải có ít nhất 6 ký tự.");
+      toast.error(t("teacher:studentForm.passwordTooShort"));
       return;
     }
 
@@ -109,33 +83,31 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
         active: activateNow,
       });
 
-      if (pendingClasses.length > 0) {
-        const results = await Promise.allSettled(
-          pendingClasses.map((c) => addStudentToClass(c.id, created.id)),
-        );
-        const failed = results.filter((r) => r.status === "rejected").length;
-        if (failed > 0) {
-          toast.error(`Đã tạo tài khoản nhưng thêm vào ${failed} lớp học thất bại.`);
+      if (selectedClass) {
+        try {
+          await addStudentToClass(selectedClass.id, created.id);
+        } catch (err) {
+          if (err instanceof ClassConflictError) {
+            toast.error(t("teacher:classConflict", { className: err.className }));
+          } else {
+            toast.error(t("teacher:studentForm.addToClassFailed"));
+          }
         }
       }
 
       onCreated();
       resetForm();
-      toast.success("Đã tạo tài khoản học sinh.");
+      toast.success(t("teacher:studentForm.createSuccess"));
     } catch (err) {
       if (err instanceof Error && err.message === "DUPLICATE_USERNAME") {
-        toast.error("Tên đăng nhập đã tồn tại.");
+        toast.error(t("teacher:studentForm.duplicateUsername"));
       } else {
-        toast.error("Tạo tài khoản thất bại. Vui lòng thử lại.");
+        toast.error(t("teacher:studentForm.createError"));
       }
     } finally {
       setIsSubmitting(false);
     }
   }
-
-  const availableClasses = classes.filter(
-    (c) => !pendingClasses.some((p) => p.id === c.id),
-  );
 
   return (
     <Dialog
@@ -147,19 +119,15 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tạo tài khoản học sinh</DialogTitle>
-          <DialogDescription>
-            Nhập thông tin đăng ký cho học sinh. Mặc định tài khoản sẽ ở trạng thái
-            chưa kích hoạt cho đến khi được thêm vào lớp, trừ khi bạn chọn kích hoạt
-            ngay.
-          </DialogDescription>
+          <DialogTitle>{t("teacher:studentForm.title")}</DialogTitle>
+          <DialogDescription>{t("teacher:studentForm.description")}</DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-username">
-                Tên đăng nhập
+                {t("teacher:studentFields.username")}
                 <RequiredMark />
               </Label>
               <Input
@@ -172,7 +140,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-password">
-                Mật khẩu
+                {t("teacher:studentFields.password")}
                 <RequiredMark />
               </Label>
               <Input
@@ -186,7 +154,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="s-fullname">
-              Họ tên học sinh
+              {t("teacher:studentFields.fullName")}
               <RequiredMark />
             </Label>
             <Input
@@ -199,22 +167,22 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-grade">Khối lớp</Label>
+              <Label htmlFor="s-grade">{t("teacher:studentFields.grade")}</Label>
               <Select value={grade} onValueChange={setGrade}>
                 <SelectTrigger id="s-grade" className="w-full" disabled={isSubmitting}>
-                  <SelectValue placeholder="Chọn khối" />
+                  <SelectValue placeholder={t("teacher:studentFields.gradePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {GRADE_OPTIONS.map((g) => (
                     <SelectItem key={g} value={g}>
-                      {/^\d+$/.test(g) ? `Lớp ${g}` : g}
+                      {displayGrade(g, t)}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-school">Trường học</Label>
+              <Label htmlFor="s-school">{t("teacher:studentFields.school")}</Label>
               <Input
                 id="s-school"
                 value={schoolName}
@@ -226,7 +194,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-parent-name">Tên phụ huynh</Label>
+              <Label htmlFor="s-parent-name">{t("teacher:studentFields.parentName")}</Label>
               <Input
                 id="s-parent-name"
                 value={parentName}
@@ -235,7 +203,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-parent-phone">SĐT phụ huynh</Label>
+              <Label htmlFor="s-parent-phone">{t("teacher:studentFields.parentPhone")}</Label>
               <Input
                 id="s-parent-phone"
                 type="tel"
@@ -247,53 +215,32 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Lớp học (không bắt buộc)</Label>
-            {pendingClasses.length > 0 && (
-              <ul className="flex flex-col gap-1.5">
-                {pendingClasses.map((c) => (
-                  <li
-                    key={c.id}
-                    className="flex items-center justify-between rounded-lg border border-border px-3 py-1.5 text-sm"
-                  >
-                    <span>{c.name}</span>
-                    <button
-                      type="button"
-                      className="text-xs font-semibold text-destructive underline-offset-4 hover:underline"
-                      onClick={() => handleRemovePendingClass(c.id)}
-                      disabled={isSubmitting}
-                    >
-                      Xoá
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {availableClasses.length > 0 ? (
-              <div className="flex gap-2">
-                <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                  <SelectTrigger className="w-full" disabled={isSubmitting}>
-                    <SelectValue placeholder="Chọn lớp" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableClasses.map((c) => (
-                      <SelectItem key={c.id} value={String(c.id)}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
+            <Label>{t("teacher:studentForm.classesLabel")}</Label>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="flex h-8 flex-1 items-center rounded-md border border-input bg-transparent px-2.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => setIsClassPickerOpen(true)}
+                disabled={isSubmitting}
+              >
+                {selectedClass ? (
+                  selectedClass.name
+                ) : (
+                  <span className="text-muted-foreground">{t("teacher:studentForm.classPlaceholder")}</span>
+                )}
+              </button>
+              {selectedClass && (
+                <button
                   type="button"
-                  variant="outline"
-                  onClick={handleAddPendingClass}
-                  disabled={!selectedClassId || isSubmitting}
+                  className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                  onClick={() => setSelectedClass(null)}
+                  disabled={isSubmitting}
                 >
-                  Thêm
-                </Button>
-              </div>
-            ) : classes.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Chưa có lớp học nào.</p>
-            ) : null}
+                  {t("common:actions.clear")}
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground">{t("teacher:studentForm.oneClassHint")}</p>
           </div>
 
           <Label htmlFor="s-active" className="font-normal">
@@ -303,14 +250,20 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
               onCheckedChange={(checked) => setActivateNow(checked === true)}
               disabled={isSubmitting}
             />
-            Kích hoạt tài khoản ngay
+            {t("teacher:studentForm.activateNow")}
           </Label>
 
           <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "Đang tạo..." : "Tạo tài khoản"}
+            {isSubmitting ? t("teacher:studentForm.submitting") : t("teacher:studentForm.submit")}
           </Button>
         </form>
       </DialogContent>
+
+      <ClassPickerDialog
+        open={isClassPickerOpen}
+        onOpenChange={setIsClassPickerOpen}
+        onSelect={setSelectedClass}
+      />
     </Dialog>
   );
 }

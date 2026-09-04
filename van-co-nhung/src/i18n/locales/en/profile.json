@@ -1,0 +1,43 @@
+{
+  "title": "Profile",
+  "subtitle": "View and update your account information",
+  "loadError": "Couldn't load your profile.",
+  "fullNameRequired": "Please enter your full name.",
+  "invalidEmail": "Invalid email address.",
+  "updateSuccess": "Profile updated.",
+  "updateError": "Couldn't update your profile.",
+  "edit": "Edit",
+  "cancel": "Cancel",
+  "save": "Save changes",
+  "saving": "Saving...",
+  "personalInfo": {
+    "title": "Personal information",
+    "description": "Your contact information"
+  },
+  "studentInfo": {
+    "title": "Student information",
+    "description": "School, class, and parent details"
+  },
+  "fields": {
+    "fullName": "Full name",
+    "fullNamePlaceholder": "John Smith",
+    "email": "Email",
+    "phone": "Phone number",
+    "address": "Address",
+    "addressPlaceholder": "House number, street, ward, city",
+    "grade": "Grade",
+    "gradePlaceholder": "e.g. 10A1",
+    "schoolName": "School",
+    "parentName": "Parent's name",
+    "parentPhone": "Parent's phone number"
+  },
+  "accountInfo": {
+    "title": "Account information",
+    "username": "Username",
+    "role": "Role",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Suspended",
+    "joinedAt": "Joined"
+  }
+}

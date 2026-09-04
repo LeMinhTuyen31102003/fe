@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import RequiredMark from "@/components/RequiredMark";
@@ -20,7 +21,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  addStudentToClass,
   fetchClassDetail,
   removeStudentFromClass,
   updateClass,
@@ -28,10 +28,10 @@ import {
   type ClassSummary,
   type ScheduleSlotInput,
 } from "./classesApi";
+import AddStudentDialog from "./AddStudentDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
 import ScheduleSlotEditor from "./ScheduleSlotEditor";
 import { formatScheduleSlot, sortSchedules } from "./scheduleOptions";
-import { fetchStudents, type Student } from "./studentsApi";
 
 interface ClassDetailModalProps {
   classId: number | null;
@@ -40,18 +40,18 @@ interface ClassDetailModalProps {
 }
 
 function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetailModalProps) {
+  const { t } = useTranslation(["teacher", "common"]);
   const [detail, setDetail] = useState<ClassDetail | null>(null);
   const [loadedClassId, setLoadedClassId] = useState<number | null>(null);
-  const [allStudents, setAllStudents] = useState<Student[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAddingStudent, setIsAddingStudent] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
 
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
+  const [feePerSession, setFeePerSession] = useState("");
 
   const isLoading = classId !== null && loadedClassId !== classId;
 
@@ -59,8 +59,8 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
     if (classId === null) return;
     let cancelled = false;
 
-    Promise.all([fetchClassDetail(classId), fetchStudents()])
-      .then(([classDetail, students]) => {
+    fetchClassDetail(classId)
+      .then((classDetail) => {
         if (cancelled) return;
         setDetail(classDetail);
         setLoadedClassId(classId);
@@ -75,24 +75,25 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
           })),
         );
         setNote(classDetail.note ?? "");
-        setAllStudents(students);
+        setFeePerSession(classDetail.feePerSession != null ? String(classDetail.feePerSession) : "");
       })
       .catch(() => {
         if (cancelled) return;
         setLoadedClassId(classId);
-        toast.error("Không thể tải thông tin lớp học.");
+        toast.error(t("teacher:classDetail.loadError"));
       });
 
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classId]);
 
   async function handleSaveInfo(e: FormEvent) {
     e.preventDefault();
     if (!detail) return;
     if (!name.trim()) {
-      toast.error("Vui lòng nhập tên lớp học.");
+      toast.error(t("teacher:classForm.nameRequiredError"));
       return;
     }
 
@@ -103,46 +104,31 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
         grade,
         schedules,
         note: note.trim(),
+        feePerSession: feePerSession.trim() ? Number(feePerSession) : null,
       });
       setDetail((prev) => (prev ? { ...prev, ...updated } : prev));
       onClassUpdated(updated);
       setIsEditing(false);
-      toast.success("Đã cập nhật thông tin lớp học.");
+      toast.success(t("teacher:classDetail.updateSuccess"));
     } catch {
-      toast.error("Cập nhật thất bại. Vui lòng thử lại.");
+      toast.error(t("teacher:classDetail.updateError"));
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  async function handleAddStudent() {
-    if (!detail || !selectedStudentId) return;
-    const wasInactive = allStudents.find((s) => s.id === Number(selectedStudentId))?.active === false;
-
-    setIsAddingStudent(true);
-    try {
-      const updated = await addStudentToClass(detail.id, Number(selectedStudentId));
-      setDetail(updated);
-      setSelectedStudentId("");
-      onClassUpdated({
-        id: updated.id,
-        name: updated.name,
-        grade: updated.grade,
-        schedules: updated.schedules,
-        note: updated.note,
-        active: updated.active,
-        studentCount: updated.students.length,
-      });
-      toast.success(
-        wasInactive
-          ? "Đã thêm học sinh vào lớp và tự động kích hoạt tài khoản."
-          : "Đã thêm học sinh vào lớp.",
-      );
-    } catch {
-      toast.error("Không thể thêm học sinh vào lớp.");
-    } finally {
-      setIsAddingStudent(false);
-    }
+  function handleStudentAdded(updated: ClassDetail) {
+    setDetail(updated);
+    onClassUpdated({
+      id: updated.id,
+      name: updated.name,
+      grade: updated.grade,
+      schedules: updated.schedules,
+      note: updated.note,
+      feePerSession: updated.feePerSession,
+      active: updated.active,
+      studentCount: updated.students.length,
+    });
   }
 
   async function handleRemoveStudent(studentId: number) {
@@ -156,35 +142,34 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
         grade: updated.grade,
         schedules: updated.schedules,
         note: updated.note,
+        feePerSession: updated.feePerSession,
         active: updated.active,
         studentCount: updated.students.length,
       });
-      toast.success("Đã xoá học sinh khỏi lớp.");
+      toast.success(t("teacher:classDetail.removedStudent"));
     } catch {
-      toast.error("Không thể xoá học sinh khỏi lớp.");
+      toast.error(t("teacher:classDetail.removeStudentError"));
     }
   }
-
-  const availableStudents = detail
-    ? allStudents.filter((s) => !detail.students.some((cs) => cs.id === s.id))
-    : [];
 
   return (
     <Dialog open={classId !== null} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Chỉnh sửa lớp học" : "Thông tin lớp học"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? t("teacher:classDetail.titleEdit") : t("teacher:classDetail.titleView")}
+          </DialogTitle>
         </DialogHeader>
 
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Đang tải...</p>
+          <p className="text-sm text-muted-foreground">{t("common:status.loading")}</p>
         ) : !detail ? (
-          <p className="text-sm text-muted-foreground">Không thể tải thông tin lớp học.</p>
+          <p className="text-sm text-muted-foreground">{t("teacher:classDetail.loadError")}</p>
         ) : isEditing ? (
           <form className="flex flex-col gap-4" onSubmit={handleSaveInfo}>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="ce-name">
-                Tên lớp học
+                {t("teacher:classForm.fields.name")}
                 <RequiredMark />
               </Label>
               <Input
@@ -197,15 +182,15 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ce-grade">Khối lớp</Label>
+              <Label htmlFor="ce-grade">{t("teacher:classForm.fields.grade")}</Label>
               <Select value={grade} onValueChange={setGrade}>
                 <SelectTrigger id="ce-grade" className="w-full" disabled={isSubmitting}>
-                  <SelectValue placeholder="Chọn khối" />
+                  <SelectValue placeholder={t("teacher:classForm.fields.gradePlaceholder")} />
                 </SelectTrigger>
                 <SelectContent>
                   {GRADE_OPTIONS.map((g) => (
                     <SelectItem key={g} value={g}>
-                      {displayGrade(g)}
+                      {displayGrade(g, t)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -215,7 +200,21 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
             <ScheduleSlotEditor slots={schedules} onChange={setSchedules} disabled={isSubmitting} />
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ce-note">Ghi chú</Label>
+              <Label htmlFor="ce-fee-per-session">{t("teacher:classForm.fields.feePerSession")}</Label>
+              <Input
+                id="ce-fee-per-session"
+                type="number"
+                min={0}
+                step={1000}
+                value={feePerSession}
+                onChange={(e) => setFeePerSession(e.target.value)}
+                disabled={isSubmitting}
+                placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ce-note">{t("teacher:classForm.fields.note")}</Label>
               <Textarea
                 id="ce-note"
                 rows={3}
@@ -233,10 +232,10 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
-                Huỷ
+                {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                {isSubmitting ? "Đang lưu..." : "Lưu"}
+                {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>
           </form>
@@ -244,56 +243,74 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
           <>
             <dl className="flex flex-col gap-4">
               <div>
-                <dt className="text-xs font-medium text-muted-foreground">Tên lớp học</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.name")}
+                </dt>
                 <dd className="text-sm font-medium text-foreground">{detail.name}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-muted-foreground">Khối lớp</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.grade")}
+                </dt>
                 <dd className="text-sm font-medium text-foreground">
-                  {detail.grade ? displayGrade(detail.grade) : "—"}
+                  {detail.grade ? displayGrade(detail.grade, t) : "—"}
                 </dd>
               </div>
               <div>
-                <dt className="mb-1 text-xs font-medium text-muted-foreground">Lịch học</dt>
+                <dt className="mb-1 text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.schedule")}
+                </dt>
                 {detail.schedules.length === 0 ? (
                   <dd className="text-sm font-medium text-foreground">—</dd>
                 ) : (
                   <dd className="flex flex-col gap-1">
                     {sortSchedules(detail.schedules).map((slot) => (
                       <span key={slot.id} className="text-sm font-medium text-foreground">
-                        {formatScheduleSlot(slot)}
+                        {formatScheduleSlot(slot, t)}
                       </span>
                     ))}
                   </dd>
                 )}
               </div>
+              <div>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.feePerSession")}
+                </dt>
+                <dd className="text-sm font-medium text-foreground">
+                  {detail.feePerSession != null ? `${detail.feePerSession.toLocaleString("vi-VN")}đ` : "—"}
+                </dd>
+              </div>
               {detail.note && (
                 <div>
-                  <dt className="text-xs font-medium text-muted-foreground">Ghi chú</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("teacher:classDetail.labels.note")}
+                  </dt>
                   <dd className="text-sm text-foreground whitespace-pre-wrap">{detail.note}</dd>
                 </div>
               )}
               <div>
-                <dt className="mb-1 text-xs font-medium text-muted-foreground">Trạng thái</dt>
+                <dt className="mb-1 text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.status")}
+                </dt>
                 <dd>
                   <Badge variant={detail.active ? "default" : "secondary"}>
-                    {detail.active ? "Đang hoạt động" : "Ngừng hoạt động"}
+                    {detail.active ? t("teacher:classStatus.active") : t("teacher:classStatus.inactive")}
                   </Badge>
                 </dd>
               </div>
             </dl>
 
             <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
-              Chỉnh sửa
+              {t("common:actions.edit")}
             </Button>
 
             <div className="flex flex-col gap-3 border-t border-border pt-4">
               <h3 className="text-sm font-semibold text-foreground">
-                Học sinh trong lớp ({detail.students.length})
+                {t("teacher:classDetail.studentsTitle", { count: detail.students.length })}
               </h3>
 
               {detail.students.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Chưa có học sinh nào trong lớp.</p>
+                <p className="text-sm text-muted-foreground">{t("teacher:classDetail.noStudents")}</p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {detail.students.map((student) => (
@@ -310,47 +327,27 @@ function ClassDetailModal({ classId, onOpenChange, onClassUpdated }: ClassDetail
                         className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
                         onClick={() => handleRemoveStudent(student.id)}
                       >
-                        Xoá
+                        {t("common:actions.delete")}
                       </button>
                     </li>
                   ))}
                 </ul>
               )}
 
-              {availableStudents.length > 0 ? (
-                <div className="flex items-end gap-2">
-                  <div className="flex flex-1 flex-col gap-1.5">
-                    <Label htmlFor="add-student">Thêm học sinh</Label>
-                    <Select value={selectedStudentId} onValueChange={setSelectedStudentId}>
-                      <SelectTrigger id="add-student" className="w-full" disabled={isAddingStudent}>
-                        <SelectValue placeholder="Chọn học sinh" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableStudents.map((s) => (
-                          <SelectItem key={s.id} value={String(s.id)}>
-                            {s.fullName} ({s.username})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={handleAddStudent}
-                    disabled={!selectedStudentId || isAddingStudent}
-                  >
-                    {isAddingStudent ? "Đang thêm..." : "Thêm"}
-                  </Button>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  Không còn học sinh nào để thêm vào lớp.
-                </p>
-              )}
+              <Button type="button" variant="outline" onClick={() => setIsAddStudentOpen(true)}>
+                {t("teacher:classDetail.addStudentLabel")}
+              </Button>
             </div>
           </>
         )}
       </DialogContent>
+
+      <AddStudentDialog
+        open={isAddStudentOpen}
+        classId={detail?.id ?? null}
+        onOpenChange={setIsAddStudentOpen}
+        onStudentAdded={handleStudentAdded}
+      />
     </Dialog>
   );
 }

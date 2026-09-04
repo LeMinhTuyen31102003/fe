@@ -1,0 +1,310 @@
+{
+  "nav": {
+    "overview": "Tổng quan",
+    "students": "Học sinh",
+    "classes": "Lớp học",
+    "attendance": "Điểm danh",
+    "tuition": "Học phí",
+    "settings": "Ngân Hàng"
+  },
+  "classStatus": {
+    "active": "Đang hoạt động",
+    "inactive": "Ngừng hoạt động"
+  },
+  "classConflict": "Học sinh đang thuộc lớp \"{{className}}\" đang hoạt động. Vui lòng xoá học sinh khỏi lớp đó hoặc ngừng hoạt động lớp đó trước khi thêm vào lớp mới.",
+  "studentStatus": {
+    "active": "Đã kích hoạt",
+    "inactive": "Chưa kích hoạt"
+  },
+  "pagination": {
+    "prev": "‹ Trước",
+    "next": "Sau ›",
+    "pageOf": "Trang {{current}}/{{total}}"
+  },
+  "grade": {
+    "prefix": "Lớp {{grade}}",
+    "supplementary": "Bổ trợ riêng"
+  },
+  "schedule": {
+    "label": "Lịch học",
+    "dayLabel": "Thứ",
+    "dayPlaceholder": "Chọn thứ",
+    "startTimeLabel": "Giờ bắt đầu",
+    "endTimeLabel": "Giờ kết thúc",
+    "days": {
+      "MONDAY": { "label": "Thứ 2", "short": "T2" },
+      "TUESDAY": { "label": "Thứ 3", "short": "T3" },
+      "WEDNESDAY": { "label": "Thứ 4", "short": "T4" },
+      "THURSDAY": { "label": "Thứ 5", "short": "T5" },
+      "FRIDAY": { "label": "Thứ 6", "short": "T6" },
+      "SATURDAY": { "label": "Thứ 7", "short": "T7" },
+      "SUNDAY": { "label": "Chủ nhật", "short": "CN" }
+    }
+  },
+  "overview": {
+    "title": "Tổng quan",
+    "greeting": "Xin chào, {{name}}",
+    "stats": {
+      "classes": "Lớp đang dạy",
+      "students": "Học sinh",
+      "sessionsThisWeek": "Buổi học tuần này"
+    },
+    "placeholder": "Các chức năng quản lý lớp học, điểm danh và học phí sẽ hiển thị tại đây."
+  },
+  "studentFields": {
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "fullName": "Họ tên học sinh",
+    "grade": "Khối lớp",
+    "gradePlaceholder": "Chọn khối",
+    "school": "Trường học",
+    "parentName": "Tên phụ huynh",
+    "parentPhone": "SĐT phụ huynh"
+  },
+  "students": {
+    "pageTitle": "Quản lý học sinh",
+    "pageSubtitle": "Tạo và quản lý tài khoản học sinh",
+    "listTitle": "Danh sách học sinh",
+    "searchPlaceholder": "Tìm theo họ tên hoặc tên đăng nhập...",
+    "statusFilterAll": "Tất cả trạng thái",
+    "classFilterAll": "Tất cả lớp",
+    "add": "+ Thêm học sinh",
+    "loadError": "Không thể tải danh sách học sinh.",
+    "empty": "Chưa có học sinh nào.",
+    "noResults": "Không tìm thấy học sinh phù hợp.",
+    "table": {
+      "fullName": "Họ tên",
+      "grade": "Khối lớp",
+      "username": "Tên đăng nhập",
+      "parent": "Phụ huynh",
+      "status": "Trạng thái",
+      "createdAt": "Ngày tạo",
+      "actions": "Thao tác"
+    },
+    "activate": "Kích hoạt",
+    "deactivate": "Vô hiệu hoá",
+    "deleteConfirm": "Xoá tài khoản của \"{{name}}\"?",
+    "toggleActiveError": "Không thể cập nhật trạng thái học sinh.",
+    "deleteError": "Không thể xoá học sinh.",
+    "reloadError": "Không thể tải lại danh sách học sinh."
+  },
+  "studentForm": {
+    "title": "Tạo tài khoản học sinh",
+    "description": "Nhập thông tin đăng ký cho học sinh. Mặc định tài khoản sẽ ở trạng thái chưa kích hoạt cho đến khi được thêm vào lớp, trừ khi bạn chọn kích hoạt ngay.",
+    "loadClassesError": "Không thể tải danh sách lớp học.",
+    "classesLabel": "Lớp học (không bắt buộc)",
+    "classPlaceholder": "Chọn lớp",
+    "classPickerTitle": "Chọn lớp học",
+    "classSearchPlaceholder": "Tìm theo tên lớp học...",
+    "noClasses": "Chưa có lớp học nào.",
+    "oneClassHint": "Mỗi học sinh chỉ có thể thuộc 1 lớp đang hoạt động tại một thời điểm.",
+    "activateNow": "Kích hoạt tài khoản ngay",
+    "submit": "Tạo tài khoản",
+    "submitting": "Đang tạo...",
+    "requiredFieldsError": "Vui lòng nhập đầy đủ tên đăng nhập và họ tên học sinh.",
+    "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự.",
+    "addToClassFailed": "Đã tạo tài khoản nhưng thêm vào lớp học thất bại.",
+    "createSuccess": "Đã tạo tài khoản học sinh.",
+    "duplicateUsername": "Tên đăng nhập đã tồn tại.",
+    "createError": "Tạo tài khoản thất bại. Vui lòng thử lại."
+  },
+  "studentDetail": {
+    "titleView": "Thông tin học sinh",
+    "titleEdit": "Chỉnh sửa học sinh",
+    "loadClassesError": "Không thể tải danh sách lớp học.",
+    "requiredNameError": "Vui lòng nhập họ tên học sinh.",
+    "updateSuccess": "Đã cập nhật thông tin học sinh.",
+    "updateError": "Cập nhật thất bại. Vui lòng thử lại.",
+    "labelFullName": "Họ tên",
+    "labelStatus": "Trạng thái",
+    "addedToClassAutoActivated": "Đã thêm vào lớp và tự động kích hoạt tài khoản.",
+    "addedToClass": "Đã thêm vào lớp.",
+    "addToClassError": "Không thể thêm vào lớp học.",
+    "removedFromClass": "Đã xoá khỏi lớp học.",
+    "removeFromClassError": "Không thể xoá khỏi lớp học.",
+    "classesTitle": "Lớp học",
+    "noClasses": "Chưa thuộc lớp học nào.",
+    "classPlaceholder": "Chọn lớp",
+    "addClassLabel": "+ Thêm vào lớp",
+    "addClassDialogTitle": "Thêm học sinh vào lớp",
+    "addClassSearchPlaceholder": "Tìm theo tên lớp học...",
+    "noClassesToAdd": "Không còn lớp nào để thêm."
+  },
+  "classes": {
+    "pageTitle": "Quản lý lớp học",
+    "pageSubtitle": "Tạo lớp học và xếp học sinh vào lớp",
+    "listTitle": "Danh sách lớp học",
+    "searchPlaceholder": "Tìm theo tên lớp học...",
+    "statusFilterAll": "Tất cả trạng thái",
+    "add": "+ Thêm lớp học",
+    "loadError": "Không thể tải danh sách lớp học.",
+    "empty": "Chưa có lớp học nào.",
+    "noResults": "Không tìm thấy lớp học phù hợp.",
+    "table": {
+      "name": "Tên lớp",
+      "grade": "Khối lớp",
+      "schedule": "Lịch học",
+      "studentCount": "Sĩ số",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+    "activate": "Kích hoạt",
+    "deleteConfirm": "Xoá lớp học \"{{name}}\"?",
+    "toggleActiveError": "Không thể cập nhật trạng thái lớp học.",
+    "deleteError": "Không thể xoá lớp học.",
+    "createSuccess": "Đã tạo lớp học."
+  },
+  "classForm": {
+    "createTitle": "Tạo lớp học",
+    "fields": {
+      "name": "Tên lớp học",
+      "grade": "Khối lớp",
+      "gradePlaceholder": "Chọn khối",
+      "feePerSession": "Học phí / buổi (VNĐ)",
+      "feePerSessionPlaceholder": "Ví dụ: 60000",
+      "note": "Ghi chú"
+    },
+    "nameRequiredError": "Vui lòng nhập tên lớp học.",
+    "createError": "Tạo lớp học thất bại. Vui lòng thử lại.",
+    "submit": "Tạo lớp học",
+    "submitting": "Đang tạo..."
+  },
+  "classDetail": {
+    "titleView": "Thông tin lớp học",
+    "titleEdit": "Chỉnh sửa lớp học",
+    "loadError": "Không thể tải thông tin lớp học.",
+    "updateSuccess": "Đã cập nhật thông tin lớp học.",
+    "updateError": "Cập nhật thất bại. Vui lòng thử lại.",
+    "labels": {
+      "name": "Tên lớp học",
+      "grade": "Khối lớp",
+      "schedule": "Lịch học",
+      "feePerSession": "Học phí / buổi",
+      "note": "Ghi chú",
+      "status": "Trạng thái"
+    },
+    "studentsTitle": "Học sinh trong lớp ({{count}})",
+    "noStudents": "Chưa có học sinh nào trong lớp.",
+    "addStudentLabel": "+ Thêm học sinh",
+    "addStudentDialogTitle": "Thêm học sinh vào lớp",
+    "addStudentSearchPlaceholder": "Tìm theo họ tên hoặc tên đăng nhập...",
+    "studentPlaceholder": "Chọn học sinh",
+    "addingStudent": "Đang thêm...",
+    "noStudentsToAdd": "Không còn học sinh nào để thêm vào lớp.",
+    "addedStudentAutoActivated": "Đã thêm học sinh vào lớp và tự động kích hoạt tài khoản.",
+    "addedStudent": "Đã thêm học sinh vào lớp.",
+    "addStudentError": "Không thể thêm học sinh vào lớp.",
+    "removedStudent": "Đã xoá học sinh khỏi lớp.",
+    "removeStudentError": "Không thể xoá học sinh khỏi lớp."
+  },
+  "attendance": {
+    "pageSubtitle": "Theo dõi điểm danh học sinh theo từng tháng",
+    "title": "Điểm danh theo tháng",
+    "classPlaceholder": "Chọn lớp học",
+    "loadClassesError": "Không thể tải danh sách lớp học.",
+    "inactiveLockBanner": "Lớp này đã ngừng hoạt động — chỉ xem lại lịch sử điểm danh, không thể chỉnh sửa.",
+    "noClasses": "Chưa có lớp học nào. Hãy tạo lớp học trước.",
+    "loadError": "Không thể tải dữ liệu điểm danh.",
+    "noStudents": "Lớp học chưa có học sinh nào.",
+    "addSessionLabel": "Thêm buổi điểm danh",
+    "addSession": "+ Thêm buổi",
+    "dateOutOfMonthError": "Ngày thêm phải nằm trong tháng đang xem.",
+    "restoredPending": "Đã khôi phục {{count}} thay đổi điểm danh chưa lưu trước đó.",
+    "discardChanges": "Hủy thay đổi",
+    "saveChanges": "Lưu thay đổi ({{count}})",
+    "noSessionsInMonth": "Chưa có buổi học nào trong tháng này. Hãy thêm lịch học cho lớp hoặc thêm buổi điểm danh thủ công.",
+    "table": {
+      "fullName": "Họ tên",
+      "present": "Có mặt",
+      "absent": "Vắng",
+      "late": "Trễ",
+      "excused": "Phép"
+    },
+    "notMarked": "Chưa điểm danh",
+    "unsavedSuffix": "chưa lưu",
+    "saveDialog": {
+      "title": "Xác nhận lưu điểm danh",
+      "before": "Bạn có",
+      "middle": "thay đổi điểm danh chưa lưu cho lớp",
+      "after": "Xác nhận lưu vào dữ liệu?"
+    },
+    "confirmSave": "Xác nhận lưu",
+    "saveSuccess": "Đã lưu điểm danh.",
+    "saveError": "Không thể lưu một số thay đổi. Vui lòng thử lại."
+  },
+  "tuition": {
+    "pageSubtitle": "Theo dõi học phí học sinh theo từng tháng",
+    "title": "Học phí theo tháng",
+    "classPlaceholder": "Chọn lớp học",
+    "loadClassesError": "Không thể tải danh sách lớp học.",
+    "inactiveLockBanner": "Lớp này đã ngừng hoạt động — chỉ xem lại lịch sử học phí, không thể chỉnh sửa.",
+    "noClasses": "Chưa có lớp học nào. Hãy tạo lớp học trước.",
+    "loadError": "Không thể tải dữ liệu học phí.",
+    "noStudents": "Lớp học chưa có học sinh nào.",
+    "feeInfoBefore": "Học phí/buổi:",
+    "feeNotSet": "chưa đặt",
+    "feeInfoMiddle": "· Học phí mỗi học sinh được tự tính theo số buổi",
+    "presentWord": "Có mặt",
+    "lateWord": "Trễ",
+    "feeInfoAfter": "trong tháng, có thể chỉnh tay khi cần.",
+    "summary": {
+      "totalDue": "Tổng cần thu",
+      "totalCollected": "Đã thu",
+      "totalOutstanding": "Còn thiếu",
+      "pendingCount": "Chờ xác nhận",
+      "pendingCountSuffix": "học sinh",
+      "paidCount": "Đã đóng",
+      "paidCountSuffix": "học sinh"
+    },
+    "table": {
+      "fullName": "Họ tên",
+      "sessionCount": "Số buổi",
+      "amount": "Học phí (VNĐ)",
+      "status": "Trạng thái",
+      "time": "Thời gian",
+      "note": "Ghi chú"
+    },
+    "status": {
+      "UNPAID": "Chưa đóng",
+      "PENDING": "Chờ xác nhận",
+      "PAID": "Đã đóng"
+    },
+    "reject": "Từ chối",
+    "paidBadgeTitle": "Đã xác nhận, không thể chuyển lại trạng thái",
+    "requestedAt": "Yêu cầu lúc {{time}}",
+    "markPaidConfirm": "Xác nhận đã nhận được khoản thanh toán {{amount}} của {{name}}?",
+    "updateError": "Không thể cập nhật học phí.",
+    "rejectReasonRequired": "Vui lòng nhập lý do từ chối.",
+    "rejectSuccess": "Đã từ chối yêu cầu và gửi lý do cho học sinh.",
+    "rejectError": "Không thể từ chối yêu cầu.",
+    "rejectDialog": {
+      "title": "Từ chối xác nhận thanh toán",
+      "before": "Học sinh",
+      "middle": "đã xác nhận chuyển khoản",
+      "after": "Vui lòng nhập lý do từ chối để học sinh biết và kiểm tra lại.",
+      "reasonLabel": "Lý do từ chối",
+      "reasonPlaceholder": "Ví dụ: Chưa thấy tiền về, sai số tiền, sai nội dung chuyển khoản..."
+    }
+  },
+  "settings": {
+    "pageTitle": "Cài đặt",
+    "pageSubtitle": "Cấu hình tài khoản ngân hàng dùng để tạo mã QR thu học phí"
+  },
+  "bankSettings": {
+    "title": "Tài khoản nhận học phí",
+    "description": "Thông tin này dùng để tạo mã QR chuyển khoản hiển thị cho học sinh trên trang học tập.",
+    "loadError": "Không thể tải cấu hình ngân hàng.",
+    "fields": {
+      "bank": "Ngân hàng",
+      "bankPlaceholder": "Chọn ngân hàng",
+      "accountNumber": "Số tài khoản",
+      "accountNumberPlaceholder": "Ví dụ: 0123456789",
+      "accountName": "Tên chủ tài khoản",
+      "accountNamePlaceholder": "Ví dụ: NGUYEN THI NHUNG"
+    },
+    "requiredError": "Vui lòng nhập đầy đủ thông tin ngân hàng.",
+    "saveSuccess": "Đã lưu thông tin ngân hàng.",
+    "saveError": "Không thể lưu thông tin ngân hàng.",
+    "submit": "Lưu thông tin"
+  }
+}

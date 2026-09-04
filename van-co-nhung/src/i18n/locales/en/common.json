@@ -1,0 +1,67 @@
+{
+  "appName": "Văn Cô Nhung",
+  "genericUser": "User",
+  "role": {
+    "TEACHER": "Teacher",
+    "STUDENT": "Student"
+  },
+  "actions": {
+    "save": "Save",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "add": "Add",
+    "clear": "Clear",
+    "logout": "Log out"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "sending": "Sending...",
+    "loadError": "Couldn't load data."
+  },
+  "header": {
+    "notifications": "Notifications",
+    "noNotifications": "You have no notifications yet.",
+    "profileInfo": "Profile",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "toggleTheme": "Toggle light/dark theme",
+    "toggleLanguage": "Change language"
+  },
+  "attendanceStatus": {
+    "PRESENT": { "label": "Present", "short": "P" },
+    "ABSENT": { "label": "Absent", "short": "A" },
+    "LATE": { "label": "Late", "short": "L" },
+    "EXCUSED": { "label": "Excused", "short": "E" }
+  },
+  "months": {
+    "1": "January",
+    "2": "February",
+    "3": "March",
+    "4": "April",
+    "5": "May",
+    "6": "June",
+    "7": "July",
+    "8": "August",
+    "9": "September",
+    "10": "October",
+    "11": "November",
+    "12": "December"
+  },
+  "selectMonth": "Select month",
+  "selectYear": "Select year",
+  "weekdaysShort": {
+    "sun": "Sun",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat"
+  }
+}

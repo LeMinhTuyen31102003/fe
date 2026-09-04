@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import styles from './LoginPage.module.css'
 
 interface FieldErrors {
@@ -9,6 +10,7 @@ interface FieldErrors {
 
 function LoginPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation('auth')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -18,8 +20,8 @@ function LoginPage() {
 
   function validate(): boolean {
     const errors: FieldErrors = {}
-    if (!username.trim()) errors.username = 'Vui lòng nhập tên đăng nhập'
-    if (!password) errors.password = 'Vui lòng nhập mật khẩu'
+    if (!username.trim()) errors.username = t('usernameRequired')
+    if (!password) errors.password = t('passwordRequired')
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -38,21 +40,18 @@ function LoginPage() {
       })
 
       if (!res.ok) {
-        setFormError(
-          res.status === 401
-            ? 'Tên đăng nhập hoặc mật khẩu không đúng.'
-            : 'Đăng nhập thất bại. Vui lòng thử lại.',
-        )
+        setFormError(res.status === 401 ? t('invalidCredentials') : t('loginFailed'))
         return
       }
 
       const data = await res.json()
       localStorage.setItem('token', data.token)
       localStorage.setItem('userName', data.userName)
+      localStorage.setItem('fullName', data.fullName ?? '')
       localStorage.setItem('role', data.role)
       navigate(data.role === 'TEACHER' ? '/admin' : '/')
     } catch {
-      setFormError('Không thể kết nối đến máy chủ. Vui lòng thử lại sau.')
+      setFormError(t('connectionError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -61,22 +60,20 @@ function LoginPage() {
   return (
     <div className={styles.page}>
       <Link to="/" className={styles.backHome}>
-        ← Về trang chủ
+        ← {t('backToHome')}
       </Link>
 
       <div className={styles.card}>
         <img src="/images/logo.jpg" alt="Văn Cô Nhung" className={styles.logo} />
-        <h1 className={styles.heading}>Đăng nhập</h1>
-        <p className={styles.subheading}>
-          Đăng nhập để vào trang học tập hoặc trang quản lý
-        </p>
+        <h1 className={styles.heading}>{t('title')}</h1>
+        <p className={styles.subheading}>{t('subtitle')}</p>
 
         <form className={styles.form} onSubmit={handleSubmit} noValidate>
           {formError && <div className={styles.formError}>{formError}</div>}
 
           <div className={styles.field}>
             <label htmlFor="username">
-              Tên đăng nhập <span className={styles.required}>*</span>
+              {t('username')} <span className={styles.required}>*</span>
             </label>
             <div className={styles.inputWrap}>
               <input
@@ -96,7 +93,7 @@ function LoginPage() {
 
           <div className={styles.field}>
             <label htmlFor="password">
-              Mật khẩu <span className={styles.required}>*</span>
+              {t('password')} <span className={styles.required}>*</span>
             </label>
             <div className={styles.inputWrap}>
               <input
@@ -114,7 +111,7 @@ function LoginPage() {
                 onClick={() => setShowPassword((v) => !v)}
                 tabIndex={-1}
               >
-                {showPassword ? 'Ẩn' : 'Hiện'}
+                {showPassword ? t('hidePassword') : t('showPassword')}
               </button>
             </div>
             {fieldErrors.password && (
@@ -123,14 +120,14 @@ function LoginPage() {
           </div>
 
           <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {isSubmitting ? t('submitting') : t('submit')}
           </button>
         </form>
 
         <p className={styles.footerNote}>
-          Chưa có tài khoản? Chỉ giáo viên mới có thể cấp tài khoản học sinh.
+          {t('noAccount')}
           <br />
-          Liên hệ <strong>0933621222</strong> để được hỗ trợ.
+          {t('contactSupportBefore')} <strong>0933621222</strong> {t('contactSupportAfter')}
         </p>
       </div>
     </div>

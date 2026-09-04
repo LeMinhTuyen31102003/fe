@@ -1,0 +1,43 @@
+{
+  "title": "Hồ sơ cá nhân",
+  "subtitle": "Xem và cập nhật thông tin tài khoản của bạn",
+  "loadError": "Không thể tải thông tin cá nhân.",
+  "fullNameRequired": "Vui lòng nhập họ tên.",
+  "invalidEmail": "Email không hợp lệ.",
+  "updateSuccess": "Đã cập nhật thông tin cá nhân.",
+  "updateError": "Không thể cập nhật thông tin cá nhân.",
+  "edit": "Chỉnh sửa",
+  "cancel": "Hủy",
+  "save": "Lưu thay đổi",
+  "saving": "Đang lưu...",
+  "personalInfo": {
+    "title": "Thông tin cá nhân",
+    "description": "Thông tin liên hệ của bạn"
+  },
+  "studentInfo": {
+    "title": "Thông tin học sinh",
+    "description": "Trường lớp và phụ huynh"
+  },
+  "fields": {
+    "fullName": "Họ và tên",
+    "fullNamePlaceholder": "Nguyễn Văn A",
+    "email": "Email",
+    "phone": "Số điện thoại",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Số nhà, đường, phường/xã, tỉnh/thành",
+    "grade": "Lớp",
+    "gradePlaceholder": "Ví dụ: 10A1",
+    "schoolName": "Trường",
+    "parentName": "Tên phụ huynh",
+    "parentPhone": "Số điện thoại phụ huynh"
+  },
+  "accountInfo": {
+    "title": "Thông tin tài khoản",
+    "username": "Tên đăng nhập",
+    "role": "Vai trò",
+    "status": "Trạng thái",
+    "active": "Đang hoạt động",
+    "inactive": "Đã khóa",
+    "joinedAt": "Tham gia từ"
+  }
+}

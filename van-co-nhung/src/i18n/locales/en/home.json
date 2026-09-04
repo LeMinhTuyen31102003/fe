@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "grades": "Grades",
+    "pricing": "Tuition",
+    "guide": "Enroll",
+    "contact": "Contact",
+    "login": "Log in"
+  },
+  "hero": {
+    "tag": "● Literature tutoring · Grade 5 - Grade 11",
+    "titlePrefix": "Learn Literature",
+    "titleEmphasis": "fun - solid - high scores",
+    "description": "Văn Cô Nhung's tutoring class takes students from grade 5 to grade 11. Closely follows the school curriculum, builds structured paragraph and essay writing skills, and helps your child grow more confident in Literature every day.",
+    "ctaPrimary": "Enroll now",
+    "ctaSecondary": "See all grades",
+    "note": "Small classes, limited seats ·",
+    "imageAlt": "Ms. Nhung - Văn Cô Nhung"
+  },
+  "grades": {
+    "tag": "● Grades currently enrolling",
+    "title": "A learning path suited to every grade",
+    "description": "Each grade has its own curriculum, closely following the textbook and exam requirements for that level.",
+    "items": [
+      { "badge": "5", "title": "Grade 5", "desc": "Builds paragraph-writing fundamentals and introduces literary appreciation ahead of secondary school." },
+      { "badge": "6", "title": "Grade 6", "desc": "Introduces the secondary curriculum, building reading comprehension and full essay-writing skills." },
+      { "badge": "7", "title": "Grade 7", "desc": "Reinforces Vietnamese language fundamentals and sharpens argumentative and expressive writing." },
+      { "badge": "8", "title": "Grade 8", "desc": "Practices social and literary argumentative essays following a standard structure." },
+      { "badge": "9", "title": "Grade 9", "desc": "Focuses on high school entrance exam prep, with practice tests matching the real exam format." },
+      { "badge": "10", "title": "Grade 10", "desc": "Introduces the high school curriculum and sharpens literary analysis skills." },
+      { "badge": "11", "title": "Grade 11", "desc": "Builds a solid foundation, preparing early for the high school graduation exam." },
+      { "badge": "✎", "title": "Custom support classes", "desc": "1-on-1 or small-group tutoring tailored to your needs, with flexible timing and pace." }
+    ]
+  },
+  "pricing": {
+    "tag": "● Tuition",
+    "title": "Clear tuition for every grade",
+    "perSession": "/session",
+    "mostPopular": "Most popular",
+    "cta": "Enroll in this class",
+    "plans": [
+      {
+        "name": "Grade 5 - Grade 7",
+        "price": "60,000₫",
+        "desc": "2 sessions/week · 90 minutes/session",
+        "features": ["Builds paragraph-writing fundamentals", "Max 12 students per class", "Monthly progress checks"]
+      },
+      {
+        "name": "Grade 8 - Grade 9",
+        "price": "60,000₫",
+        "desc": "2 sessions/week · 90 minutes/session · Grade 10 entrance exam prep available",
+        "features": ["Social and literary argumentative essay practice", "Practice tests matching the exam format", "Detailed grading and feedback"]
+      },
+      {
+        "name": "Grade 10 - Grade 11",
+        "price": "60,000₫",
+        "desc": "2 sessions/week · 90 minutes/session",
+        "features": ["Sharpens analytical thinking", "Builds a foundation for the graduation exam", "Dedicated materials and practice tests"]
+      }
+    ]
+  },
+  "guide": {
+    "tag": "● Enroll",
+    "title": "Just 3 steps to get your child started",
+    "steps": [
+      { "title": "Get in touch", "desc": "Message or call Ms. Nhung to sign up for a trial class." },
+      { "title": "Get placed in a class", "desc": "Your child is placed in the class matching their grade and current level." },
+      { "title": "Start the official class", "desc": "Pay tuition and start the learning path for your child's grade." }
+    ]
+  },
+  "contact": {
+    "title": "Enroll today",
+    "description": "Get in touch with Ms. Nhung for advice on the right grade and class schedule.",
+    "phoneLabel": "Phone",
+    "facebookLabel": "Facebook",
+    "addressLabel": "Class address",
+    "address": "No. 243 - An Duong Vuong Street - Hoa Binh Ward - Phu Tho"
+  },
+  "footer": {
+    "tagline": "Learning is fun!"
+  }
+}

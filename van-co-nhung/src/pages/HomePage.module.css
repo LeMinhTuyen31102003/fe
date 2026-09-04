@@ -302,8 +302,7 @@
 .priceCard.featured {
   border: 2px solid var(--brand-yellow-dark);
 }
-.priceCard.featured::before {
-  content: 'Nhiều học sinh chọn nhất';
+.featuredBadge {
   position: absolute;
   top: -13px;
   left: 50%;

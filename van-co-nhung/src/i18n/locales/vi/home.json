@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "grades": "Khối lớp",
+    "pricing": "Học phí",
+    "guide": "Đăng ký",
+    "contact": "Liên hệ",
+    "login": "Đăng nhập"
+  },
+  "hero": {
+    "tag": "● Lớp học thêm Văn · Lớp 5 - Lớp 11",
+    "titlePrefix": "Học Văn",
+    "titleEmphasis": "vui - chắc - điểm cao",
+    "description": "Lớp học thêm Văn Cô Nhung nhận học sinh từ lớp 5 đến lớp 11. Bám sát chương trình trên lớp, luyện viết đoạn - viết bài bài bản, giúp con tự tin hơn với môn Văn mỗi ngày đến lớp.",
+    "ctaPrimary": "Đăng ký học ngay",
+    "ctaSecondary": "Xem các khối lớp",
+    "note": "Lớp học nhỏ, sĩ số giới hạn ·",
+    "imageAlt": "Cô Nhung - Văn Cô Nhung"
+  },
+  "grades": {
+    "tag": "● Các khối lớp đang nhận học sinh",
+    "title": "Lộ trình phù hợp cho từng khối lớp",
+    "description": "Mỗi khối lớp có giáo trình riêng, bám sát sách giáo khoa và định hướng thi cử của từng cấp học.",
+    "items": [
+      { "badge": "5", "title": "Lớp 5", "desc": "Rèn nền tảng viết đoạn văn, làm quen cảm thụ văn học, chuẩn bị vào cấp 2." },
+      { "badge": "6", "title": "Lớp 6", "desc": "Làm quen chương trình THCS, luyện kỹ năng đọc hiểu và viết bài văn hoàn chỉnh." },
+      { "badge": "7", "title": "Lớp 7", "desc": "Củng cố kiến thức tiếng Việt, nâng cao kỹ năng nghị luận và biểu cảm." },
+      { "badge": "8", "title": "Lớp 8", "desc": "Luyện viết văn nghị luận xã hội, nghị luận văn học theo cấu trúc chuẩn." },
+      { "badge": "9", "title": "Lớp 9", "desc": "Ôn luyện trọng tâm thi vào lớp 10, luyện đề sát cấu trúc đề thi thực tế." },
+      { "badge": "10", "title": "Lớp 10", "desc": "Làm quen chương trình THPT, nâng cao tư duy phân tích tác phẩm văn học." },
+      { "badge": "11", "title": "Lớp 11", "desc": "Xây dựng nền tảng vững chắc, chuẩn bị sớm cho kỳ thi tốt nghiệp THPT." },
+      { "badge": "✎", "title": "Lớp bổ trợ riêng", "desc": "Kèm 1-1 hoặc nhóm nhỏ theo nhu cầu, linh hoạt thời gian và tiến độ học." }
+    ]
+  },
+  "pricing": {
+    "tag": "● Học phí",
+    "title": "Học phí rõ ràng theo từng khối lớp",
+    "perSession": "/buổi",
+    "mostPopular": "Nhiều học sinh chọn nhất",
+    "cta": "Đăng ký lớp này",
+    "plans": [
+      {
+        "name": "Lớp 5 - Lớp 7",
+        "price": "60.000đ",
+        "desc": "2 buổi/tuần · 90 phút/buổi",
+        "features": ["Rèn nền tảng viết đoạn văn", "Sĩ số tối đa 12 học sinh", "Kiểm tra định kỳ hàng tháng"]
+      },
+      {
+        "name": "Lớp 8 - Lớp 9",
+        "price": "60.000đ",
+        "desc": "2 buổi/tuần · 90 phút/buổi · Có lớp luyện thi vào 10",
+        "features": ["Luyện nghị luận xã hội & văn học", "Luyện đề sát cấu trúc thi", "Chấm - chữa bài chi tiết"]
+      },
+      {
+        "name": "Lớp 10 - Lớp 11",
+        "price": "60.000đ",
+        "desc": "2 buổi/tuần · 90 phút/buổi",
+        "features": ["Nâng cao tư duy phân tích", "Xây nền cho kỳ thi TN THPT", "Tài liệu & đề luyện riêng"]
+      }
+    ]
+  },
+  "guide": {
+    "tag": "● Đăng ký học",
+    "title": "Chỉ 3 bước để con bắt đầu học",
+    "steps": [
+      { "title": "Liên hệ đăng ký", "desc": "Nhắn tin hoặc gọi điện cho cô Nhung để đăng ký học thử." },
+      { "title": "Xếp lớp theo khối", "desc": "Con được xếp vào lớp đúng khối, phù hợp trình độ hiện tại." },
+      { "title": "Vào lớp chính thức", "desc": "Đăng ký học phí và bắt đầu lộ trình học theo đúng khối lớp." }
+    ]
+  },
+  "contact": {
+    "title": "Đăng ký học ngay hôm nay",
+    "description": "Liên hệ với cô Nhung để được tư vấn khối lớp phù hợp và xếp lịch học.",
+    "phoneLabel": "Điện thoại",
+    "facebookLabel": "Facebook",
+    "addressLabel": "Địa chỉ lớp học",
+    "address": "Số 243 - Đường An Dương Vương - Phường Hòa Bình - Phú Thọ"
+  },
+  "footer": {
+    "tagline": "Học Là Vui!"
+  }
+}

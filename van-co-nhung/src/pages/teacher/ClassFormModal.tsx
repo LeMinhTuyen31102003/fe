@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,10 +30,12 @@ interface ClassFormModalProps {
 }
 
 function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) {
+  const { t } = useTranslation(["teacher", "common"]);
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
+  const [feePerSession, setFeePerSession] = useState("60000");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function resetForm() {
@@ -40,13 +43,14 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
     setGrade("");
     setSchedules([]);
     setNote("");
+    setFeePerSession("60000");
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     if (!name.trim()) {
-      toast.error("Vui lòng nhập tên lớp học.");
+      toast.error(t("teacher:classForm.nameRequiredError"));
       return;
     }
 
@@ -57,11 +61,12 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
         grade,
         schedules,
         note: note.trim(),
+        feePerSession: feePerSession.trim() ? Number(feePerSession) : null,
       });
       onCreated(created);
       resetForm();
     } catch {
-      toast.error("Tạo lớp học thất bại. Vui lòng thử lại.");
+      toast.error(t("teacher:classForm.createError"));
     } finally {
       setIsSubmitting(false);
     }
@@ -77,13 +82,13 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tạo lớp học</DialogTitle>
+          <DialogTitle>{t("teacher:classForm.createTitle")}</DialogTitle>
         </DialogHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="c-name">
-              Tên lớp học
+              {t("teacher:classForm.fields.name")}
               <RequiredMark />
             </Label>
             <Input
@@ -96,15 +101,15 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="c-grade">Khối lớp</Label>
+            <Label htmlFor="c-grade">{t("teacher:classForm.fields.grade")}</Label>
             <Select value={grade} onValueChange={setGrade}>
               <SelectTrigger id="c-grade" className="w-full" disabled={isSubmitting}>
-                <SelectValue placeholder="Chọn khối" />
+                <SelectValue placeholder={t("teacher:classForm.fields.gradePlaceholder")} />
               </SelectTrigger>
               <SelectContent>
                 {GRADE_OPTIONS.map((g) => (
                   <SelectItem key={g} value={g}>
-                    {displayGrade(g)}
+                    {displayGrade(g, t)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -114,7 +119,21 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
           <ScheduleSlotEditor slots={schedules} onChange={setSchedules} disabled={isSubmitting} />
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="c-note">Ghi chú</Label>
+            <Label htmlFor="c-fee-per-session">{t("teacher:classForm.fields.feePerSession")}</Label>
+            <Input
+              id="c-fee-per-session"
+              type="number"
+              min={0}
+              step={1000}
+              value={feePerSession}
+              onChange={(e) => setFeePerSession(e.target.value)}
+              disabled={isSubmitting}
+              placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="c-note">{t("teacher:classForm.fields.note")}</Label>
             <Textarea
               id="c-note"
               rows={3}
@@ -125,7 +144,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
           </div>
 
           <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "Đang tạo..." : "Tạo lớp học"}
+            {isSubmitting ? t("teacher:classForm.submitting") : t("teacher:classForm.submit")}
           </Button>
         </form>
       </DialogContent>

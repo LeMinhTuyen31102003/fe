@@ -1,5 +1,6 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import RequiredMark from "@/components/RequiredMark";
 import { Button } from "@/components/ui/button";
@@ -18,12 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  addStudentToClass,
-  fetchClasses,
-  removeStudentFromClass,
-  type ClassSummary,
-} from "./classesApi";
+import { removeStudentFromClass } from "./classesApi";
+import AddClassDialog from "./AddClassDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
 import { updateStudent, type Student } from "./studentsApi";
 
@@ -34,6 +31,7 @@ interface StudentDetailModalProps {
 }
 
 function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailModalProps) {
+  const { t } = useTranslation(["teacher", "common"]);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -43,22 +41,15 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
   const [parentName, setParentName] = useState(student?.parentName ?? "");
   const [parentPhone, setParentPhone] = useState(student?.parentPhone ?? "");
 
-  const [classes, setClasses] = useState<ClassSummary[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState("");
   const [isClassBusy, setIsClassBusy] = useState(false);
-
-  useEffect(() => {
-    fetchClasses()
-      .then(setClasses)
-      .catch(() => toast.error("Không thể tải danh sách lớp học."));
-  }, []);
+  const [isAddClassOpen, setIsAddClassOpen] = useState(false);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!student) return;
 
     if (!fullName.trim()) {
-      toast.error("Vui lòng nhập họ tên học sinh.");
+      toast.error(t("teacher:studentDetail.requiredNameError"));
       return;
     }
 
@@ -73,33 +64,11 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
       });
       onUpdated({ ...updated, classes: student.classes });
       setIsEditing(false);
-      toast.success("Đã cập nhật thông tin học sinh.");
+      toast.success(t("teacher:studentDetail.updateSuccess"));
     } catch {
-      toast.error("Cập nhật thất bại. Vui lòng thử lại.");
+      toast.error(t("teacher:studentDetail.updateError"));
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  async function handleAddClass() {
-    if (!student || !selectedClassId) return;
-    setIsClassBusy(true);
-    try {
-      const classDetail = await addStudentToClass(Number(selectedClassId), student.id);
-      const updatedStudent = classDetail.students.find((s) => s.id === student.id);
-      if (updatedStudent) {
-        onUpdated(updatedStudent);
-        if (updatedStudent.active && !student.active) {
-          toast.success("Đã thêm vào lớp và tự động kích hoạt tài khoản.");
-        } else {
-          toast.success("Đã thêm vào lớp.");
-        }
-      }
-      setSelectedClassId("");
-    } catch {
-      toast.error("Không thể thêm vào lớp học.");
-    } finally {
-      setIsClassBusy(false);
     }
   }
 
@@ -109,45 +78,51 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
     try {
       await removeStudentFromClass(classId, student.id);
       onUpdated({ ...student, classes: student.classes.filter((c) => c.id !== classId) });
-      toast.success("Đã xoá khỏi lớp học.");
+      toast.success(t("teacher:studentDetail.removedFromClass"));
     } catch {
-      toast.error("Không thể xoá khỏi lớp học.");
+      toast.error(t("teacher:studentDetail.removeFromClassError"));
     } finally {
       setIsClassBusy(false);
     }
   }
 
-  const availableClasses = student
-    ? classes.filter((c) => !student.classes.some((sc) => sc.id === c.id))
-    : [];
-
   return (
     <Dialog open={student !== null} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? "Chỉnh sửa học sinh" : "Thông tin học sinh"}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? t("teacher:studentDetail.titleEdit") : t("teacher:studentDetail.titleView")}
+          </DialogTitle>
         </DialogHeader>
 
         {student && !isEditing && (
           <>
             <dl className="flex flex-col gap-4">
               <div>
-                <dt className="text-xs font-medium text-muted-foreground">Họ tên</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:studentDetail.labelFullName")}
+                </dt>
                 <dd className="text-sm font-medium text-foreground">{student.fullName}</dd>
               </div>
               <div>
-                <dt className="text-xs font-medium text-muted-foreground">Tên đăng nhập</dt>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:studentFields.username")}
+                </dt>
                 <dd className="text-sm font-medium text-foreground">{student.username}</dd>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <dt className="text-xs font-medium text-muted-foreground">Khối lớp</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("teacher:studentFields.grade")}
+                  </dt>
                   <dd className="text-sm font-medium text-foreground">
-                    {student.grade ? displayGrade(student.grade) : "—"}
+                    {student.grade ? displayGrade(student.grade, t) : "—"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-medium text-muted-foreground">Trường học</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("teacher:studentFields.school")}
+                  </dt>
                   <dd className="text-sm font-medium text-foreground">
                     {student.schoolName || "—"}
                   </dd>
@@ -155,37 +130,45 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <dt className="text-xs font-medium text-muted-foreground">Tên phụ huynh</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("teacher:studentFields.parentName")}
+                  </dt>
                   <dd className="text-sm font-medium text-foreground">
                     {student.parentName || "—"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs font-medium text-muted-foreground">SĐT phụ huynh</dt>
+                  <dt className="text-xs font-medium text-muted-foreground">
+                    {t("teacher:studentFields.parentPhone")}
+                  </dt>
                   <dd className="text-sm font-medium text-foreground">
                     {student.parentPhone || "—"}
                   </dd>
                 </div>
               </div>
               <div>
-                <dt className="mb-1 text-xs font-medium text-muted-foreground">Trạng thái</dt>
+                <dt className="mb-1 text-xs font-medium text-muted-foreground">
+                  {t("teacher:studentDetail.labelStatus")}
+                </dt>
                 <dd>
                   <Badge variant={student.active ? "default" : "secondary"}>
-                    {student.active ? "Đã kích hoạt" : "Chưa kích hoạt"}
+                    {student.active ? t("teacher:studentStatus.active") : t("teacher:studentStatus.inactive")}
                   </Badge>
                 </dd>
               </div>
             </dl>
 
             <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
-              Chỉnh sửa
+              {t("common:actions.edit")}
             </Button>
 
             <div className="flex flex-col gap-3 border-t border-border pt-4">
-              <h3 className="text-sm font-semibold text-foreground">Lớp học</h3>
+              <h3 className="text-sm font-semibold text-foreground">
+                {t("teacher:studentDetail.classesTitle")}
+              </h3>
 
               {student.classes.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Chưa thuộc lớp học nào.</p>
+                <p className="text-sm text-muted-foreground">{t("teacher:studentDetail.noClasses")}</p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {student.classes.map((c) => (
@@ -200,37 +183,21 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                         onClick={() => handleRemoveClass(c.id)}
                         disabled={isClassBusy}
                       >
-                        Xoá
+                        {t("common:actions.delete")}
                       </button>
                     </li>
                   ))}
                 </ul>
               )}
 
-              {availableClasses.length > 0 && (
-                <div className="flex gap-2">
-                  <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-                    <SelectTrigger className="w-full" disabled={isClassBusy}>
-                      <SelectValue placeholder="Chọn lớp" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableClasses.map((c) => (
-                        <SelectItem key={c.id} value={String(c.id)}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleAddClass}
-                    disabled={!selectedClassId || isClassBusy}
-                  >
-                    Thêm
-                  </Button>
-                </div>
-              )}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddClassOpen(true)}
+                disabled={isClassBusy}
+              >
+                {t("teacher:studentDetail.addClassLabel")}
+              </Button>
             </div>
           </>
         )}
@@ -239,7 +206,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="d-fullname">
-                Họ tên học sinh
+                {t("teacher:studentFields.fullName")}
                 <RequiredMark />
               </Label>
               <Input
@@ -253,22 +220,22 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="d-grade">Khối lớp</Label>
+                <Label htmlFor="d-grade">{t("teacher:studentFields.grade")}</Label>
                 <Select value={grade} onValueChange={setGrade}>
                   <SelectTrigger id="d-grade" className="w-full" disabled={isSubmitting}>
-                    <SelectValue placeholder="Chọn khối" />
+                    <SelectValue placeholder={t("teacher:studentFields.gradePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {GRADE_OPTIONS.map((g) => (
                       <SelectItem key={g} value={g}>
-                        {displayGrade(g)}
+                        {displayGrade(g, t)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="d-school">Trường học</Label>
+                <Label htmlFor="d-school">{t("teacher:studentFields.school")}</Label>
                 <Input
                   id="d-school"
                   value={schoolName}
@@ -280,7 +247,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="d-parent-name">Tên phụ huynh</Label>
+                <Label htmlFor="d-parent-name">{t("teacher:studentFields.parentName")}</Label>
                 <Input
                   id="d-parent-name"
                   value={parentName}
@@ -289,7 +256,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="d-parent-phone">SĐT phụ huynh</Label>
+                <Label htmlFor="d-parent-phone">{t("teacher:studentFields.parentPhone")}</Label>
                 <Input
                   id="d-parent-phone"
                   type="tel"
@@ -308,15 +275,22 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
-                Huỷ
+                {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
-                {isSubmitting ? "Đang lưu..." : "Lưu"}
+                {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>
           </form>
         )}
       </DialogContent>
+
+      <AddClassDialog
+        open={isAddClassOpen}
+        student={student}
+        onOpenChange={setIsAddClassOpen}
+        onStudentUpdated={onUpdated}
+      />
     </Dialog>
   );
 }

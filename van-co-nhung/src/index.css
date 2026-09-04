@@ -10,6 +10,7 @@
   --ink: #1a1a1a;
   --brand-muted: #6b6b6b;
   --cream: #faf6ec;
+  --cream-foreground: var(--ink);
   --brand-border: #ececec;
   --muted: oklch(0.97 0 0);
   --border: oklch(0.922 0 0);
@@ -52,8 +53,9 @@
 body {
   font-family: 'Inter', sans-serif;
   background: var(--cream);
-  color: var(--ink);
+  color: var(--cream-foreground);
   margin: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a {
@@ -64,6 +66,7 @@ a {
   --font-heading: 'Playfair Display', serif;
   --font-sans: 'Inter', sans-serif;
   --color-cream: var(--cream);
+  --color-cream-foreground: var(--cream-foreground);
   --color-brand: var(--brand-yellow);
   --color-brand-dark: var(--brand-yellow-dark);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -107,37 +110,42 @@ a {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* A soft, warm charcoal dark theme (not near-black) that keeps the brand's
+     gold/cream identity instead of the generic shadcn grayscale dark palette. */
+  --cream: oklch(0.2 0.016 75);
+  --cream-foreground: oklch(0.95 0.012 75);
+  --brand-border: oklch(0.34 0.018 75);
+  --background: oklch(0.235 0.018 75);
+  --foreground: oklch(0.95 0.012 75);
+  --card: oklch(0.235 0.018 75);
+  --card-foreground: oklch(0.95 0.012 75);
+  --popover: oklch(0.26 0.018 75);
+  --popover-foreground: oklch(0.95 0.012 75);
+  --primary: var(--brand-yellow);
+  --primary-foreground: var(--ink);
+  --secondary: oklch(0.31 0.018 75);
+  --secondary-foreground: oklch(0.95 0.012 75);
+  --muted: oklch(0.29 0.018 75);
+  --muted-foreground: oklch(0.7 0.015 75);
+  --accent: oklch(0.31 0.018 75);
+  --accent-foreground: oklch(0.95 0.012 75);
+  --destructive: oklch(0.65 0.19 25);
+  --border: oklch(1 0.012 75 / 12%);
+  --input: oklch(0.31 0.018 75);
+  --ring: var(--brand-yellow-dark);
+  --chart-1: oklch(0.8 0.16 85);
+  --chart-2: oklch(0.66 0.02 75);
+  --chart-3: oklch(0.56 0.02 75);
+  --chart-4: oklch(0.46 0.02 75);
+  --chart-5: oklch(0.36 0.02 75);
+  --sidebar: oklch(0.235 0.018 75);
+  --sidebar-foreground: oklch(0.95 0.012 75);
+  --sidebar-primary: var(--brand-yellow);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: oklch(0.31 0.018 75);
+  --sidebar-accent-foreground: oklch(0.95 0.012 75);
+  --sidebar-border: oklch(1 0.012 75 / 12%);
+  --sidebar-ring: var(--brand-yellow-dark);
 }
 
 @layer base {
