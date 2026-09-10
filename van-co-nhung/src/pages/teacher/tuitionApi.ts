@@ -1,4 +1,4 @@
-import { apiUrl, authHeaders } from "./apiClient";
+import { apiFetch, apiUrl, authHeaders } from "./apiClient";
 
 export type TuitionStatus = "UNPAID" | "PENDING" | "PAID";
 
@@ -28,6 +28,7 @@ export interface MonthlyTuition {
   feePerSession: number | null;
   year: number;
   month: number;
+  finalized: boolean;
   students: StudentTuitionRow[];
   summary: TuitionSummary;
 }
@@ -43,7 +44,7 @@ export async function fetchMonthlyTuition(
   year: number,
   month: number,
 ): Promise<MonthlyTuition> {
-  const res = await fetch(apiUrl(`/api/classes/${classId}/tuition?year=${year}&month=${month}`), {
+  const res = await apiFetch(apiUrl(`/api/classes/${classId}/tuition?year=${year}&month=${month}`), {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("LOAD_FAILED");
@@ -57,12 +58,29 @@ export async function updateTuition(
   month: number,
   input: TuitionUpdateInput,
 ): Promise<MonthlyTuition> {
-  const res = await fetch(
+  const res = await apiFetch(
     apiUrl(`/api/classes/${classId}/tuition/${studentId}?year=${year}&month=${month}`),
     {
       method: "PUT",
       headers: authHeaders(),
       body: JSON.stringify(input),
+    },
+  );
+  if (!res.ok) throw new Error("UPDATE_FAILED");
+  return res.json();
+}
+
+// One-way by design — there is no "un-finalize" endpoint, matching the backend.
+export async function finalizeTuitionMonth(
+  classId: number,
+  year: number,
+  month: number,
+): Promise<MonthlyTuition> {
+  const res = await apiFetch(
+    apiUrl(`/api/classes/${classId}/tuition/finalize?year=${year}&month=${month}`),
+    {
+      method: "PUT",
+      headers: authHeaders(),
     },
   );
   if (!res.ok) throw new Error("UPDATE_FAILED");

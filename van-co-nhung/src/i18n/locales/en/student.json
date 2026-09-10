@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "schedule": "Schedule",
-    "class": "Class"
+    "assignments": "Assignments"
   },
   "days": {
     "MONDAY": "Monday",
@@ -38,12 +38,14 @@
       "paidNoteWithDate": "Thanks for paying this month's tuition ({{date}}).",
       "pendingNote": "Payment confirmation sent at {{date}}. Waiting for your teacher to review it.",
       "noFeeThisMonth": "No sessions have been billed yet this month.",
+      "paymentNotOpenYet": "Your teacher hasn't finalized this month's tuition yet. Please check back later.",
       "rejectedNotePrefix": "Your teacher declined the previous payment confirmation. Reason:",
       "rejectedNoteSuffix": "Please double-check and transfer again.",
       "noBankConfigured": "Your teacher hasn't set up a payment account yet. Please contact them directly to pay.",
       "qrAlt": "Payment QR code for {{className}} tuition",
       "qrInstructions": "Scan to transfer {{amount}} to {{accountName}} ({{bankName}})",
       "confirmButton": "I've made the transfer",
+      "confirmDialogTitle": "Confirm the transfer",
       "confirmDialog": "Confirm that you've transferred {{amount}} for {{className}}? Your teacher will review it before confirming.",
       "confirmSuccess": "Confirmation sent. Please wait for your teacher to review it.",
       "confirmError": "Couldn't send the confirmation. Please try again."
@@ -61,13 +63,43 @@
     "loadScheduleError": "Couldn't load your schedule.",
     "loadAttendanceError": "Couldn't load attendance."
   },
+  "assignments": {
+    "title": "Assignments & Class",
+    "subtitle": "Literature homework assigned by your teacher, by class",
+    "tabs": {
+      "work": "Classwork",
+      "people": "People"
+    },
+    "filter": {
+      "all": "All"
+    },
+    "filterEmpty": "No assignments in this filter.",
+    "dueSoonTitle": "Due soon",
+    "dueSoonEmpty": "Great, no assignments due soon!",
+    "empty": "No assignments given yet.",
+    "loadError": "Couldn't load the assignment list.",
+    "submitError": "Couldn't submit the assignment. Please try again.",
+    "submitSuccess": "Submitted successfully.",
+    "fileTooLargeError": "The photo is too large (10MB max). Please choose another one.",
+    "uploadNotConfiguredError": "Submitting isn't set up yet. Please contact your teacher.",
+    "dueDate": "Due: {{date}}",
+    "submitButton": "Take/choose a photo to submit",
+    "resubmitButton": "Resubmit",
+    "uploading": "Uploading...",
+    "viewSubmission": "View submission",
+    "lockedPastDue": "The due date has passed.",
+    "status": {
+      "PENDING": "Not submitted",
+      "SUBMITTED": "Submitted",
+      "GRADED": "Graded"
+    }
+  },
   "class": {
-    "title": "Class",
-    "subtitle": "Your teacher and classmates",
     "loadError": "Couldn't load class information.",
     "teacherSection": "Teacher in charge",
     "noContactInfo": "Your teacher hasn't added contact information yet.",
     "myClassesSection": "My Classes",
+    "classmateCount": "{{count}} students",
     "emptyState": "You haven't been assigned to any class yet.",
     "noClassmates": "No other classmates in this class yet."
   }

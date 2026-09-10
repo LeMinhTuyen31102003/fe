@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import CurrencyInput from "@/components/CurrencyInput";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +36,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
   const [grade, setGrade] = useState("");
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
-  const [feePerSession, setFeePerSession] = useState("60000");
+  const [feePerSession, setFeePerSession] = useState<number | null>(60000);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function resetForm() {
@@ -43,7 +44,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
     setGrade("");
     setSchedules([]);
     setNote("");
-    setFeePerSession("60000");
+    setFeePerSession(60000);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -61,7 +62,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
         grade,
         schedules,
         note: note.trim(),
-        feePerSession: feePerSession.trim() ? Number(feePerSession) : null,
+        feePerSession,
       });
       onCreated(created);
       resetForm();
@@ -120,13 +121,10 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="c-fee-per-session">{t("teacher:classForm.fields.feePerSession")}</Label>
-            <Input
+            <CurrencyInput
               id="c-fee-per-session"
-              type="number"
-              min={0}
-              step={1000}
               value={feePerSession}
-              onChange={(e) => setFeePerSession(e.target.value)}
+              onChange={setFeePerSession}
               disabled={isSubmitting}
               placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
             />

@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import PageBanner from "@/components/PageBanner";
 import ClassesSection from "./ClassesSection";
 
 function TeacherClassesPage() {
@@ -6,10 +7,7 @@ function TeacherClassesPage() {
 
   return (
     <>
-      <header className="mb-6">
-        <h1 className="font-heading text-2xl font-bold text-foreground">{t("teacher:classes.pageTitle")}</h1>
-        <p className="text-muted-foreground">{t("teacher:classes.pageSubtitle")}</p>
-      </header>
+      <PageBanner title={t("teacher:classes.pageTitle")} subtitle={t("teacher:classes.pageSubtitle")} className="mb-6" />
 
       <ClassesSection />
     </>

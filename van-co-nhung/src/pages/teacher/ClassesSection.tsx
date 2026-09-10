@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -19,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import ClassDetailModal from "./ClassDetailModal";
 import ClassFormModal from "./ClassFormModal";
 import {
   deleteClass,
@@ -39,10 +41,12 @@ type SortKey = "name" | "grade" | "studentCount" | "active";
 
 function ClassesSection() {
   const { t } = useTranslation(["teacher", "common"]);
+  const navigate = useNavigate();
   const [classes, setClasses] = useState<ClassSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
+  const [removingClass, setRemovingClass] = useState<ClassSummary | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -120,14 +124,22 @@ function ClassesSection() {
     }
   }
 
-  async function handleRemove(classRoom: ClassSummary, e: React.MouseEvent) {
+  function handleRemove(classRoom: ClassSummary, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!window.confirm(t("teacher:classes.deleteConfirm", { name: classRoom.name }))) return;
+    setRemovingClass(classRoom);
+  }
+
+  async function confirmRemove() {
+    if (!removingClass) return;
+    setIsRemoving(true);
     try {
-      await deleteClass(classRoom.id);
-      setClasses((prev) => prev.filter((c) => c.id !== classRoom.id));
+      await deleteClass(removingClass.id);
+      setClasses((prev) => prev.filter((c) => c.id !== removingClass.id));
+      setRemovingClass(null);
     } catch {
       toast.error(t("teacher:classes.deleteError"));
+    } finally {
+      setIsRemoving(false);
     }
   }
 
@@ -135,10 +147,6 @@ function ClassesSection() {
     setIsModalOpen(false);
     toast.success(t("teacher:classes.createSuccess"));
     reload();
-  }
-
-  function handleClassUpdated(updated: ClassSummary) {
-    setClasses((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
   }
 
   const totalPages = Math.max(1, Math.ceil(classes.length / PAGE_SIZE));
@@ -203,7 +211,7 @@ function ClassesSection() {
                 <TableRow
                   key={classRoom.id}
                   className="cursor-pointer"
-                  onClick={() => setSelectedClassId(classRoom.id)}
+                  onClick={() => navigate(`/admin/classes/${classRoom.id}`)}
                 >
                   <TableCell className="font-medium">{classRoom.name}</TableCell>
                   <TableCell className="text-muted-foreground">
@@ -241,42 +249,21 @@ function ClassesSection() {
             </TableBody>
           </Table>
 
-          {totalPages > 1 && (
-            <div className="mt-5 flex items-center justify-center gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                {t("teacher:pagination.prev")}
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {t("teacher:pagination.pageOf", { current: currentPage, total: totalPages })}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                {t("teacher:pagination.next")}
-              </Button>
-            </div>
-          )}
+          <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}
 
       <ClassFormModal open={isModalOpen} onOpenChange={setIsModalOpen} onCreated={handleCreated} />
 
-      <ClassDetailModal
-        classId={selectedClassId}
-        onOpenChange={(open) => {
-          if (!open) setSelectedClassId(null);
-        }}
-        onClassUpdated={handleClassUpdated}
+      <ConfirmDialog
+        open={removingClass !== null}
+        onOpenChange={(open) => !open && setRemovingClass(null)}
+        title={t("teacher:classes.deleteDialog.title")}
+        description={removingClass && t("teacher:classes.deleteConfirm", { name: removingClass.name })}
+        confirmLabel={t("common:actions.delete")}
+        variant="destructive"
+        isConfirming={isRemoving}
+        onConfirm={confirmRemove}
       />
     </div>
   );

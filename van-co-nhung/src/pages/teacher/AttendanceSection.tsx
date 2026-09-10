@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import DatePicker from "@/components/DatePicker";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -22,77 +22,52 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import MonthYearPicker from "@/components/MonthYearPicker";
 import { cn } from "@/lib/utils";
 import {
   fetchMonthlyAttendance,
   markAttendance,
-  type AttendanceMarkInput,
   type AttendanceStatus,
   type MonthlyAttendance,
 } from "./attendanceApi";
-import {
-  getAttendanceStatusMeta,
-  formatSessionDate,
-  nextAttendanceStatus,
-} from "./attendanceOptions";
+import { ATTENDANCE_CYCLE, getAttendanceStatusMeta } from "./attendanceOptions";
 import { fetchClasses, type ClassSummary } from "./classesApi";
 
-function today() {
+const RADIO_STATUSES = ATTENDANCE_CYCLE.filter((s): s is AttendanceStatus => s !== null);
+
+function getTodayIso(): string {
   const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
-type PendingChange = AttendanceMarkInput & { date: string };
-
-function pendingStorageKey(classId: number, year: number, month: number): string {
-  return `attendance-pending:${classId}:${year}:${month}`;
-}
-
-function loadPendingChanges(classId: number, year: number, month: number): Map<string, PendingChange> {
-  try {
-    const raw = localStorage.getItem(pendingStorageKey(classId, year, month));
-    if (!raw) return new Map();
-    const list: PendingChange[] = JSON.parse(raw);
-    return new Map(list.map((c) => [`${c.studentId}-${c.date}`, c]));
-  } catch {
-    return new Map();
-  }
-}
-
-function savePendingChanges(
-  classId: number,
-  year: number,
-  month: number,
-  pending: Map<string, PendingChange>,
-) {
-  const key = pendingStorageKey(classId, year, month);
-  if (pending.size === 0) {
-    localStorage.removeItem(key);
-  } else {
-    localStorage.setItem(key, JSON.stringify([...pending.values()]));
-  }
+function parseIsoDate(iso: string): { year: number; month: number } {
+  const [y, m] = iso.split("-").map(Number);
+  return { year: y, month: m };
 }
 
 function AttendanceSection() {
   const { t } = useTranslation(["teacher", "common"]);
+  const todayIso = getTodayIso();
   const [classes, setClasses] = useState<ClassSummary[]>([]);
   const [isLoadingClasses, setIsLoadingClasses] = useState(true);
   const [selectedClassId, setSelectedClassId] = useState<string>("");
-  const [{ year, month }, setPeriod] = useState(today);
+  const [selectedDate, setSelectedDate] = useState<string>(todayIso);
   const [data, setData] = useState<MonthlyAttendance | null>(null);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
-  const [extraDates, setExtraDates] = useState<string[]>([]);
-  const [newDate, setNewDate] = useState("");
-  const [pendingChanges, setPendingChanges] = useState<Map<string, PendingChange>>(new Map());
-  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [savingIds, setSavingIds] = useState<Set<number>>(new Set());
+  const [editingPastKey, setEditingPastKey] = useState<string | null>(null);
 
-  const currentKey = selectedClassId ? `${selectedClassId}-${year}-${month}` : null;
+  const currentKey = selectedClassId ? `${selectedClassId}-${selectedDate}` : null;
   const isLoading = currentKey !== null && loadedKey !== currentKey;
+  const isPastDate = selectedDate < todayIso;
+  const isEditingPast = currentKey !== null && editingPastKey === currentKey;
 
   const selectedClass = classes.find((c) => String(c.id) === selectedClassId) ?? null;
   const isClassInactive = selectedClass !== null && !selectedClass.active;
+  const isReadOnly = isClassInactive;
+  const isEditable = !isReadOnly && (!isPastDate || isEditingPast);
 
   useEffect(() => {
     fetchClasses()
@@ -110,25 +85,15 @@ function AttendanceSection() {
   useEffect(() => {
     if (!selectedClassId) return;
     let cancelled = false;
-    const key = `${selectedClassId}-${year}-${month}`;
-
+    const key = `${selectedClassId}-${selectedDate}`;
     const classId = Number(selectedClassId);
+    const { year, month } = parseIsoDate(selectedDate);
+
     fetchMonthlyAttendance(classId, year, month)
       .then((res) => {
         if (cancelled) return;
-        const restored = loadPendingChanges(classId, year, month);
-        for (const [entryKey, change] of restored) {
-          const original = res.students.find((s) => s.studentId === change.studentId)?.entries[change.date]
-            ?.status ?? null;
-          if (original === change.status) restored.delete(entryKey);
-        }
         setData(res);
-        setExtraDates([]);
-        setPendingChanges(restored);
         setLoadedKey(key);
-        if (restored.size > 0) {
-          toast.info(t("teacher:attendance.restoredPending", { count: restored.size }));
-        }
       })
       .catch(() => {
         if (cancelled) return;
@@ -140,86 +105,47 @@ function AttendanceSection() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedClassId, year, month]);
-
-  function updatePendingChanges(updater: (prev: Map<string, PendingChange>) => Map<string, PendingChange>) {
-    setPendingChanges((prev) => {
-      const next = updater(prev);
-      if (selectedClassId) {
-        savePendingChanges(Number(selectedClassId), year, month, next);
-      }
-      return next;
-    });
-  }
-
-  function handleAddDate() {
-    if (!newDate) return;
-    const [y, m] = newDate.split("-").map(Number);
-    if (y !== year || m !== month) {
-      toast.error(t("teacher:attendance.dateOutOfMonthError"));
-      return;
-    }
-    setExtraDates((prev) => (prev.includes(newDate) ? prev : [...prev, newDate].sort()));
-    setNewDate("");
-  }
-
-  const sessionDates = useMemo(() => {
-    const set = new Set([...(data?.sessionDates ?? []), ...extraDates]);
-    return [...set].sort();
-  }, [data, extraDates]);
+  }, [selectedClassId, selectedDate]);
 
   const activeClasses = useMemo(() => classes.filter((c) => c.active), [classes]);
   const inactiveClasses = useMemo(() => classes.filter((c) => !c.active), [classes]);
 
-  function statusFor(studentId: number, date: string): AttendanceStatus | null {
-    const key = `${studentId}-${date}`;
-    const pending = pendingChanges.get(key);
-    if (pending) return pending.status;
-    return data?.students.find((s) => s.studentId === studentId)?.entries[date]?.status ?? null;
-  }
-
-  function handleCellToggle(studentId: number, date: string) {
-    if (isClassInactive) return;
-    const current = statusFor(studentId, date);
-    const next = nextAttendanceStatus(current);
-    const original = data?.students.find((s) => s.studentId === studentId)?.entries[date]?.status ?? null;
-    const key = `${studentId}-${date}`;
-
-    updatePendingChanges((prev) => {
-      const map = new Map(prev);
-      if (next === original) {
-        map.delete(key);
-      } else {
-        map.set(key, { studentId, date, status: next });
-      }
-      return map;
+  function setLocalStatus(studentId: number, status: AttendanceStatus) {
+    setData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        students: prev.students.map((s) =>
+          s.studentId === studentId
+            ? { ...s, entries: { ...s.entries, [selectedDate]: { status, note: null } } }
+            : s,
+        ),
+      };
     });
   }
 
-  async function handleConfirmSave() {
-    if (!data || pendingChanges.size === 0) return;
-    setIsSaving(true);
+  async function handleSelectStatus(studentId: number, status: AttendanceStatus) {
+    if (!isEditable || !selectedClassId) return;
+    const student = data?.students.find((s) => s.studentId === studentId);
+    const previous = student?.entries[selectedDate]?.status ?? null;
+    if (previous === status) return;
+
+    setSavingIds((prev) => new Set(prev).add(studentId));
+    setLocalStatus(studentId, status);
+
     try {
-      const byDate = new Map<string, AttendanceMarkInput[]>();
-      for (const { studentId, status, date } of pendingChanges.values()) {
-        const list = byDate.get(date) ?? [];
-        list.push({ studentId, status });
-        byDate.set(date, list);
-      }
-
-      await Promise.all(
-        [...byDate.entries()].map(([date, records]) => markAttendance(data.classId, date, records)),
-      );
-
-      const fresh = await fetchMonthlyAttendance(data.classId, year, month);
-      setData(fresh);
-      updatePendingChanges(() => new Map());
-      setIsSaveDialogOpen(false);
-      toast.success(t("teacher:attendance.saveSuccess"));
+      await markAttendance(Number(selectedClassId), selectedDate, [{ studentId, status }]);
     } catch {
+      if (previous) {
+        setLocalStatus(studentId, previous);
+      }
       toast.error(t("teacher:attendance.saveError"));
     } finally {
-      setIsSaving(false);
+      setSavingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(studentId);
+        return next;
+      });
     }
   }
 
@@ -256,7 +182,7 @@ function AttendanceSection() {
             </SelectContent>
           </Select>
 
-          <MonthYearPicker year={year} month={month} onChange={setPeriod} />
+          <DatePicker value={selectedDate} onChange={setSelectedDate} max={todayIso} />
         </div>
       </div>
 
@@ -264,6 +190,19 @@ function AttendanceSection() {
         <p className="mb-4 rounded-lg border border-dashed border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
           {t("teacher:attendance.inactiveLockBanner")}
         </p>
+      )}
+      {!isClassInactive && isPastDate && data && data.sessionDates.includes(selectedDate) && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-dashed border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+          <span>{isEditingPast ? t("teacher:attendance.editingPastDateNotice") : t("teacher:attendance.viewOnlyPastDateNotice")}</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setEditingPastKey((prev) => (prev === currentKey ? null : currentKey))}
+          >
+            {isEditingPast ? t("teacher:attendance.doneEditingPast") : t("teacher:attendance.editPast")}
+          </Button>
+        </div>
       )}
 
       {isLoadingClasses ? (
@@ -276,147 +215,77 @@ function AttendanceSection() {
         <p className="text-sm text-muted-foreground">{t("teacher:attendance.loadError")}</p>
       ) : data.students.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("teacher:attendance.noStudents")}</p>
+      ) : !data.sessionDates.includes(selectedDate) ? (
+        <p className="rounded-lg border border-dashed border-border bg-muted/40 px-3 py-6 text-center text-sm text-muted-foreground">
+          {t("teacher:attendance.noScheduleThisDay")}
+        </p>
       ) : (
-        <>
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-            <div className="flex items-end gap-2">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="add-date">{t("teacher:attendance.addSessionLabel")}</Label>
-                <Input
-                  id="add-date"
-                  type="date"
-                  className="w-[180px]"
-                  value={newDate}
-                  onChange={(e) => setNewDate(e.target.value)}
-                  disabled={isClassInactive}
-                />
-              </div>
-              <Button type="button" variant="outline" onClick={handleAddDate} disabled={!newDate || isClassInactive}>
-                {t("teacher:attendance.addSession")}
-              </Button>
-            </div>
-
-            {!isClassInactive && pendingChanges.size > 0 && (
-              <div className="flex items-center gap-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => updatePendingChanges(() => new Map())}>
-                  {t("teacher:attendance.discardChanges")}
-                </Button>
-                <Button type="button" size="sm" onClick={() => setIsSaveDialogOpen(true)}>
-                  {t("teacher:attendance.saveChanges", { count: pendingChanges.size })}
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {sessionDates.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t("teacher:attendance.noSessionsInMonth")}
-            </p>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="sticky left-0 z-10 bg-background">
-                      {t("teacher:attendance.table.fullName")}
-                    </TableHead>
-                    {sessionDates.map((date) => {
-                      const { dayLabel, dateLabel } = formatSessionDate(date, t);
-                      return (
-                        <TableHead key={date} className="text-center">
-                          <div className="flex flex-col items-center leading-tight">
-                            <span>{dateLabel}</span>
-                            <span className="text-[10px] font-normal text-muted-foreground">{dayLabel}</span>
-                          </div>
-                        </TableHead>
-                      );
-                    })}
-                    <TableHead className="text-center">{t("teacher:attendance.table.present")}</TableHead>
-                    <TableHead className="text-center">{t("teacher:attendance.table.absent")}</TableHead>
-                    <TableHead className="text-center">{t("teacher:attendance.table.late")}</TableHead>
-                    <TableHead className="text-center">{t("teacher:attendance.table.excused")}</TableHead>
+        <div className="overflow-x-auto">
+          <Table className="min-w-[720px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="sticky left-0 z-10 w-40 max-w-[160px] bg-background">
+                  {t("teacher:attendance.table.fullName")}
+                </TableHead>
+                <TableHead className="sticky left-40 z-10 w-40 max-w-[160px] bg-background">
+                  {t("teacher:attendance.table.parentName")}
+                </TableHead>
+                <TableHead className="text-right">{t("teacher:attendance.table.status")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.students.map((student) => {
+                const status = student.entries[selectedDate]?.status ?? null;
+                const isSaving = savingIds.has(student.studentId);
+                const rowDisabled = !isEditable || isSaving;
+                return (
+                  <TableRow key={student.studentId}>
+                    <TableCell
+                      title={student.fullName}
+                      className="sticky left-0 z-10 w-40 max-w-[160px] truncate bg-background font-medium"
+                    >
+                      {student.fullName}
+                    </TableCell>
+                    <TableCell
+                      title={student.parentName ?? undefined}
+                      className="sticky left-40 z-10 w-40 max-w-[160px] truncate bg-background text-muted-foreground"
+                    >
+                      {student.parentName ?? "–"}
+                    </TableCell>
+                    <TableCell>
+                      <RadioGroup
+                        value={status ?? ""}
+                        onValueChange={(v) => handleSelectStatus(student.studentId, v as AttendanceStatus)}
+                        disabled={rowDisabled}
+                        className={cn("flex-nowrap justify-end whitespace-nowrap", isSaving && "opacity-60")}
+                      >
+                        {RADIO_STATUSES.map((s) => {
+                          const meta = getAttendanceStatusMeta(t, s);
+                          const inputId = `att-${student.studentId}-${s}`;
+                          return (
+                            <div key={s} className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+                              <RadioGroupItem value={s} id={inputId} />
+                              <Label
+                                htmlFor={inputId}
+                                className={cn(
+                                  "cursor-pointer text-sm font-normal",
+                                  rowDisabled && "cursor-not-allowed opacity-60",
+                                )}
+                              >
+                                {meta.label}
+                              </Label>
+                            </div>
+                          );
+                        })}
+                      </RadioGroup>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.students.map((student) => (
-                    <TableRow key={student.studentId}>
-                      <TableCell className="sticky left-0 z-10 bg-background font-medium">
-                        {student.fullName}
-                      </TableCell>
-                      {sessionDates.map((date) => {
-                        const status = statusFor(student.studentId, date);
-                        const meta = status ? getAttendanceStatusMeta(t, status) : null;
-                        const key = `${student.studentId}-${date}`;
-                        const isPending = pendingChanges.has(key);
-                        const notMarkedLabel = t("teacher:attendance.notMarked");
-                        return (
-                          <TableCell key={date} className="p-1 text-center">
-                            <button
-                              type="button"
-                              disabled={isClassInactive}
-                              onClick={() => handleCellToggle(student.studentId, date)}
-                              className={cn(
-                                "inline-flex h-8 w-10 items-center justify-center rounded-md text-xs font-semibold transition-colors",
-                                meta ? meta.className : "bg-muted text-muted-foreground hover:bg-muted/70",
-                                isClassInactive && "cursor-not-allowed opacity-60",
-                                isPending && "ring-2 ring-amber-500 ring-offset-1",
-                              )}
-                              title={
-                                isPending
-                                  ? `${meta ? meta.label : notMarkedLabel} (${t("teacher:attendance.unsavedSuffix")})`
-                                  : meta
-                                    ? meta.label
-                                    : notMarkedLabel
-                              }
-                            >
-                              {meta ? meta.short : "–"}
-                            </button>
-                          </TableCell>
-                        );
-                      })}
-                      <TableCell className="text-center text-sm text-muted-foreground">
-                        {student.summary.present}
-                      </TableCell>
-                      <TableCell className="text-center text-sm text-muted-foreground">
-                        {student.summary.absent}
-                      </TableCell>
-                      <TableCell className="text-center text-sm text-muted-foreground">
-                        {student.summary.late}
-                      </TableCell>
-                      <TableCell className="text-center text-sm text-muted-foreground">
-                        {student.summary.excused}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
-
-      <Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{t("teacher:attendance.saveDialog.title")}</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {t("teacher:attendance.saveDialog.before")}{" "}
-            <span className="font-semibold text-foreground">{pendingChanges.size}</span>{" "}
-            {t("teacher:attendance.saveDialog.middle")}{" "}
-            <span className="font-semibold text-foreground">{data?.className}</span>.{" "}
-            {t("teacher:attendance.saveDialog.after")}
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setIsSaveDialogOpen(false)} disabled={isSaving}>
-              {t("common:actions.cancel")}
-            </Button>
-            <Button type="button" onClick={handleConfirmSave} disabled={isSaving}>
-              {isSaving ? t("common:status.saving") : t("teacher:attendance.confirmSave")}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

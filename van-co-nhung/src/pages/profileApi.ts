@@ -1,4 +1,4 @@
-import { apiUrl, authHeaders } from "./teacher/apiClient";
+import { apiFetch, apiUrl, authHeaders } from "./teacher/apiClient";
 
 export interface MyProfile {
   id: number;
@@ -28,13 +28,13 @@ export interface UpdateMyProfileInput {
 }
 
 export async function fetchMyProfile(): Promise<MyProfile> {
-  const res = await fetch(apiUrl("/api/me/profile"), { headers: authHeaders() });
+  const res = await apiFetch(apiUrl("/api/me/profile"), { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function updateMyProfile(input: UpdateMyProfileInput): Promise<MyProfile> {
-  const res = await fetch(apiUrl("/api/me/profile"), {
+  const res = await apiFetch(apiUrl("/api/me/profile"), {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify(input),

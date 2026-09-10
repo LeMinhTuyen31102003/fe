@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LanguageToggle from "@/components/LanguageToggle";
@@ -7,11 +8,33 @@ import UserMenu from "@/components/UserMenu";
 import { useScopedDarkMode } from "@/hooks/useScopedDarkMode";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../hooks/useAuth";
+import { onAppEvent } from "@/eventStream";
+import { fetchMyPendingAssignmentCount } from "./myAssignmentsApi";
 
 function StudentLayout() {
   const { isLoggedIn, userName, fullName, role, logout } = useAuth();
   const { t } = useTranslation(["student", "common"]);
   useScopedDarkMode();
+  const [pendingAssignmentCount, setPendingAssignmentCount] = useState(0);
+
+  useEffect(() => {
+    if (!isLoggedIn || role !== "STUDENT") return;
+    let cancelled = false;
+    function poll() {
+      fetchMyPendingAssignmentCount()
+        .then((count) => {
+          if (!cancelled) setPendingAssignmentCount(count);
+        })
+        .catch(() => {});
+    }
+    const unsubscribe = onAppEvent((scope) => {
+      if (scope === "assignment") poll();
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [isLoggedIn, role]);
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -54,15 +77,20 @@ function StudentLayout() {
             {t("student:nav.schedule")}
           </NavLink>
           <NavLink
-            to="/student/class"
+            to="/student/assignments"
             className={({ isActive }) =>
               cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
                 isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
               )
             }
           >
-            {t("student:nav.class")}
+            <span>{t("student:nav.assignments")}</span>
+            {pendingAssignmentCount > 0 && (
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-[10px] font-semibold text-amber-800">
+                {pendingAssignmentCount > 9 ? "9+" : pendingAssignmentCount}
+              </span>
+            )}
           </NavLink>
         </nav>
       </aside>

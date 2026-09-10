@@ -61,7 +61,14 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    if (!username.trim() || !fullName.trim()) {
+    if (
+      !username.trim() ||
+      !fullName.trim() ||
+      !grade.trim() ||
+      !schoolName.trim() ||
+      !parentName.trim() ||
+      !parentPhone.trim()
+    ) {
       toast.error(t("teacher:studentForm.requiredFieldsError"));
       return;
     }
@@ -167,7 +174,10 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-grade">{t("teacher:studentFields.grade")}</Label>
+              <Label htmlFor="s-grade">
+                {t("teacher:studentFields.grade")}
+                <RequiredMark />
+              </Label>
               <Select value={grade} onValueChange={setGrade}>
                 <SelectTrigger id="s-grade" className="w-full" disabled={isSubmitting}>
                   <SelectValue placeholder={t("teacher:studentFields.gradePlaceholder")} />
@@ -182,7 +192,10 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-school">{t("teacher:studentFields.school")}</Label>
+              <Label htmlFor="s-school">
+                {t("teacher:studentFields.school")}
+                <RequiredMark />
+              </Label>
               <Input
                 id="s-school"
                 value={schoolName}
@@ -194,7 +207,10 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-parent-name">{t("teacher:studentFields.parentName")}</Label>
+              <Label htmlFor="s-parent-name">
+                {t("teacher:studentFields.parentName")}
+                <RequiredMark />
+              </Label>
               <Input
                 id="s-parent-name"
                 value={parentName}
@@ -203,7 +219,10 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="s-parent-phone">{t("teacher:studentFields.parentPhone")}</Label>
+              <Label htmlFor="s-parent-phone">
+                {t("teacher:studentFields.parentPhone")}
+                <RequiredMark />
+              </Label>
               <Input
                 id="s-parent-phone"
                 type="tel"

@@ -1,4 +1,4 @@
-import { apiUrl, authHeaders } from "./apiClient";
+import { apiFetch, apiUrl, authHeaders } from "./apiClient";
 
 export interface StudentClassRef {
   id: number;
@@ -56,13 +56,13 @@ export async function fetchStudents(params: FetchStudentsParams = {}): Promise<S
   if (params.sortDir) qs.set("sortDir", params.sortDir);
   const query = qs.toString();
   const url = apiUrl(query ? `/api/users/students?${query}` : "/api/users/students");
-  const res = await fetch(url, { headers: authHeaders() });
+  const res = await apiFetch(url, { headers: authHeaders() });
   if (!res.ok) throw new Error("LOAD_FAILED");
   return res.json();
 }
 
 export async function createStudent(input: CreateStudentInput): Promise<Student> {
-  const res = await fetch(apiUrl("/api/users/students"), {
+  const res = await apiFetch(apiUrl("/api/users/students"), {
     method: "POST",
     headers: authHeaders(),
     body: JSON.stringify(input),
@@ -73,7 +73,7 @@ export async function createStudent(input: CreateStudentInput): Promise<Student>
 }
 
 export async function updateStudent(id: number, input: UpdateStudentInput): Promise<Student> {
-  const res = await fetch(apiUrl(`/api/users/students/${id}`), {
+  const res = await apiFetch(apiUrl(`/api/users/students/${id}`), {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify(input),
@@ -83,7 +83,7 @@ export async function updateStudent(id: number, input: UpdateStudentInput): Prom
 }
 
 export async function setStudentActive(id: number, active: boolean): Promise<Student> {
-  const res = await fetch(apiUrl(`/api/users/students/${id}/active`), {
+  const res = await apiFetch(apiUrl(`/api/users/students/${id}/active`), {
     method: "PATCH",
     headers: authHeaders(),
     body: JSON.stringify({ active }),
@@ -93,7 +93,7 @@ export async function setStudentActive(id: number, active: boolean): Promise<Stu
 }
 
 export async function deleteStudent(id: number): Promise<void> {
-  const res = await fetch(apiUrl(`/api/users/students/${id}`), {
+  const res = await apiFetch(apiUrl(`/api/users/students/${id}`), {
     method: "DELETE",
     headers: authHeaders(),
   });

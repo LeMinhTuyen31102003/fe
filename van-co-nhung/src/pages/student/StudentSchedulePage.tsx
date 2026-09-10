@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import MonthYearPicker from "@/components/MonthYearPicker";
+import PageBanner from "@/components/PageBanner";
 import { cn } from "@/lib/utils";
 import { getAttendanceStatusMeta } from "../teacher/attendanceOptions";
 import type { AttendanceStatus } from "../teacher/attendanceApi";
@@ -152,12 +153,28 @@ function StudentSchedulePage() {
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">{t("student:schedule.title")}</h1>
-          <p className="text-muted-foreground">{t("student:schedule.subtitle")}</p>
+      <PageBanner title={t("student:schedule.title")} subtitle={t("student:schedule.subtitle")} />
+
+      <div className="flex flex-wrap items-center gap-3">
+        {hasAnyClasses && (
+          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-muted" /> {t("student:schedule.notMarked")}
+            </span>
+            {ATTENDANCE_STATUSES.map((status) => {
+              const meta = getAttendanceStatusMeta(t, status);
+              return (
+                <span key={status} className="flex items-center gap-1.5">
+                  <span className={cn("h-2.5 w-2.5 rounded-full", meta.className.split(" ")[0])} />
+                  {meta.label}
+                </span>
+              );
+            })}
+          </div>
+        )}
+        <div className="ml-auto">
+          <MonthYearPicker year={year} month={month} onChange={setPeriod} />
         </div>
-        <MonthYearPicker year={year} month={month} onChange={setPeriod} />
       </div>
 
       {!schedule ? (
@@ -226,21 +243,6 @@ function StudentSchedulePage() {
                 );
               })}
             </div>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-muted" /> {t("student:schedule.notMarked")}
-            </span>
-            {ATTENDANCE_STATUSES.map((status) => {
-              const meta = getAttendanceStatusMeta(t, status);
-              return (
-                <span key={status} className="flex items-center gap-1.5">
-                  <span className={cn("h-2.5 w-2.5 rounded-full", meta.className.split(" ")[0])} />
-                  {meta.label}
-                </span>
-              );
-            })}
           </div>
 
           {isLoading && <p className="text-xs text-muted-foreground">{t("student:schedule.updatingAttendance")}</p>}

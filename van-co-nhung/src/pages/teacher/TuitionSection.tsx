@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import CurrencyInput from "@/components/CurrencyInput";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +35,7 @@ import MonthYearPicker from "@/components/MonthYearPicker";
 import { fetchClasses, type ClassSummary } from "./classesApi";
 import {
   fetchMonthlyTuition,
+  finalizeTuitionMonth,
   updateTuition,
   type StudentTuitionRow,
   type TuitionStatus,
@@ -77,11 +80,15 @@ function TuitionSection() {
   const [rows, setRows] = useState<StudentTuitionRow[]>([]);
   const [feePerSession, setFeePerSession] = useState<number | null>(null);
   const [summary, setSummary] = useState<TuitionSummary | null>(null);
+  const [finalized, setFinalized] = useState(false);
+  const [isFinalizing, setIsFinalizing] = useState(false);
+  const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<number | null>(null);
   const [rejectingRow, setRejectingRow] = useState<StudentTuitionRow | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
+  const [markPaidRow, setMarkPaidRow] = useState<StudentTuitionRow | null>(null);
 
   const currentKey = selectedClassId ? `${selectedClassId}-${year}-${month}` : null;
   const isLoading = currentKey !== null && loadedKey !== currentKey;
@@ -113,6 +120,7 @@ function TuitionSection() {
         setRows(res.students);
         setFeePerSession(res.feePerSession);
         setSummary(res.summary);
+        setFinalized(res.finalized);
         setLoadedKey(key);
       })
       .catch(() => {
@@ -149,17 +157,33 @@ function TuitionSection() {
     }
   }
 
+  async function handleConfirmFinalize() {
+    if (!selectedClassId || isClassInactive) return;
+    setIsFinalizing(true);
+    try {
+      const updated = await finalizeTuitionMonth(Number(selectedClassId), year, month);
+      setFinalized(updated.finalized);
+      setRows(updated.students);
+      setSummary(updated.summary);
+      setIsFinalizeDialogOpen(false);
+      toast.success(t("teacher:tuition.finalizeSuccess"));
+    } catch {
+      toast.error(t("teacher:tuition.finalizeError"));
+    } finally {
+      setIsFinalizing(false);
+    }
+  }
+
   function handleMarkPaid(row: StudentTuitionRow) {
     if (isClassInactive) return;
-    if (
-      !window.confirm(
-        t("teacher:tuition.markPaidConfirm", { amount: formatCurrency(row.amount), name: row.fullName }),
-      )
-    ) {
-      return;
-    }
-    updateLocalRow(row.studentId, { status: "PAID" });
-    saveRow({ ...row, status: "PAID" });
+    setMarkPaidRow(row);
+  }
+
+  function confirmMarkPaid() {
+    if (!markPaidRow) return;
+    updateLocalRow(markPaidRow.studentId, { status: "PAID" });
+    saveRow({ ...markPaidRow, status: "PAID" });
+    setMarkPaidRow(null);
   }
 
   const activeClasses = useMemo(() => classes.filter((c) => c.active), [classes]);
@@ -261,6 +285,30 @@ function TuitionSection() {
             {t("teacher:tuition.feeInfoAfter")}
           </p>
 
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Badge
+                variant={finalized ? "default" : "outline"}
+                className={finalized ? "bg-emerald-100 text-emerald-700" : undefined}
+              >
+                {finalized ? t("teacher:tuition.finalizedBadge") : t("teacher:tuition.notFinalizedBadge")}
+              </Badge>
+              <span className="text-sm text-muted-foreground">
+                {finalized ? t("teacher:tuition.finalizedHint") : t("teacher:tuition.notFinalizedHint")}
+              </span>
+            </div>
+            {!finalized && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => setIsFinalizeDialogOpen(true)}
+                disabled={isClassInactive}
+              >
+                {t("teacher:tuition.finalizeButton")}
+              </Button>
+            )}
+          </div>
+
           {summary && (
             <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-5">
               <div className="rounded-lg border border-border p-3">
@@ -312,15 +360,10 @@ function TuitionSection() {
                     <TableCell className="font-medium">{row.fullName}</TableCell>
                     <TableCell className="text-center text-muted-foreground">{row.sessionCount}</TableCell>
                     <TableCell>
-                      <Input
-                        type="number"
-                        min={0}
-                        step={1000}
+                      <CurrencyInput
                         value={row.amount}
                         disabled={savingId === row.studentId || isClassInactive}
-                        onChange={(e) =>
-                          updateLocalRow(row.studentId, { amount: Number(e.target.value) || 0 })
-                        }
+                        onChange={(v) => updateLocalRow(row.studentId, { amount: v ?? 0 })}
                         onBlur={() => saveRow(row)}
                       />
                     </TableCell>
@@ -435,6 +478,31 @@ function TuitionSection() {
         )}
       </DialogContent>
     </Dialog>
+
+    <ConfirmDialog
+      open={markPaidRow !== null}
+      onOpenChange={(open) => !open && setMarkPaidRow(null)}
+      title={t("teacher:tuition.markPaidDialog.title")}
+      description={
+        markPaidRow &&
+        t("teacher:tuition.markPaidConfirm", {
+          amount: formatCurrency(markPaidRow.amount),
+          name: markPaidRow.fullName,
+        })
+      }
+      confirmLabel={t("common:actions.confirm")}
+      onConfirm={confirmMarkPaid}
+    />
+
+    <ConfirmDialog
+      open={isFinalizeDialogOpen}
+      onOpenChange={setIsFinalizeDialogOpen}
+      title={t("teacher:tuition.finalizeDialog.title")}
+      description={t("teacher:tuition.finalizeDialog.description")}
+      confirmLabel={t("teacher:tuition.finalizeButton")}
+      isConfirming={isFinalizing}
+      onConfirm={handleConfirmFinalize}
+    />
     </>
   );
 }

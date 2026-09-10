@@ -22,11 +22,23 @@
     "loading": "Đang tải...",
     "saving": "Đang lưu...",
     "sending": "Đang gửi...",
-    "loadError": "Không thể tải dữ liệu."
+    "loadError": "Không thể tải dữ liệu.",
+    "sessionExpired": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại."
+  },
+  "pagination": {
+    "prev": "‹ Trước",
+    "next": "Sau ›",
+    "pageOf": "Trang {{current}}/{{total}}"
   },
   "header": {
     "notifications": "Thông báo",
     "noNotifications": "Bạn chưa có thông báo nào.",
+    "markAllRead": "Đánh dấu đã đọc tất cả",
+    "notificationTypes": {
+      "tuitionPaymentRequested": "Phụ huynh của {{studentName}} (lớp {{className}}) đã gửi xác nhận chuyển khoản {{amount}}. Vào kiểm tra và xác nhận nhé.",
+      "assignmentCreated": "Giáo viên đã giao bài tập mới \"{{title}}\" cho lớp {{className}}.",
+      "assignmentFullySubmitted": "Lớp {{className}} đã nộp đủ bài tập \"{{title}}\". Vào chấm điểm nhé."
+    },
     "profileInfo": "Thông tin cá nhân",
     "themeLight": "Sáng",
     "themeDark": "Tối",
@@ -53,8 +65,10 @@
     "11": "Tháng 11",
     "12": "Tháng 12"
   },
+  "selectDate": "Chọn ngày",
   "selectMonth": "Chọn tháng",
   "selectYear": "Chọn năm",
+  "today": "Hôm nay",
   "weekdaysShort": {
     "sun": "CN",
     "mon": "T2",

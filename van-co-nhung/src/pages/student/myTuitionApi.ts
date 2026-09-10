@@ -1,4 +1,4 @@
-import { apiUrl, authHeaders } from "../teacher/apiClient";
+import { apiFetch, apiUrl, authHeaders } from "../teacher/apiClient";
 
 export type TuitionStatus = "UNPAID" | "PENDING" | "PAID";
 
@@ -12,6 +12,7 @@ export interface MyClassTuition {
   requestedAt: string | null;
   paidAt: string | null;
   note: string | null;
+  finalized: boolean;
 }
 
 export interface MyTuition {
@@ -21,7 +22,7 @@ export interface MyTuition {
 }
 
 export async function fetchMyTuition(year: number, month: number): Promise<MyTuition> {
-  const res = await fetch(apiUrl(`/api/me/tuition?year=${year}&month=${month}`), {
+  const res = await apiFetch(apiUrl(`/api/me/tuition?year=${year}&month=${month}`), {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("LOAD_FAILED");
@@ -33,7 +34,7 @@ export async function confirmMyPayment(
   year: number,
   month: number,
 ): Promise<MyClassTuition> {
-  const res = await fetch(
+  const res = await apiFetch(
     apiUrl(`/api/me/tuition/${classId}/confirm-payment?year=${year}&month=${month}`),
     {
       method: "PUT",

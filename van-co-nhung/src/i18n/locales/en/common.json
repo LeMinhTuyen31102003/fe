@@ -22,11 +22,23 @@
     "loading": "Loading...",
     "saving": "Saving...",
     "sending": "Sending...",
-    "loadError": "Couldn't load data."
+    "loadError": "Couldn't load data.",
+    "sessionExpired": "Your session has expired. Please log in again."
+  },
+  "pagination": {
+    "prev": "‹ Previous",
+    "next": "Next ›",
+    "pageOf": "Page {{current}} of {{total}}"
   },
   "header": {
     "notifications": "Notifications",
     "noNotifications": "You have no notifications yet.",
+    "markAllRead": "Mark all as read",
+    "notificationTypes": {
+      "tuitionPaymentRequested": "{{studentName}}'s parent (class {{className}}) submitted a payment confirmation of {{amount}}. Go check and confirm it.",
+      "assignmentCreated": "A new assignment \"{{title}}\" was posted for class {{className}}.",
+      "assignmentFullySubmitted": "Class {{className}} has fully submitted \"{{title}}\". Time to grade it."
+    },
     "profileInfo": "Profile",
     "themeLight": "Light",
     "themeDark": "Dark",
@@ -53,8 +65,10 @@
     "11": "November",
     "12": "December"
   },
+  "selectDate": "Pick a date",
   "selectMonth": "Select month",
   "selectYear": "Select year",
+  "today": "Today",
   "weekdaysShort": {
     "sun": "Sun",
     "mon": "Mon",

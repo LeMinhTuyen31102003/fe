@@ -1,4 +1,4 @@
-import { apiUrl, authHeaders } from "./apiClient";
+import { apiFetch, apiUrl, authHeaders } from "./apiClient";
 
 export type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
 
@@ -17,6 +17,7 @@ export interface AttendanceSummary {
 export interface StudentAttendanceRow {
   studentId: number;
   fullName: string;
+  parentName: string | null;
   entries: Record<string, AttendanceEntry>;
   summary: AttendanceSummary;
 }
@@ -41,7 +42,7 @@ export async function fetchMonthlyAttendance(
   year: number,
   month: number,
 ): Promise<MonthlyAttendance> {
-  const res = await fetch(apiUrl(`/api/classes/${classId}/attendance?year=${year}&month=${month}`), {
+  const res = await apiFetch(apiUrl(`/api/classes/${classId}/attendance?year=${year}&month=${month}`), {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error("LOAD_FAILED");
@@ -53,7 +54,7 @@ export async function markAttendance(
   date: string,
   records: AttendanceMarkInput[],
 ): Promise<MonthlyAttendance> {
-  const res = await fetch(apiUrl(`/api/classes/${classId}/attendance/${date}`), {
+  const res = await apiFetch(apiUrl(`/api/classes/${classId}/attendance/${date}`), {
     method: "PUT",
     headers: authHeaders(),
     body: JSON.stringify({ records }),

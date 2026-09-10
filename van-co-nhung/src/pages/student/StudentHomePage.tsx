@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import MonthYearPicker from "@/components/MonthYearPicker";
+import PageBanner from "@/components/PageBanner";
 import { getAttendanceStatusMeta, formatSessionDate } from "../teacher/attendanceOptions";
 import { fetchBankSettings, type BankSettings } from "../teacher/bankSettingsApi";
 import { fetchMyAttendance, type MyClassAttendance } from "./myAttendanceApi";
@@ -111,22 +113,17 @@ function TuitionCard({
   t: TFunction;
   language: string;
 }) {
-  const { classId, className, sessionCount, feePerSession, amount, status, requestedAt, paidAt, note } =
+  const { classId, className, sessionCount, feePerSession, amount, status, requestedAt, paidAt, note, finalized } =
     classTuition;
   const [isConfirming, setIsConfirming] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
   async function handleConfirm() {
-    if (
-      !window.confirm(
-        t("student:home.tuitionCard.confirmDialog", { amount: formatCurrency(amount), className }),
-      )
-    ) {
-      return;
-    }
     setIsConfirming(true);
     try {
       const updated = await confirmMyPayment(classId, year, month);
       onConfirmed(updated);
+      setIsConfirmDialogOpen(false);
       toast.success(t("student:home.tuitionCard.confirmSuccess"));
     } catch {
       toast.error(t("student:home.tuitionCard.confirmError"));
@@ -178,6 +175,8 @@ function TuitionCard({
         </p>
       ) : amount <= 0 ? (
         <p className="text-sm text-muted-foreground">{t("student:home.tuitionCard.noFeeThisMonth")}</p>
+      ) : !finalized ? (
+        <p className="text-sm text-muted-foreground">{t("student:home.tuitionCard.paymentNotOpenYet")}</p>
       ) : (
         <div className="flex flex-col gap-3">
           {note && (
@@ -203,13 +202,30 @@ function TuitionCard({
                   bankName: bank.bankName,
                 })}
               </p>
-              <Button type="button" onClick={handleConfirm} disabled={isConfirming} className="w-full max-w-[260px]">
+              <Button
+                type="button"
+                onClick={() => setIsConfirmDialogOpen(true)}
+                disabled={isConfirming}
+                className="w-full max-w-[260px]"
+              >
                 {isConfirming ? t("common:status.sending") : t("student:home.tuitionCard.confirmButton")}
               </Button>
             </div>
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={isConfirmDialogOpen}
+        onOpenChange={setIsConfirmDialogOpen}
+        title={t("student:home.tuitionCard.confirmDialogTitle")}
+        description={t("student:home.tuitionCard.confirmDialog", {
+          amount: formatCurrency(amount),
+          className,
+        })}
+        isConfirming={isConfirming}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 }
@@ -262,12 +278,15 @@ function StudentHomePage() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">{t("student:home.title")}</h1>
-          <p className="text-muted-foreground">{t("student:home.subtitle")}</p>
+      <PageBanner title={t("student:home.title")} subtitle={t("student:home.subtitle")} />
+
+      <div className="flex flex-wrap items-center gap-3">
+        {!isLoading && classes.length > 0 && (
+          <h2 className="font-heading text-lg font-bold text-foreground">{t("student:home.attendanceSection")}</h2>
+        )}
+        <div className="ml-auto">
+          <MonthYearPicker year={year} month={month} onChange={setPeriod} />
         </div>
-        <MonthYearPicker year={year} month={month} onChange={setPeriod} />
       </div>
 
       {isLoading ? (
@@ -277,7 +296,6 @@ function StudentHomePage() {
       ) : (
         <>
           <section className="flex flex-col gap-4">
-            <h2 className="font-heading text-lg font-bold text-foreground">{t("student:home.attendanceSection")}</h2>
             {attendance.map((a) => (
               <AttendanceCard key={a.classId} attendance={a} t={t} />
             ))}

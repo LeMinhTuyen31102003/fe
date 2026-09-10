@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -49,6 +51,8 @@ function StudentsSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [removingStudent, setRemovingStudent] = useState<Student | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -137,14 +141,22 @@ function StudentsSection() {
     }
   }
 
-  async function handleRemove(student: Student, e: React.MouseEvent) {
+  function handleRemove(student: Student, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!window.confirm(t("teacher:students.deleteConfirm", { name: student.fullName }))) return;
+    setRemovingStudent(student);
+  }
+
+  async function confirmRemove() {
+    if (!removingStudent) return;
+    setIsRemoving(true);
     try {
-      await deleteStudent(student.id);
-      setStudents((prev) => prev.filter((s) => s.id !== student.id));
+      await deleteStudent(removingStudent.id);
+      setStudents((prev) => prev.filter((s) => s.id !== removingStudent.id));
+      setRemovingStudent(null);
     } catch {
       toast.error(t("teacher:students.deleteError"));
+    } finally {
+      setIsRemoving(false);
     }
   }
 
@@ -284,31 +296,7 @@ function StudentsSection() {
             </TableBody>
           </Table>
 
-          {totalPages > 1 && (
-            <div className="mt-5 flex items-center justify-center gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                {t("teacher:pagination.prev")}
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                {t("teacher:pagination.pageOf", { current: currentPage, total: totalPages })}
-              </span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={currentPage === totalPages}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                {t("teacher:pagination.next")}
-              </Button>
-            </div>
-          )}
+          <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}
 
@@ -328,6 +316,19 @@ function StudentsSection() {
           setStudents((prev) => prev.map((s) => (s.id === updated.id ? updated : s)));
           setSelectedStudent(updated);
         }}
+      />
+
+      <ConfirmDialog
+        open={removingStudent !== null}
+        onOpenChange={(open) => !open && setRemovingStudent(null)}
+        title={t("teacher:students.deleteDialog.title")}
+        description={
+          removingStudent && t("teacher:students.deleteConfirm", { name: removingStudent.fullName })
+        }
+        confirmLabel={t("common:actions.delete")}
+        variant="destructive"
+        isConfirming={isRemoving}
+        onConfirm={confirmRemove}
       />
     </div>
   );

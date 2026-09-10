@@ -14,6 +14,17 @@ import {
 import { fetchBankSettings, updateBankSettings } from "./bankSettingsApi";
 import { bankNameFromId, BANK_OPTIONS } from "./bankOptions";
 
+const PREVIEW_SAMPLE_AMOUNT = 0;
+
+function buildPreviewQrUrl(bankId: string, accountNumber: string, accountName: string) {
+  const params = new URLSearchParams({
+    amount: String(PREVIEW_SAMPLE_AMOUNT),
+    addInfo: "Hoc phi lop mau",
+    accountName,
+  });
+  return `https://img.vietqr.io/image/${bankId}-${accountNumber}-compact2.png?${params.toString()}`;
+}
+
 function BankSettingsSection() {
   const { t } = useTranslation(["teacher", "common"]);
   const [bankId, setBankId] = useState("");
@@ -65,49 +76,63 @@ function BankSettingsSection() {
       {isLoading ? (
         <p className="text-sm text-muted-foreground">{t("common:status.loading")}</p>
       ) : (
-        <form className="flex max-w-md flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="bank-id">{t("teacher:bankSettings.fields.bank")}</Label>
-            <Select value={bankId} onValueChange={setBankId}>
-              <SelectTrigger id="bank-id" className="w-full" disabled={isSubmitting}>
-                <SelectValue placeholder={t("teacher:bankSettings.fields.bankPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {BANK_OPTIONS.map((b) => (
-                  <SelectItem key={b.id} value={b.id}>
-                    {b.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          <form className="flex w-full max-w-md flex-col gap-4" onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="bank-id">{t("teacher:bankSettings.fields.bank")}</Label>
+              <Select value={bankId} onValueChange={setBankId}>
+                <SelectTrigger id="bank-id" className="w-full" disabled={isSubmitting}>
+                  <SelectValue placeholder={t("teacher:bankSettings.fields.bankPlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {BANK_OPTIONS.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="account-number">{t("teacher:bankSettings.fields.accountNumber")}</Label>
-            <Input
-              id="account-number"
-              value={accountNumber}
-              onChange={(e) => setAccountNumber(e.target.value)}
-              disabled={isSubmitting}
-              placeholder={t("teacher:bankSettings.fields.accountNumberPlaceholder")}
-            />
-          </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="account-number">{t("teacher:bankSettings.fields.accountNumber")}</Label>
+              <Input
+                id="account-number"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+                disabled={isSubmitting}
+                placeholder={t("teacher:bankSettings.fields.accountNumberPlaceholder")}
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="account-name">{t("teacher:bankSettings.fields.accountName")}</Label>
-            <Input
-              id="account-name"
-              value={accountName}
-              onChange={(e) => setAccountName(e.target.value)}
-              disabled={isSubmitting}
-              placeholder={t("teacher:bankSettings.fields.accountNamePlaceholder")}
-            />
-          </div>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="account-name">{t("teacher:bankSettings.fields.accountName")}</Label>
+              <Input
+                id="account-name"
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+                disabled={isSubmitting}
+                placeholder={t("teacher:bankSettings.fields.accountNamePlaceholder")}
+              />
+            </div>
 
-          <Button type="submit" disabled={isSubmitting} className="w-fit">
-            {isSubmitting ? t("common:status.saving") : t("teacher:bankSettings.submit")}
-          </Button>
-        </form>
+            <Button type="submit" disabled={isSubmitting} className="w-fit">
+              {isSubmitting ? t("common:status.saving") : t("teacher:bankSettings.submit")}
+            </Button>
+          </form>
+
+          <div className="flex w-full max-w-md items-center justify-center rounded-xl border border-dashed border-border bg-muted/30 p-4">
+            {!bankId || !accountNumber.trim() || !accountName.trim() ? (
+              <p className="text-xs text-muted-foreground">{t("teacher:bankSettings.preview.incomplete")}</p>
+            ) : (
+              <img
+                src={buildPreviewQrUrl(bankId, accountNumber.trim(), accountName.trim().toUpperCase())}
+                alt={t("teacher:bankSettings.preview.qrAlt")}
+                className="h-auto w-full max-w-[240px]"
+              />
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

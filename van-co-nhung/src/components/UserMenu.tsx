@@ -34,7 +34,7 @@ function UserMenu({ fullName, userName, role, onLogout }: UserMenuProps) {
       <DropdownMenuTrigger className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground outline-none transition-opacity hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring/50">
         {initialsFrom(displayName)}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56" onCloseAutoFocus={(e) => e.preventDefault()}>
         <DropdownMenuLabel>
           <div className="flex flex-col">
             <span className="truncate text-sm font-semibold text-foreground">{displayName}</span>

@@ -16,11 +16,6 @@
     "active": "Đã kích hoạt",
     "inactive": "Chưa kích hoạt"
   },
-  "pagination": {
-    "prev": "‹ Trước",
-    "next": "Sau ›",
-    "pageOf": "Trang {{current}}/{{total}}"
-  },
   "grade": {
     "prefix": "Lớp {{grade}}",
     "supplementary": "Bổ trợ riêng"
@@ -44,12 +39,24 @@
   "overview": {
     "title": "Tổng quan",
     "greeting": "Xin chào, {{name}}",
+    "loadError": "Không thể tải dữ liệu tổng quan.",
     "stats": {
       "classes": "Lớp đang dạy",
       "students": "Học sinh",
       "sessionsThisWeek": "Buổi học tuần này"
     },
-    "placeholder": "Các chức năng quản lý lớp học, điểm danh và học phí sẽ hiển thị tại đây."
+    "todaySchedule": {
+      "title": "Lịch dạy hôm nay",
+      "empty": "Hôm nay không có lớp nào theo lịch.",
+      "complete": "Đã điểm danh đủ",
+      "progress": "Đã điểm danh {{marked}}/{{total}}",
+      "markButton": "Điểm danh"
+    },
+    "tuition": {
+      "title": "Học phí tháng này",
+      "collected": "Đã thu",
+      "outstanding": "Còn thiếu"
+    }
   },
   "studentFields": {
     "username": "Tên đăng nhập",
@@ -83,6 +90,7 @@
     },
     "activate": "Kích hoạt",
     "deactivate": "Vô hiệu hoá",
+    "deleteDialog": { "title": "Xoá học sinh" },
     "deleteConfirm": "Xoá tài khoản của \"{{name}}\"?",
     "toggleActiveError": "Không thể cập nhật trạng thái học sinh.",
     "deleteError": "Không thể xoá học sinh.",
@@ -149,6 +157,7 @@
       "actions": "Thao tác"
     },
     "activate": "Kích hoạt",
+    "deleteDialog": { "title": "Xoá lớp học" },
     "deleteConfirm": "Xoá lớp học \"{{name}}\"?",
     "toggleActiveError": "Không thể cập nhật trạng thái lớp học.",
     "deleteError": "Không thể xoá lớp học.",
@@ -170,6 +179,11 @@
     "submitting": "Đang tạo..."
   },
   "classDetail": {
+    "tabs": {
+      "info": "Thông tin lớp",
+      "students": "Học sinh",
+      "assignments": "Bài tập"
+    },
     "titleView": "Thông tin lớp học",
     "titleEdit": "Chỉnh sửa lớp học",
     "loadError": "Không thể tải thông tin lớp học.",
@@ -197,40 +211,68 @@
     "removedStudent": "Đã xoá học sinh khỏi lớp.",
     "removeStudentError": "Không thể xoá học sinh khỏi lớp."
   },
+  "assignments": {
+    "listTitle": "Bài tập môn Văn",
+    "add": "+ Giao bài tập",
+    "loadError": "Không thể tải danh sách bài tập.",
+    "empty": "Chưa có bài tập nào được giao.",
+    "dueDate": "Hạn nộp: {{date}}",
+    "submittedCount": "{{submitted}}/{{total}} đã nộp",
+    "deleteSuccess": "Đã xoá bài tập.",
+    "deleteError": "Không thể xoá bài tập.",
+    "deleteDialog": { "title": "Xoá bài tập" },
+    "deleteConfirm": "Xoá bài tập \"{{title}}\"?",
+    "status": {
+      "PENDING": "Chưa nộp",
+      "SUBMITTED": "Đã nộp",
+      "GRADED": "Đã chấm"
+    },
+    "form": {
+      "createTitle": "Giao bài tập mới",
+      "editTitle": "Chỉnh sửa bài tập",
+      "fields": {
+        "title": "Tiêu đề",
+        "content": "Nội dung / đề bài",
+        "contentPlaceholder": "Nhập đề bài, yêu cầu cho học sinh...",
+        "dueDate": "Hạn nộp (không bắt buộc)"
+      },
+      "titleRequiredError": "Vui lòng nhập tiêu đề bài tập.",
+      "createSuccess": "Đã giao bài tập.",
+      "createError": "Giao bài tập thất bại. Vui lòng thử lại.",
+      "updateSuccess": "Đã cập nhật bài tập.",
+      "updateError": "Cập nhật thất bại. Vui lòng thử lại."
+    },
+    "detail": {
+      "loadError": "Không thể tải chi tiết bài tập.",
+      "dueDate": "Hạn nộp: {{date}}",
+      "studentsTitle": "Học sinh ({{count}})",
+      "submittedAt": "Đã nộp lúc {{date}}",
+      "notePlaceholder": "Ghi chú / nhận xét...",
+      "viewFile": "Xem bài nộp",
+      "openOriginal": "Mở ảnh gốc trong tab mới",
+      "updateStatusError": "Không thể cập nhật trạng thái nộp bài."
+    }
+  },
   "attendance": {
-    "pageSubtitle": "Theo dõi điểm danh học sinh theo từng tháng",
-    "title": "Điểm danh theo tháng",
+    "pageSubtitle": "Điểm danh học sinh theo ngày, xem và chỉnh sửa lại các ngày trước",
+    "title": "Điểm danh",
     "classPlaceholder": "Chọn lớp học",
     "loadClassesError": "Không thể tải danh sách lớp học.",
     "inactiveLockBanner": "Lớp này đã ngừng hoạt động — chỉ xem lại lịch sử điểm danh, không thể chỉnh sửa.",
     "noClasses": "Chưa có lớp học nào. Hãy tạo lớp học trước.",
     "loadError": "Không thể tải dữ liệu điểm danh.",
     "noStudents": "Lớp học chưa có học sinh nào.",
-    "addSessionLabel": "Thêm buổi điểm danh",
-    "addSession": "+ Thêm buổi",
-    "dateOutOfMonthError": "Ngày thêm phải nằm trong tháng đang xem.",
-    "restoredPending": "Đã khôi phục {{count}} thay đổi điểm danh chưa lưu trước đó.",
-    "discardChanges": "Hủy thay đổi",
-    "saveChanges": "Lưu thay đổi ({{count}})",
-    "noSessionsInMonth": "Chưa có buổi học nào trong tháng này. Hãy thêm lịch học cho lớp hoặc thêm buổi điểm danh thủ công.",
+    "noScheduleThisDay": "Lớp không có lịch học vào ngày này. Hãy chọn một ngày khác.",
+    "viewOnlyPastDateNotice": "Đang xem lại điểm danh của một ngày đã qua (chỉ xem).",
+    "editingPastDateNotice": "Đang chỉnh sửa điểm danh của một ngày đã qua.",
+    "editPast": "Chỉnh sửa",
+    "doneEditingPast": "Xong",
     "table": {
       "fullName": "Họ tên",
-      "present": "Có mặt",
-      "absent": "Vắng",
-      "late": "Trễ",
-      "excused": "Phép"
+      "parentName": "Phụ huynh",
+      "status": "Điểm danh"
     },
-    "notMarked": "Chưa điểm danh",
-    "unsavedSuffix": "chưa lưu",
-    "saveDialog": {
-      "title": "Xác nhận lưu điểm danh",
-      "before": "Bạn có",
-      "middle": "thay đổi điểm danh chưa lưu cho lớp",
-      "after": "Xác nhận lưu vào dữ liệu?"
-    },
-    "confirmSave": "Xác nhận lưu",
-    "saveSuccess": "Đã lưu điểm danh.",
-    "saveError": "Không thể lưu một số thay đổi. Vui lòng thử lại."
+    "saveError": "Không thể lưu điểm danh. Vui lòng thử lại."
   },
   "tuition": {
     "pageSubtitle": "Theo dõi học phí học sinh theo từng tháng",
@@ -247,6 +289,17 @@
     "presentWord": "Có mặt",
     "lateWord": "Trễ",
     "feeInfoAfter": "trong tháng, có thể chỉnh tay khi cần.",
+    "finalizedBadge": "Đã chốt",
+    "notFinalizedBadge": "Chưa chốt",
+    "finalizedHint": "Học sinh/phụ huynh đã có thể xem mã QR để thanh toán tháng này.",
+    "notFinalizedHint": "Học sinh/phụ huynh chưa thấy mã QR cho tới khi bạn chốt tháng này.",
+    "finalizeButton": "Chốt học phí tháng này",
+    "finalizeDialog": {
+      "title": "Xác nhận chốt học phí",
+      "description": "Sau khi chốt, học sinh/phụ huynh sẽ thấy mã QR để thanh toán tháng này. Không thể mở lại sau khi đã chốt — hãy chắc chắn số buổi học đã đúng trước khi xác nhận."
+    },
+    "finalizeSuccess": "Đã chốt học phí tháng này.",
+    "finalizeError": "Không thể chốt học phí. Vui lòng thử lại.",
     "summary": {
       "totalDue": "Tổng cần thu",
       "totalCollected": "Đã thu",
@@ -272,6 +325,7 @@
     "reject": "Từ chối",
     "paidBadgeTitle": "Đã xác nhận, không thể chuyển lại trạng thái",
     "requestedAt": "Yêu cầu lúc {{time}}",
+    "markPaidDialog": { "title": "Xác nhận thanh toán" },
     "markPaidConfirm": "Xác nhận đã nhận được khoản thanh toán {{amount}} của {{name}}?",
     "updateError": "Không thể cập nhật học phí.",
     "rejectReasonRequired": "Vui lòng nhập lý do từ chối.",
@@ -305,6 +359,10 @@
     "requiredError": "Vui lòng nhập đầy đủ thông tin ngân hàng.",
     "saveSuccess": "Đã lưu thông tin ngân hàng.",
     "saveError": "Không thể lưu thông tin ngân hàng.",
-    "submit": "Lưu thông tin"
+    "submit": "Lưu thông tin",
+    "preview": {
+      "incomplete": "Điền đầy đủ ngân hàng, số tài khoản và tên chủ tài khoản để xem trước.",
+      "qrAlt": "Mã QR thanh toán mẫu"
+    }
   }
 }

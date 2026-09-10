@@ -5,13 +5,14 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import TeacherAttendancePage from './pages/teacher/TeacherAttendancePage'
+import ClassDetailPage from './pages/teacher/ClassDetailPage'
 import TeacherClassesPage from './pages/teacher/TeacherClassesPage'
 import TeacherLayout from './pages/teacher/TeacherLayout'
 import TeacherOverviewPage from './pages/teacher/TeacherOverviewPage'
 import TeacherSettingsPage from './pages/teacher/TeacherSettingsPage'
 import TeacherStudentsPage from './pages/teacher/TeacherStudentsPage'
 import TeacherTuitionPage from './pages/teacher/TeacherTuitionPage'
-import StudentClassPage from './pages/student/StudentClassPage'
+import StudentAssignmentsPage from './pages/student/StudentAssignmentsPage'
 import StudentHomePage from './pages/student/StudentHomePage'
 import StudentLayout from './pages/student/StudentLayout'
 import StudentSchedulePage from './pages/student/StudentSchedulePage'
@@ -28,6 +29,7 @@ function App() {
           <Route index element={<TeacherOverviewPage />} />
           <Route path="students" element={<TeacherStudentsPage />} />
           <Route path="classes" element={<TeacherClassesPage />} />
+          <Route path="classes/:classId" element={<ClassDetailPage />} />
           <Route path="attendance" element={<TeacherAttendancePage />} />
           <Route path="tuition" element={<TeacherTuitionPage />} />
           <Route path="settings" element={<TeacherSettingsPage />} />
@@ -36,7 +38,7 @@ function App() {
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentHomePage />} />
           <Route path="schedule" element={<StudentSchedulePage />} />
-          <Route path="class" element={<StudentClassPage />} />
+          <Route path="assignments" element={<StudentAssignmentsPage />} />
           <Route path="profile" element={<ProfilePage />} />
         </Route>
       </Routes>
