@@ -16,6 +16,7 @@
     "back": "Quay lại",
     "add": "Thêm",
     "clear": "Bỏ chọn",
+    "copy": "Sao chép",
     "logout": "Đăng xuất"
   },
   "status": {
@@ -36,20 +37,34 @@
     "markAllRead": "Đánh dấu đã đọc tất cả",
     "notificationTypes": {
       "tuitionPaymentRequested": "Phụ huynh của {{studentName}} (lớp {{className}}) đã gửi xác nhận chuyển khoản {{amount}}. Vào kiểm tra và xác nhận nhé.",
+      "tuitionFinalized": "Học phí lớp {{className}} tháng {{month}}/{{year}} đã được chốt. Vào xem và thanh toán nhé.",
       "assignmentCreated": "Giáo viên đã giao bài tập mới \"{{title}}\" cho lớp {{className}}.",
       "assignmentFullySubmitted": "Lớp {{className}} đã nộp đủ bài tập \"{{title}}\". Vào chấm điểm nhé."
     },
     "profileInfo": "Thông tin cá nhân",
+    "changePassword": "Đổi mật khẩu",
     "themeLight": "Sáng",
     "themeDark": "Tối",
     "toggleTheme": "Đổi giao diện sáng/tối",
     "toggleLanguage": "Đổi ngôn ngữ"
   },
   "attendanceStatus": {
-    "PRESENT": { "label": "Có mặt", "short": "P" },
-    "ABSENT": { "label": "Vắng", "short": "V" },
-    "LATE": { "label": "Trễ", "short": "T" },
-    "EXCUSED": { "label": "Có phép", "short": "CP" }
+    "PRESENT": {
+      "label": "Có mặt",
+      "short": "P"
+    },
+    "ABSENT": {
+      "label": "Vắng",
+      "short": "V"
+    },
+    "LATE": {
+      "label": "Trễ",
+      "short": "T"
+    },
+    "EXCUSED": {
+      "label": "Có phép",
+      "short": "CP"
+    }
   },
   "months": {
     "1": "Tháng 1",

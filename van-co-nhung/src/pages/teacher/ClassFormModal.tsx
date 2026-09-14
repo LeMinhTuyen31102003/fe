@@ -37,6 +37,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
   const [feePerSession, setFeePerSession] = useState<number | null>(60000);
+  const [classFund, setClassFund] = useState<number | null>(50000);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function resetForm() {
@@ -45,6 +46,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
     setSchedules([]);
     setNote("");
     setFeePerSession(60000);
+    setClassFund(50000);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -63,6 +65,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
         schedules,
         note: note.trim(),
         feePerSession,
+        classFund,
       });
       onCreated(created);
       resetForm();
@@ -127,6 +130,17 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
               onChange={setFeePerSession}
               disabled={isSubmitting}
               placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="c-class-fund">{t("teacher:classForm.fields.classFund")}</Label>
+            <CurrencyInput
+              id="c-class-fund"
+              value={classFund}
+              onChange={setClassFund}
+              disabled={isSubmitting}
+              placeholder={t("teacher:classForm.fields.classFundPlaceholder")}
             />
           </div>
 

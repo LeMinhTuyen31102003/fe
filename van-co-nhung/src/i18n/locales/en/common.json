@@ -16,6 +16,7 @@
     "back": "Back",
     "add": "Add",
     "clear": "Clear",
+    "copy": "Copy",
     "logout": "Log out"
   },
   "status": {
@@ -36,20 +37,34 @@
     "markAllRead": "Mark all as read",
     "notificationTypes": {
       "tuitionPaymentRequested": "{{studentName}}'s parent (class {{className}}) submitted a payment confirmation of {{amount}}. Go check and confirm it.",
+      "tuitionFinalized": "Tuition for class {{className}}, month {{month}}/{{year}}, has been finalized. Go check and pay.",
       "assignmentCreated": "A new assignment \"{{title}}\" was posted for class {{className}}.",
       "assignmentFullySubmitted": "Class {{className}} has fully submitted \"{{title}}\". Time to grade it."
     },
     "profileInfo": "Profile",
+    "changePassword": "Change password",
     "themeLight": "Light",
     "themeDark": "Dark",
     "toggleTheme": "Toggle light/dark theme",
     "toggleLanguage": "Change language"
   },
   "attendanceStatus": {
-    "PRESENT": { "label": "Present", "short": "P" },
-    "ABSENT": { "label": "Absent", "short": "A" },
-    "LATE": { "label": "Late", "short": "L" },
-    "EXCUSED": { "label": "Excused", "short": "E" }
+    "PRESENT": {
+      "label": "Present",
+      "short": "P"
+    },
+    "ABSENT": {
+      "label": "Absent",
+      "short": "A"
+    },
+    "LATE": {
+      "label": "Late",
+      "short": "L"
+    },
+    "EXCUSED": {
+      "label": "Excused",
+      "short": "E"
+    }
   },
   "months": {
     "1": "January",

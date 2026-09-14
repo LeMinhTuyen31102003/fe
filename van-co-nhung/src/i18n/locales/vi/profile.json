@@ -3,6 +3,7 @@
   "subtitle": "Xem và cập nhật thông tin tài khoản của bạn",
   "loadError": "Không thể tải thông tin cá nhân.",
   "fullNameRequired": "Vui lòng nhập họ tên.",
+  "emailRequired": "Vui lòng nhập email — đây là nơi nhận lại mật khẩu khi bạn quên.",
   "invalidEmail": "Email không hợp lệ.",
   "updateSuccess": "Đã cập nhật thông tin cá nhân.",
   "updateError": "Không thể cập nhật thông tin cá nhân.",
@@ -39,5 +40,24 @@
     "active": "Đang hoạt động",
     "inactive": "Đã khóa",
     "joinedAt": "Tham gia từ"
+  },
+  "changePassword": {
+    "title": "Đổi mật khẩu",
+    "subtitle": "Cập nhật mật khẩu đăng nhập của bạn",
+    "formTitle": "Đổi mật khẩu",
+    "formHint": "Mật khẩu mới cần ít nhất 6 ký tự.",
+    "fields": {
+      "currentPassword": "Mật khẩu hiện tại",
+      "newPassword": "Mật khẩu mới",
+      "confirmPassword": "Xác nhận mật khẩu mới"
+    },
+    "currentPasswordRequired": "Vui lòng nhập mật khẩu hiện tại.",
+    "newPasswordTooShort": "Mật khẩu mới phải có ít nhất 6 ký tự.",
+    "confirmMismatch": "Xác nhận mật khẩu không khớp.",
+    "wrongCurrentPassword": "Mật khẩu hiện tại không đúng.",
+    "success": "Đã đổi mật khẩu thành công.",
+    "error": "Không thể đổi mật khẩu. Vui lòng thử lại.",
+    "submit": "Đổi mật khẩu",
+    "saving": "Đang lưu..."
   }
 }

@@ -9,6 +9,7 @@ export interface Assignment {
   content: string | null;
   dueDate: string | null;
   createdAt: string;
+  attachmentUrl: string | null;
   totalStudents: number;
   submittedCount: number;
   gradedCount: number;
@@ -21,6 +22,7 @@ export interface AssignmentStudentRow {
   submittedAt: string | null;
   fileUrl: string | null;
   note: string | null;
+  score: number | null;
 }
 
 export interface AssignmentDetail {
@@ -31,6 +33,7 @@ export interface AssignmentDetail {
   content: string | null;
   dueDate: string | null;
   createdAt: string;
+  attachmentUrl: string | null;
   students: AssignmentStudentRow[];
 }
 
@@ -38,6 +41,8 @@ export interface AssignmentInput {
   title: string;
   content: string;
   dueDate: string | null;
+  attachmentUrl: string | null;
+  attachmentPublicId: string | null;
 }
 
 export async function fetchAssignments(classId: number): Promise<Assignment[]> {
@@ -78,6 +83,28 @@ export async function updateAssignment(
   return res.json();
 }
 
+export interface UploadedAssignmentFile {
+  url: string;
+  publicId: string;
+}
+
+export async function uploadAssignmentAttachment(classId: number, file: File): Promise<UploadedAssignmentFile> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  // Deliberately not authHeaders() here — it forces Content-Type: application/json,
+  // which would stop the browser from setting the multipart boundary itself.
+  const token = localStorage.getItem("token");
+  const res = await apiFetch(apiUrl(`/api/classes/${classId}/assignments/attachment`), {
+    method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+  });
+  if (!res.ok) throw new Error("UPLOAD_FAILED");
+  const data: { fileUrl: string; filePublicId: string } = await res.json();
+  return { url: data.fileUrl, publicId: data.filePublicId };
+}
+
 export async function deleteAssignment(classId: number, assignmentId: number): Promise<void> {
   const res = await apiFetch(apiUrl(`/api/classes/${classId}/assignments/${assignmentId}`), {
     method: "DELETE",
@@ -86,19 +113,21 @@ export async function deleteAssignment(classId: number, assignmentId: number): P
   if (!res.ok) throw new Error("DELETE_FAILED");
 }
 
-export async function updateSubmissionStatus(
+// Status is no longer settable directly — the backend derives PENDING/SUBMITTED/GRADED
+// from whether a score is present (see AssignmentController.updateSubmission).
+export async function updateSubmissionFeedback(
   classId: number,
   assignmentId: number,
   studentId: number,
-  status: AssignmentSubmissionStatus,
   note: string,
+  score: number | null,
 ): Promise<AssignmentDetail> {
   const res = await apiFetch(
     apiUrl(`/api/classes/${classId}/assignments/${assignmentId}/students/${studentId}`),
     {
       method: "PUT",
       headers: authHeaders(),
-      body: JSON.stringify({ status, note }),
+      body: JSON.stringify({ note, score }),
     },
   );
   if (!res.ok) throw new Error("UPDATE_FAILED");

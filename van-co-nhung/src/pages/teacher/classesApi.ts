@@ -21,6 +21,7 @@ export interface ClassSummary {
   schedules: ScheduleSlot[];
   note: string | null;
   feePerSession: number | null;
+  classFund: number | null;
   active: boolean;
   studentCount: number;
 }
@@ -32,6 +33,7 @@ export interface ClassDetail {
   schedules: ScheduleSlot[];
   note: string | null;
   feePerSession: number | null;
+  classFund: number | null;
   active: boolean;
   students: Student[];
 }
@@ -42,6 +44,7 @@ export interface ClassInput {
   schedules: ScheduleSlotInput[];
   note: string;
   feePerSession: number | null;
+  classFund: number | null;
 }
 
 export interface FetchClassesParams {

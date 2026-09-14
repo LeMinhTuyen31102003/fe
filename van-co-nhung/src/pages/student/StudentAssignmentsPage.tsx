@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { CalendarClock, ClipboardList, Mail, Phone } from "lucide-react";
+import { CalendarClock, ClipboardList, Mail, Paperclip, Phone } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
 import Pagination from "@/components/Pagination";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn, initialsFrom } from "@/lib/utils";
 import { onAppEvent } from "@/eventStream";
+import { apiUrl } from "../teacher/apiClient";
 import {
   fetchMyAssignments,
   submitMyAssignment,
@@ -123,15 +124,13 @@ function StudentAssignmentsPage() {
 
     setUploadingId(assignment.id);
     try {
-      const { url, publicId } = await uploadSubmissionFile(file);
+      const { url, publicId } = await uploadSubmissionFile(assignment.id, file);
       const updated = await submitMyAssignment(assignment.id, url, publicId);
       setAssignments((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
       toast.success(t("student:assignments.submitSuccess"));
     } catch (err) {
       if (err instanceof Error && err.message === "FILE_TOO_LARGE") {
         toast.error(t("student:assignments.fileTooLargeError"));
-      } else if (err instanceof Error && err.message === "CLOUDINARY_NOT_CONFIGURED") {
-        toast.error(t("student:assignments.uploadNotConfiguredError"));
       } else {
         toast.error(t("student:assignments.submitError"));
       }
@@ -208,10 +207,25 @@ function StudentAssignmentsPage() {
                                 {a.dueDate && ` · ${t("student:assignments.dueDate", { date: formatDate(a.dueDate) })}`}
                               </p>
                             </div>
-                            <Badge variant={STATUS_VARIANT[a.status]}>{t(`student:assignments.status.${a.status}`)}</Badge>
+                            <Badge variant={STATUS_VARIANT[a.status]}>
+                              {t(`student:assignments.status.${a.status}`)}
+                              {a.score != null && ` · ${a.score}/10`}
+                            </Badge>
                           </div>
 
                           {a.content && <p className="mb-3 text-sm whitespace-pre-wrap text-foreground">{a.content}</p>}
+
+                          {a.attachmentUrl && (
+                            <a
+                              href={apiUrl(a.attachmentUrl)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mb-3 flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
+                            >
+                              <Paperclip className="h-4 w-4" />
+                              {t("student:assignments.viewAttachment")}
+                            </a>
+                          )}
 
                           <div className="flex flex-wrap items-center gap-3">
                             {a.fileUrl && (
@@ -250,6 +264,13 @@ function StudentAssignmentsPage() {
                               <span className="text-xs text-muted-foreground">{t("student:assignments.lockedPastDue")}</span>
                             )}
                           </div>
+
+                          {a.note && (
+                            <p className="mt-3 rounded-lg border border-dashed border-border bg-muted/40 px-3 py-2 text-sm text-foreground">
+                              <span className="font-semibold">{t("student:assignments.teacherNoteLabel")}: </span>
+                              {a.note}
+                            </p>
+                          )}
                         </div>
                       </li>
                     );
@@ -377,7 +398,7 @@ function StudentAssignmentsPage() {
           </DialogHeader>
           {previewAssignment?.fileUrl && (
             <img
-              src={previewAssignment.fileUrl}
+              src={apiUrl(previewAssignment.fileUrl)}
               alt={t("student:assignments.viewSubmission")}
               className="h-auto w-full rounded-lg"
             />

@@ -36,7 +36,7 @@ function BankSettingsSection() {
   useEffect(() => {
     fetchBankSettings()
       .then((settings) => {
-        setBankId(settings.bankId ?? "MB");
+        setBankId(settings.bankId ?? "");
         setAccountNumber(settings.accountNumber ?? "");
         setAccountName(settings.accountName ?? "");
       })

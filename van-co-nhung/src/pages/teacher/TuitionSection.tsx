@@ -79,6 +79,7 @@ function TuitionSection() {
 
   const [rows, setRows] = useState<StudentTuitionRow[]>([]);
   const [feePerSession, setFeePerSession] = useState<number | null>(null);
+  const [classFund, setClassFund] = useState<number | null>(null);
   const [summary, setSummary] = useState<TuitionSummary | null>(null);
   const [finalized, setFinalized] = useState(false);
   const [isFinalizing, setIsFinalizing] = useState(false);
@@ -119,6 +120,7 @@ function TuitionSection() {
         if (cancelled) return;
         setRows(res.students);
         setFeePerSession(res.feePerSession);
+        setClassFund(res.classFund);
         setSummary(res.summary);
         setFinalized(res.finalized);
         setLoadedKey(key);
@@ -145,6 +147,7 @@ function TuitionSection() {
     try {
       const updated = await updateTuition(Number(selectedClassId), row.studentId, year, month, {
         amount: row.amount,
+        classFund: row.classFund,
         status: row.status,
         note: row.note,
       });
@@ -206,6 +209,7 @@ function TuitionSection() {
     try {
       const updated = await updateTuition(Number(selectedClassId), rejectingRow.studentId, year, month, {
         amount: rejectingRow.amount,
+        classFund: rejectingRow.classFund,
         status: "UNPAID",
         note: rejectReason.trim(),
       });
@@ -283,6 +287,12 @@ function TuitionSection() {
             <span className="font-semibold text-foreground">{t("teacher:tuition.presentWord")}</span> /{" "}
             <span className="font-semibold text-foreground">{t("teacher:tuition.lateWord")}</span>{" "}
             {t("teacher:tuition.feeInfoAfter")}
+            {classFund != null && (
+              <>
+                {" "}
+                {t("teacher:tuition.classFundInfo", { amount: formatCurrency(classFund) })}
+              </>
+            )}
           </p>
 
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-3">
@@ -349,6 +359,8 @@ function TuitionSection() {
                   <TableHead>{t("teacher:tuition.table.fullName")}</TableHead>
                   <TableHead className="text-center">{t("teacher:tuition.table.sessionCount")}</TableHead>
                   <TableHead className="w-[160px]">{t("teacher:tuition.table.amount")}</TableHead>
+                  <TableHead className="w-[160px]">{t("teacher:tuition.table.classFund")}</TableHead>
+                  <TableHead className="w-[140px]">{t("teacher:tuition.table.totalAmount")}</TableHead>
                   <TableHead className="text-center">{t("teacher:tuition.table.status")}</TableHead>
                   <TableHead>{t("teacher:tuition.table.time")}</TableHead>
                   <TableHead>{t("teacher:tuition.table.note")}</TableHead>
@@ -362,10 +374,21 @@ function TuitionSection() {
                     <TableCell>
                       <CurrencyInput
                         value={row.amount}
-                        disabled={savingId === row.studentId || isClassInactive}
+                        disabled={savingId === row.studentId || isClassInactive || finalized}
                         onChange={(v) => updateLocalRow(row.studentId, { amount: v ?? 0 })}
                         onBlur={() => saveRow(row)}
                       />
+                    </TableCell>
+                    <TableCell>
+                      <CurrencyInput
+                        value={row.classFund}
+                        disabled={savingId === row.studentId || isClassInactive || finalized}
+                        onChange={(v) => updateLocalRow(row.studentId, { classFund: v ?? 0 })}
+                        onBlur={() => saveRow(row)}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium text-foreground">
+                      {formatCurrency(row.amount + row.classFund)}
                     </TableCell>
                     <TableCell className="text-center">
                       {row.status === "PENDING" ? (
@@ -445,7 +468,7 @@ function TuitionSection() {
             <p className="text-sm text-muted-foreground">
               {t("teacher:tuition.rejectDialog.before")}{" "}
               <span className="font-semibold text-foreground">{rejectingRow.fullName}</span>{" "}
-              {t("teacher:tuition.rejectDialog.middle")} {formatCurrency(rejectingRow.amount)}.{" "}
+              {t("teacher:tuition.rejectDialog.middle")} {formatCurrency(rejectingRow.totalAmount)}.{" "}
               {t("teacher:tuition.rejectDialog.after")}
             </p>
             <div className="flex flex-col gap-1.5">
@@ -486,7 +509,7 @@ function TuitionSection() {
       description={
         markPaidRow &&
         t("teacher:tuition.markPaidConfirm", {
-          amount: formatCurrency(markPaidRow.amount),
+          amount: formatCurrency(markPaidRow.totalAmount),
           name: markPaidRow.fullName,
         })
       }

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { GraduationCap, Pencil, Save, UserRound, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import RequiredMark from "@/components/RequiredMark";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,13 +26,15 @@ interface FieldProps {
   disabled: boolean;
   placeholder?: string;
   type?: string;
+  required?: boolean;
 }
 
-function Field({ id, label, value, onChange, disabled, placeholder, type }: FieldProps) {
+function Field({ id, label, value, onChange, disabled, placeholder, type, required }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <Label htmlFor={id} className="text-muted-foreground">
         {label}
+        {required && <RequiredMark />}
       </Label>
       <Input
         id={id}
@@ -130,6 +133,8 @@ function ProfilePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isStudent = role === "STUDENT";
+
   function setField<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     setValues((prev) => (prev ? { ...prev, [key]: value } : prev));
   }
@@ -144,6 +149,12 @@ function ProfilePage() {
     if (!values) return;
     if (!values.fullName.trim()) {
       toast.error(t("profile:fullNameRequired"));
+      return;
+    }
+    // A student's email is their only "forgot password" delivery channel, so the
+    // backend rejects a blank one — mirror that here instead of waiting for the 400.
+    if (isStudent && !values.email.trim()) {
+      toast.error(t("profile:emailRequired"));
       return;
     }
     if (values.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
@@ -175,8 +186,6 @@ function ProfilePage() {
       setIsSubmitting(false);
     }
   }
-
-  const isStudent = role === "STUDENT";
 
   return (
     <>
@@ -255,6 +264,7 @@ function ProfilePage() {
                   id="email"
                   label={t("profile:fields.email")}
                   type="email"
+                  required={isStudent}
                   value={values.email}
                   onChange={(v) => setField("email", v)}
                   disabled={!isEditing || isSubmitting}

@@ -9,6 +9,7 @@ export interface Student {
   id: number;
   username: string;
   fullName: string;
+  email: string | null;
   grade: string | null;
   schoolName: string | null;
   parentName: string | null;
@@ -16,12 +17,14 @@ export interface Student {
   active: boolean;
   createdAt: string | null;
   classes: StudentClassRef[];
+  averageScore: number | null;
 }
 
 export interface CreateStudentInput {
   username: string;
   password: string;
   fullName: string;
+  email: string;
   grade: string;
   schoolName: string;
   parentName: string;
@@ -31,6 +34,7 @@ export interface CreateStudentInput {
 
 export interface UpdateStudentInput {
   fullName: string;
+  email: string;
   grade: string;
   schoolName: string;
   parentName: string;
@@ -41,7 +45,6 @@ export interface FetchStudentsParams {
   search?: string;
   status?: "all" | "active" | "inactive";
   classId?: number | null;
-  assignableToClassId?: number | null;
   sortBy?: "fullName" | "grade" | "username" | "active" | "createdAt";
   sortDir?: "asc" | "desc";
 }
@@ -51,7 +54,6 @@ export async function fetchStudents(params: FetchStudentsParams = {}): Promise<S
   if (params.search) qs.set("search", params.search);
   if (params.status && params.status !== "all") qs.set("status", params.status);
   if (params.classId != null) qs.set("classId", String(params.classId));
-  if (params.assignableToClassId != null) qs.set("assignableToClassId", String(params.assignableToClassId));
   if (params.sortBy) qs.set("sortBy", params.sortBy);
   if (params.sortDir) qs.set("sortDir", params.sortDir);
   const query = qs.toString();
@@ -79,6 +81,29 @@ export async function updateStudent(id: number, input: UpdateStudentInput): Prom
     body: JSON.stringify(input),
   });
   if (!res.ok) throw new Error("UPDATE_FAILED");
+  return res.json();
+}
+
+export interface ResetPasswordResult {
+  id: number;
+  username: string;
+  fullName: string;
+  /** Plain text, returned exactly once — the server only stores its hash. */
+  newPassword: string;
+}
+
+/**
+ * Issues a new random password for a student. Keyed by username, not id: the teacher
+ * types in the name a student gave them over the phone.
+ */
+export async function resetStudentPassword(username: string): Promise<ResetPasswordResult> {
+  const res = await apiFetch(apiUrl("/api/users/students/reset-password"), {
+    method: "POST",
+    headers: authHeaders(),
+    body: JSON.stringify({ username }),
+  });
+  if (res.status === 404) throw new Error("STUDENT_NOT_FOUND");
+  if (!res.ok) throw new Error("RESET_FAILED");
   return res.json();
 }
 

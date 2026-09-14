@@ -3,6 +3,7 @@
   "subtitle": "View and update your account information",
   "loadError": "Couldn't load your profile.",
   "fullNameRequired": "Please enter your full name.",
+  "emailRequired": "Please enter an email — it's where a new password is sent if you forget yours.",
   "invalidEmail": "Invalid email address.",
   "updateSuccess": "Profile updated.",
   "updateError": "Couldn't update your profile.",
@@ -39,5 +40,24 @@
     "active": "Active",
     "inactive": "Suspended",
     "joinedAt": "Joined"
+  },
+  "changePassword": {
+    "title": "Change password",
+    "subtitle": "Update your login password",
+    "formTitle": "Change password",
+    "formHint": "The new password must be at least 6 characters.",
+    "fields": {
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password"
+    },
+    "currentPasswordRequired": "Please enter your current password.",
+    "newPasswordTooShort": "New password must be at least 6 characters.",
+    "confirmMismatch": "Password confirmation doesn't match.",
+    "wrongCurrentPassword": "Current password is incorrect.",
+    "success": "Password changed successfully.",
+    "error": "Couldn't change your password. Please try again.",
+    "submit": "Change password",
+    "saving": "Saving..."
   }
 }

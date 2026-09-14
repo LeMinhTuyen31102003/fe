@@ -87,6 +87,17 @@ function TeacherLayout() {
             {t("teacher:nav.tuition")}
           </NavLink>
           <NavLink
+            to="/admin/reset-password"
+            className={({ isActive }) =>
+              cn(
+                "rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+              )
+            }
+          >
+            {t("teacher:nav.resetPassword")}
+          </NavLink>
+          <NavLink
             to="/admin/settings"
             className={({ isActive }) =>
               cn(

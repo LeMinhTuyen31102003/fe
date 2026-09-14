@@ -1,8 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DatePicker from "@/components/DatePicker";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -22,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import {
   fetchMonthlyAttendance,
@@ -58,6 +66,9 @@ function AttendanceSection() {
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [savingIds, setSavingIds] = useState<Set<number>>(new Set());
   const [editingPastKey, setEditingPastKey] = useState<string | null>(null);
+  const [noteDialogStudentId, setNoteDialogStudentId] = useState<number | null>(null);
+  const [noteDraft, setNoteDraft] = useState("");
+  const [isSavingNote, setIsSavingNote] = useState(false);
 
   const currentKey = selectedClassId ? `${selectedClassId}-${selectedDate}` : null;
   const isLoading = currentKey !== null && loadedKey !== currentKey;
@@ -110,14 +121,14 @@ function AttendanceSection() {
   const activeClasses = useMemo(() => classes.filter((c) => c.active), [classes]);
   const inactiveClasses = useMemo(() => classes.filter((c) => !c.active), [classes]);
 
-  function setLocalStatus(studentId: number, status: AttendanceStatus) {
+  function setLocalStatus(studentId: number, status: AttendanceStatus, note: string | null) {
     setData((prev) => {
       if (!prev) return prev;
       return {
         ...prev,
         students: prev.students.map((s) =>
           s.studentId === studentId
-            ? { ...s, entries: { ...s.entries, [selectedDate]: { status, note: null } } }
+            ? { ...s, entries: { ...s.entries, [selectedDate]: { status, note } } }
             : s,
         ),
       };
@@ -128,16 +139,19 @@ function AttendanceSection() {
     if (!isEditable || !selectedClassId) return;
     const student = data?.students.find((s) => s.studentId === studentId);
     const previous = student?.entries[selectedDate]?.status ?? null;
+    // Preserve whatever note this day already had — changing the status alone
+    // must not silently wipe out a "học bù"-style note attached to it.
+    const currentNote = student?.entries[selectedDate]?.note ?? null;
     if (previous === status) return;
 
     setSavingIds((prev) => new Set(prev).add(studentId));
-    setLocalStatus(studentId, status);
+    setLocalStatus(studentId, status, currentNote);
 
     try {
-      await markAttendance(Number(selectedClassId), selectedDate, [{ studentId, status }]);
+      await markAttendance(Number(selectedClassId), selectedDate, [{ studentId, status, note: currentNote }]);
     } catch {
       if (previous) {
-        setLocalStatus(studentId, previous);
+        setLocalStatus(studentId, previous, currentNote);
       }
       toast.error(t("teacher:attendance.saveError"));
     } finally {
@@ -146,6 +160,37 @@ function AttendanceSection() {
         next.delete(studentId);
         return next;
       });
+    }
+  }
+
+  function openNoteDialog(studentId: number) {
+    const currentNote = data?.students.find((s) => s.studentId === studentId)?.entries[selectedDate]?.note ?? "";
+    setNoteDraft(currentNote ?? "");
+    setNoteDialogStudentId(studentId);
+  }
+
+  function cancelNoteDialog() {
+    setNoteDialogStudentId(null);
+  }
+
+  async function confirmNoteDialog() {
+    if (noteDialogStudentId === null || !selectedClassId) return;
+    const student = data?.students.find((s) => s.studentId === noteDialogStudentId);
+    const currentStatus = student?.entries[selectedDate]?.status ?? null;
+    if (!currentStatus) return;
+    const trimmedNote = noteDraft.trim() || null;
+
+    setIsSavingNote(true);
+    try {
+      await markAttendance(Number(selectedClassId), selectedDate, [
+        { studentId: noteDialogStudentId, status: currentStatus, note: trimmedNote },
+      ]);
+      setLocalStatus(noteDialogStudentId, currentStatus, trimmedNote);
+      setNoteDialogStudentId(null);
+    } catch {
+      toast.error(t("teacher:attendance.noteSaveError"));
+    } finally {
+      setIsSavingNote(false);
     }
   }
 
@@ -253,31 +298,47 @@ function AttendanceSection() {
                       {student.parentName ?? "–"}
                     </TableCell>
                     <TableCell>
-                      <RadioGroup
-                        value={status ?? ""}
-                        onValueChange={(v) => handleSelectStatus(student.studentId, v as AttendanceStatus)}
-                        disabled={rowDisabled}
-                        className={cn("flex-nowrap justify-end whitespace-nowrap", isSaving && "opacity-60")}
-                      >
-                        {RADIO_STATUSES.map((s) => {
-                          const meta = getAttendanceStatusMeta(t, s);
-                          const inputId = `att-${student.studentId}-${s}`;
-                          return (
-                            <div key={s} className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
-                              <RadioGroupItem value={s} id={inputId} />
-                              <Label
-                                htmlFor={inputId}
-                                className={cn(
-                                  "cursor-pointer text-sm font-normal",
-                                  rowDisabled && "cursor-not-allowed opacity-60",
-                                )}
-                              >
-                                {meta.label}
-                              </Label>
-                            </div>
-                          );
-                        })}
-                      </RadioGroup>
+                      <div className="flex items-center justify-end gap-2">
+                        <RadioGroup
+                          value={status ?? ""}
+                          onValueChange={(v) => handleSelectStatus(student.studentId, v as AttendanceStatus)}
+                          disabled={rowDisabled}
+                          className={cn("flex-nowrap justify-end whitespace-nowrap", isSaving && "opacity-60")}
+                        >
+                          {RADIO_STATUSES.map((s) => {
+                            const meta = getAttendanceStatusMeta(t, s);
+                            const inputId = `att-${student.studentId}-${s}`;
+                            return (
+                              <div key={s} className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
+                                <RadioGroupItem value={s} id={inputId} />
+                                <Label
+                                  htmlFor={inputId}
+                                  className={cn(
+                                    "cursor-pointer text-sm font-normal",
+                                    rowDisabled && "cursor-not-allowed opacity-60",
+                                  )}
+                                >
+                                  {meta.label}
+                                </Label>
+                              </div>
+                            );
+                          })}
+                        </RadioGroup>
+                        {status && (
+                          <button
+                            type="button"
+                            title={student.entries[selectedDate]?.note ?? t("teacher:attendance.addNoteLabel")}
+                            className={cn(
+                              "shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-cream hover:text-foreground",
+                              student.entries[selectedDate]?.note && "text-brand-dark",
+                            )}
+                            onClick={() => openNoteDialog(student.studentId)}
+                            disabled={rowDisabled}
+                          >
+                            <MessageSquare className="h-4 w-4" fill={student.entries[selectedDate]?.note ? "currentColor" : "none"} />
+                          </button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -286,6 +347,40 @@ function AttendanceSection() {
           </Table>
         </div>
       )}
+
+      <Dialog open={noteDialogStudentId !== null} onOpenChange={(open) => !open && cancelNoteDialog()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {t("teacher:attendance.noteDialogTitle", {
+                name: data?.students.find((s) => s.studentId === noteDialogStudentId)?.fullName ?? "",
+              })}
+            </DialogTitle>
+          </DialogHeader>
+          <Textarea
+            rows={4}
+            value={noteDraft}
+            onChange={(e) => setNoteDraft(e.target.value)}
+            placeholder={t("teacher:attendance.notePlaceholder")}
+            disabled={isSavingNote}
+            autoFocus
+          />
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1"
+              onClick={cancelNoteDialog}
+              disabled={isSavingNote}
+            >
+              {t("common:actions.cancel")}
+            </Button>
+            <Button type="button" className="flex-1" onClick={confirmNoteDialog} disabled={isSavingNote}>
+              {isSavingNote ? t("common:status.saving") : t("common:actions.confirm")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

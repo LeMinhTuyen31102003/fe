@@ -1,12 +1,20 @@
-import { apiUrl, authHeaders } from "./pages/teacher/apiClient";
+import { apiUrl, authHeaders, handleSessionExpired } from "./pages/teacher/apiClient";
 
-export type AppEventScope = "notification" | "assignment";
+export type AppEventScope = "notification" | "assignment" | "tuition";
 
 const EVENT_NAME = "app:event";
 const RECONNECT_DELAY_MS = 3000;
-const ALL_SCOPES: AppEventScope[] = ["notification", "assignment"];
+const ALL_SCOPES: AppEventScope[] = ["notification", "assignment", "tuition"];
 
 let abortController: AbortController | null = null;
+
+/** The server rejected the token — retrying can never fix that. */
+class StreamUnauthorizedError extends Error {
+  constructor() {
+    super("STREAM_UNAUTHORIZED");
+    this.name = "StreamUnauthorizedError";
+  }
+}
 
 function dispatch(scope: AppEventScope) {
   window.dispatchEvent(new CustomEvent<{ scope: AppEventScope }>(EVENT_NAME, { detail: { scope } }));
@@ -17,6 +25,9 @@ async function readStream(signal: AbortSignal): Promise<void> {
     headers: { ...authHeaders(), Accept: "text/event-stream" },
     signal,
   });
+  if (res.status === 401 || res.status === 403) {
+    throw new StreamUnauthorizedError();
+  }
   if (!res.ok || !res.body) {
     throw new Error("STREAM_FAILED");
   }
@@ -58,8 +69,19 @@ async function connectLoop(signal: AbortSignal): Promise<void> {
   while (!signal.aborted) {
     try {
       await readStream(signal);
-    } catch {
-      // connection dropped or failed — fall through to retry below
+    } catch (err) {
+      // A dead token is the one failure retrying can't recover from: without this
+      // the loop would reconnect every few seconds forever, on every page —
+      // including public ones like /login — since the loop outlives the component
+      // that started it. Route it to the same place `apiFetch` sends an expired
+      // session (clear it, toast, back to login) and stop; `handleSessionExpired`
+      // fires `auth-changed`, whose listener below aborts this loop.
+      if (err instanceof StreamUnauthorizedError) {
+        handleSessionExpired();
+        disconnectEventStream();
+        return;
+      }
+      // anything else (server restart, network blip) — fall through to retry below
     }
     if (signal.aborted) break;
     await new Promise((resolve) => setTimeout(resolve, RECONNECT_DELAY_MS));

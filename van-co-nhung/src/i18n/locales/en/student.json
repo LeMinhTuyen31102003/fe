@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "schedule": "Schedule",
+    "tuition": "Tuition",
     "assignments": "Assignments"
   },
   "days": {
@@ -15,10 +16,9 @@
   },
   "home": {
     "title": "My Learning",
-    "subtitle": "Attendance and tuition by month",
+    "subtitle": "Attendance by month",
     "emptyState": "You haven't been assigned to any class yet.",
     "attendanceSection": "Attendance",
-    "tuitionSection": "Tuition",
     "attendanceCard": {
       "sessionsLearned": "{{count}} sessions attended",
       "noSessions": "No sessions have been marked yet this month."
@@ -34,6 +34,8 @@
       "feePerSession": "Rate",
       "feePerSessionValue": "{{amount}}/session",
       "amount": "Tuition",
+      "classFund": "Class fund",
+      "totalAmount": "Total",
       "paidNote": "Thanks for paying this month's tuition.",
       "paidNoteWithDate": "Thanks for paying this month's tuition ({{date}}).",
       "pendingNote": "Payment confirmation sent at {{date}}. Waiting for your teacher to review it.",
@@ -52,6 +54,13 @@
     },
     "loadError": "Couldn't load your learning data."
   },
+  "tuitionPage": {
+    "title": "Tuition",
+    "subtitle": "See tuition by month and confirm payment",
+    "emptyState": "No finalized tuition months yet.",
+    "loadError": "Couldn't load tuition history.",
+    "monthLabel": "Month {{month}}/{{year}}"
+  },
   "schedule": {
     "title": "Schedule",
     "subtitle": "Timetable and attendance status by month",
@@ -59,6 +68,7 @@
     "mobileHint": "Swipe sideways to see the full timetable.",
     "weekdayHeaders": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     "notMarked": "Not marked",
+    "noteLabel": "Teacher's note",
     "updatingAttendance": "Updating attendance...",
     "loadScheduleError": "Couldn't load your schedule.",
     "loadAttendanceError": "Couldn't load attendance."
@@ -81,12 +91,13 @@
     "submitError": "Couldn't submit the assignment. Please try again.",
     "submitSuccess": "Submitted successfully.",
     "fileTooLargeError": "The photo is too large (10MB max). Please choose another one.",
-    "uploadNotConfiguredError": "Submitting isn't set up yet. Please contact your teacher.",
     "dueDate": "Due: {{date}}",
     "submitButton": "Take/choose a photo to submit",
     "resubmitButton": "Resubmit",
     "uploading": "Uploading...",
     "viewSubmission": "View submission",
+    "viewAttachment": "View teacher's attachment",
+    "teacherNoteLabel": "Teacher's note",
     "lockedPastDue": "The due date has passed.",
     "status": {
       "PENDING": "Not submitted",

@@ -1,4 +1,4 @@
-import { LogOut, UserRound } from "lucide-react";
+import { KeyRound, LogOut, UserRound } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -16,6 +16,11 @@ const ROLE_PROFILE_PATH: Record<string, string> = {
   STUDENT: "/student/profile",
 };
 
+const ROLE_CHANGE_PASSWORD_PATH: Record<string, string> = {
+  TEACHER: "/admin/change-password",
+  STUDENT: "/student/change-password",
+};
+
 interface UserMenuProps {
   fullName: string | null;
   userName: string | null;
@@ -27,6 +32,7 @@ function UserMenu({ fullName, userName, role, onLogout }: UserMenuProps) {
   const { t } = useTranslation("common");
   const displayName = fullName || userName || t("genericUser");
   const profilePath = (role && ROLE_PROFILE_PATH[role]) || "/";
+  const changePasswordPath = (role && ROLE_CHANGE_PASSWORD_PATH[role]) || "/";
   const roleLabel = role ? t(`role.${role}`, { defaultValue: role }) : "";
 
   return (
@@ -46,6 +52,12 @@ function UserMenu({ fullName, userName, role, onLogout }: UserMenuProps) {
           <Link to={profilePath} className="cursor-pointer">
             <UserRound className="h-4 w-4" />
             {t("header.profileInfo")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to={changePasswordPath} className="cursor-pointer">
+            <KeyRound className="h-4 w-4" />
+            {t("header.changePassword")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

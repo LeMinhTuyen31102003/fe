@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "../../hooks/useAuth";
 import { onAppEvent } from "@/eventStream";
 import { fetchMyPendingAssignmentCount } from "./myAssignmentsApi";
+import { fetchMyUnpaidTuitionCount } from "./myTuitionApi";
 
 function StudentLayout() {
   const { isLoggedIn, userName, fullName, role, logout } = useAuth();
   const { t } = useTranslation(["student", "common"]);
   useScopedDarkMode();
   const [pendingAssignmentCount, setPendingAssignmentCount] = useState(0);
+  const [unpaidTuitionCount, setUnpaidTuitionCount] = useState(0);
 
   useEffect(() => {
     if (!isLoggedIn || role !== "STUDENT") return;
@@ -29,6 +31,25 @@ function StudentLayout() {
     }
     const unsubscribe = onAppEvent((scope) => {
       if (scope === "assignment") poll();
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [isLoggedIn, role]);
+
+  useEffect(() => {
+    if (!isLoggedIn || role !== "STUDENT") return;
+    let cancelled = false;
+    function poll() {
+      fetchMyUnpaidTuitionCount()
+        .then((count) => {
+          if (!cancelled) setUnpaidTuitionCount(count);
+        })
+        .catch(() => {});
+    }
+    const unsubscribe = onAppEvent((scope) => {
+      if (scope === "tuition") poll();
     });
     return () => {
       cancelled = true;
@@ -75,6 +96,22 @@ function StudentLayout() {
             }
           >
             {t("student:nav.schedule")}
+          </NavLink>
+          <NavLink
+            to="/student/tuition"
+            className={({ isActive }) =>
+              cn(
+                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+              )
+            }
+          >
+            <span>{t("student:nav.tuition")}</span>
+            {unpaidTuitionCount > 0 && (
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-[10px] font-semibold text-amber-800">
+                {unpaidTuitionCount > 9 ? "9+" : unpaidTuitionCount}
+              </span>
+            )}
           </NavLink>
           <NavLink
             to="/student/assignments"

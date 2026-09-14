@@ -1,6 +1,10 @@
 import { apiFetch, apiUrl, authHeaders } from "./pages/teacher/apiClient";
 
-export type NotificationType = "TUITION_PAYMENT_REQUESTED" | "ASSIGNMENT_CREATED" | "ASSIGNMENT_FULLY_SUBMITTED";
+export type NotificationType =
+  | "TUITION_PAYMENT_REQUESTED"
+  | "TUITION_FINALIZED"
+  | "ASSIGNMENT_CREATED"
+  | "ASSIGNMENT_FULLY_SUBMITTED";
 
 export interface AppNotification {
   id: number;

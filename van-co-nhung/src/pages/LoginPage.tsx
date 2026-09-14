@@ -120,6 +120,12 @@ function LoginPage() {
             )}
           </div>
 
+          <div className={styles.forgotRow}>
+            <Link to="/forgot-password" className={styles.forgotLink}>
+              {t('forgot.link')}
+            </Link>
+          </div>
+
           <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
             {isSubmitting ? t('submitting') : t('submit')}
           </button>
