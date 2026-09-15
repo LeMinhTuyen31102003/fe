@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Paperclip } from "lucide-react";
+import { Check, ClipboardCheck, Paperclip, Pencil, Trash2, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -17,6 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   deleteAssignment,
   fetchAssignmentDetail,
@@ -59,9 +60,9 @@ function sanitizeScoreInput(raw: string): string {
   return decPart !== undefined ? `${trimmedInt}.${decPart.slice(0, 2)}` : trimmedInt;
 }
 
-function formatDate(iso: string) {
+function formatDueDate(iso: string, time: string | null) {
   const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  return time ? `${d}/${m}/${y} ${time.slice(0, 5)}` : `${d}/${m}/${y}`;
 }
 
 function AssignmentDetailDialog({
@@ -245,38 +246,56 @@ function AssignmentDetailDialog({
                 {detail.content && <p className="text-sm whitespace-pre-wrap text-foreground">{detail.content}</p>}
                 {detail.dueDate && (
                   <p className="text-xs text-muted-foreground">
-                    {t("teacher:assignments.detail.dueDate", { date: formatDate(detail.dueDate) })}
+                    {t("teacher:assignments.detail.dueDate", { date: formatDueDate(detail.dueDate, detail.dueTime) })}
                   </p>
                 )}
-                {detail.attachmentUrl && (
-                  <a
-                    href={apiUrl(detail.attachmentUrl)}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
-                  >
-                    <Paperclip className="h-4 w-4" />
-                    {t("teacher:assignments.detail.viewAttachment")}
-                  </a>
+                {detail.attachments.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    {detail.attachments.map((att, index) => (
+                      <a
+                        key={att.id ?? att.fileUrl}
+                        href={apiUrl(att.fileUrl)}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
+                      >
+                        <Paperclip className="h-4 w-4" />
+                        {t("teacher:assignments.detail.viewAttachment")}
+                        {detail.attachments.length > 1 ? ` ${index + 1}` : ""}
+                      </a>
+                    ))}
+                  </div>
                 )}
                 <div className="flex gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => assignment && onEdit(assignment)}
-                  >
-                    {t("common:actions.edit")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="text-destructive"
-                    onClick={() => setIsDeleteOpen(true)}
-                  >
-                    {t("common:actions.delete")}
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => assignment && onEdit(assignment)}
+                      >
+                        <Pencil />
+                        {t("common:actions.edit")}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t("teacher:assignments.form.editTitle")}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive"
+                        onClick={() => setIsDeleteOpen(true)}
+                      >
+                        <Trash2 />
+                        {t("common:actions.delete")}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{t("teacher:assignments.deleteDialog.title")}</TooltipContent>
+                  </Tooltip>
                 </div>
               </div>
 
@@ -320,16 +339,22 @@ function AssignmentDetailDialog({
                           {t(`teacher:assignments.status.${row.status}`)}
                           {row.score != null && ` · ${row.score}/10`}
                         </Badge>
-                        <Button
-                          type="button"
-                          variant={row.score != null ? "secondary" : "outline"}
-                          size="sm"
-                          onClick={() => openGradingDialog(row.studentId)}
-                        >
-                          {row.score != null
-                            ? t("teacher:assignments.detail.editGradeButton")
-                            : t("teacher:assignments.detail.gradeButton")}
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              variant={row.score != null ? "secondary" : "outline"}
+                              size="sm"
+                              onClick={() => openGradingDialog(row.studentId)}
+                            >
+                              <ClipboardCheck />
+                              {row.score != null
+                                ? t("teacher:assignments.detail.editGradeButton")
+                                : t("teacher:assignments.detail.gradeButton")}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>{t("teacher:assignments.detail.gradeTooltip")}</TooltipContent>
+                        </Tooltip>
                       </div>
                     </li>
                   ))}
@@ -416,6 +441,7 @@ function AssignmentDetailDialog({
               onClick={cancelGradingDialog}
               disabled={savingStudentId === gradingDialogStudentId}
             >
+              <X />
               {t("common:actions.cancel")}
             </Button>
             <Button
@@ -427,6 +453,7 @@ function AssignmentDetailDialog({
                 (scoreDrafts[gradingDialogStudentId ?? -1] ?? "").trim() === ""
               }
             >
+              <Check />
               {savingStudentId === gradingDialogStudentId ? t("common:status.saving") : t("common:actions.confirm")}
             </Button>
           </div>

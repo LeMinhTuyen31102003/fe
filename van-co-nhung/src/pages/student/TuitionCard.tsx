@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import type { TFunction } from "i18next";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -219,6 +219,7 @@ function TuitionCard({
                     disabled={isConfirming}
                     className="w-full max-w-[260px]"
                   >
+                    <Check />
                     {isConfirming ? t("common:status.sending") : t("student:home.tuitionCard.confirmButton")}
                   </Button>
                 </div>

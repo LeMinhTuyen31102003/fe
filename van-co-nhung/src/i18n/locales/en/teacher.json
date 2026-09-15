@@ -98,7 +98,7 @@
     "searchPlaceholder": "Search by name or username...",
     "statusFilterAll": "All statuses",
     "classFilterAll": "All classes",
-    "add": "+ Add student",
+    "add": "Add student",
     "loadError": "Couldn't load the student list.",
     "empty": "No students yet.",
     "noResults": "No matching students found.",
@@ -163,7 +163,7 @@
     "classesTitle": "Classes",
     "noClasses": "Not enrolled in any class yet.",
     "classPlaceholder": "Select class",
-    "addClassLabel": "+ Add to class",
+    "addClassLabel": "Add to class",
     "addClassDialogTitle": "Add student to a class",
     "addClassSearchPlaceholder": "Search by class name...",
     "noClassesToAdd": "No more classes available to add.",
@@ -176,7 +176,7 @@
     "listTitle": "Class list",
     "searchPlaceholder": "Search by class name...",
     "statusFilterAll": "All statuses",
-    "add": "+ Add class",
+    "add": "Add class",
     "loadError": "Couldn't load the class list.",
     "empty": "No classes yet.",
     "noResults": "No matching classes found.",
@@ -246,7 +246,7 @@
   },
   "assignments": {
     "listTitle": "Literature assignments",
-    "add": "+ Assign homework",
+    "add": "Assign homework",
     "loadError": "Couldn't load the assignment list.",
     "empty": "No assignments given yet.",
     "dueDate": "Due: {{date}}",
@@ -270,9 +270,10 @@
         "content": "Content / prompt",
         "contentPlaceholder": "Enter the prompt or instructions for students...",
         "dueDate": "Due date (optional)",
-        "attachment": "Attached file / photo (optional)"
+        "dueTimeHint": "Add a time to pin the exact submission deadline (defaults to end of day).",
+        "attachment": "Attached files / photos (optional, multiple allowed)"
       },
-      "attachmentAdd": "+ Attach file / photo",
+      "attachmentAdd": "Attach file / photo",
       "attachmentUploading": "Uploading...",
       "attachmentView": "View attachment",
       "attachmentUploadError": "Couldn't upload the file. Please try again.",
@@ -299,7 +300,8 @@
       "gradingDialogTitle": "Grade {{name}}'s submission",
       "viewFile": "View submission",
       "openOriginal": "Open original photo in a new tab",
-      "updateStatusError": "Couldn't update the submission status."
+      "updateStatusError": "Couldn't update the submission status.",
+      "gradeTooltip": "Grade and leave feedback on this submission"
     }
   },
   "attendance": {
@@ -336,6 +338,12 @@
     "noClasses": "No classes yet. Create a class first.",
     "loadError": "Couldn't load tuition data.",
     "noStudents": "This class has no students yet.",
+    "tabs": {
+      "unpaid": "Unpaid",
+      "paid": "Paid"
+    },
+    "noUnpaidStudents": "No unpaid students.",
+    "noPaidStudents": "No one has paid yet this month.",
     "feeInfoBefore": "Fee per session:",
     "feeNotSet": "not set",
     "feeInfoMiddle": "· Each student's tuition is calculated automatically from their",

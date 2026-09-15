@@ -59,7 +59,13 @@
     "subtitle": "Xem học phí từng tháng và xác nhận thanh toán",
     "emptyState": "Chưa có tháng học phí nào được chốt.",
     "loadError": "Không thể tải lịch sử học phí.",
-    "monthLabel": "Tháng {{month}}/{{year}}"
+    "monthLabel": "Tháng {{month}}/{{year}}",
+    "tabs": {
+      "unpaid": "Chưa thanh toán",
+      "paid": "Đã thanh toán"
+    },
+    "noUnpaid": "Bạn không có khoản học phí nào chưa thanh toán.",
+    "noPaid": "Chưa có khoản học phí nào đã thanh toán."
   },
   "schedule": {
     "title": "Lịch học",

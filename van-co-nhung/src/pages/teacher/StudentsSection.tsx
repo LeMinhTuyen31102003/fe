@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Plus, Power, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -225,6 +227,7 @@ function StudentsSection() {
             </SelectContent>
           </Select>
           <Button type="button" onClick={() => setIsModalOpen(true)}>
+            <Plus />
             {t("teacher:students.add")}
           </Button>
         </div>
@@ -275,20 +278,34 @@ function StudentsSection() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-4">
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
-                        onClick={(e) => handleToggleActive(student, e)}
-                      >
-                        {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={(e) => handleRemove(student, e)}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
+                            onClick={(e) => handleToggleActive(student, e)}
+                          >
+                            <Power className="size-4" />
+                            {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                            onClick={(e) => handleRemove(student, e)}
+                          >
+                            <Trash2 className="size-4" />
+                            {t("common:actions.delete")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("teacher:students.deleteDialog.title")}</TooltipContent>
+                      </Tooltip>
                     </div>
                   </TableCell>
                 </TableRow>

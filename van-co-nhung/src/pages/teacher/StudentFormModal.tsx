@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { ChevronDown, UserPlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import RequiredMark from "@/components/RequiredMark";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { addStudentToClass, ClassConflictError, type ClassSummary } from "./classesApi";
 import ClassPickerDialog from "./ClassPickerDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
@@ -263,7 +265,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex h-8 flex-1 items-center rounded-md border border-input bg-transparent px-2.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-8 flex-1 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-2.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => setIsClassPickerOpen(true)}
                 disabled={isSubmitting}
               >
@@ -272,22 +274,30 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
                 ) : (
                   <span className="text-muted-foreground">{t("teacher:studentForm.classPlaceholder")}</span>
                 )}
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
               </button>
               {selectedClass && (
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                  onClick={() => setSelectedClass(null)}
-                  disabled={isSubmitting}
-                >
-                  {t("common:actions.clear")}
-                </button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                      onClick={() => setSelectedClass(null)}
+                      disabled={isSubmitting}
+                    >
+                      <X className="size-4" />
+                      {t("common:actions.clear")}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("teacher:studentForm.classPlaceholder")}</TooltipContent>
+                </Tooltip>
               )}
             </div>
             <p className="text-xs text-muted-foreground">{t("teacher:studentForm.oneClassHint")}</p>
           </div>
 
           <Button type="submit" disabled={isSubmitting} className="w-full">
+            <UserPlus />
             {isSubmitting ? t("teacher:studentForm.submitting") : t("teacher:studentForm.submit")}
           </Button>
         </form>

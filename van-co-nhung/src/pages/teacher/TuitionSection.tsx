@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Ban, Check, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -30,6 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import MonthYearPicker from "@/components/MonthYearPicker";
 import { fetchClasses, type ClassSummary } from "./classesApi";
@@ -90,6 +93,7 @@ function TuitionSection() {
   const [rejectReason, setRejectReason] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
   const [markPaidRow, setMarkPaidRow] = useState<StudentTuitionRow | null>(null);
+  const [statusTab, setStatusTab] = useState<"unpaid" | "paid">("unpaid");
 
   const currentKey = selectedClassId ? `${selectedClassId}-${year}-${month}` : null;
   const isLoading = currentKey !== null && loadedKey !== currentKey;
@@ -114,6 +118,7 @@ function TuitionSection() {
     if (!selectedClassId) return;
     let cancelled = false;
     const key = `${selectedClassId}-${year}-${month}`;
+    setStatusTab("unpaid");
 
     fetchMonthlyTuition(Number(selectedClassId), year, month)
       .then((res) => {
@@ -191,6 +196,8 @@ function TuitionSection() {
 
   const activeClasses = useMemo(() => classes.filter((c) => c.active), [classes]);
   const inactiveClasses = useMemo(() => classes.filter((c) => !c.active), [classes]);
+  const unpaidRows = useMemo(() => rows.filter((r) => r.status !== "PAID"), [rows]);
+  const paidRows = useMemo(() => rows.filter((r) => r.status === "PAID"), [rows]);
 
   function openRejectDialog(row: StudentTuitionRow) {
     if (isClassInactive) return;
@@ -222,6 +229,130 @@ function TuitionSection() {
     } finally {
       setIsRejecting(false);
     }
+  }
+
+  function renderTable(rowsToRender: StudentTuitionRow[]) {
+    return (
+      <div className="overflow-x-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("teacher:tuition.table.fullName")}</TableHead>
+              <TableHead className="text-center">{t("teacher:tuition.table.sessionCount")}</TableHead>
+              <TableHead className="w-[160px]">{t("teacher:tuition.table.amount")}</TableHead>
+              <TableHead className="w-[160px]">{t("teacher:tuition.table.classFund")}</TableHead>
+              <TableHead className="w-[140px]">{t("teacher:tuition.table.totalAmount")}</TableHead>
+              <TableHead className="text-center">{t("teacher:tuition.table.status")}</TableHead>
+              <TableHead>{t("teacher:tuition.table.time")}</TableHead>
+              <TableHead>{t("teacher:tuition.table.note")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rowsToRender.map((row) => (
+              <TableRow key={row.studentId}>
+                <TableCell className="font-medium">{row.fullName}</TableCell>
+                <TableCell className="text-center text-muted-foreground">{row.sessionCount}</TableCell>
+                <TableCell>
+                  <CurrencyInput
+                    value={row.amount}
+                    disabled={savingId === row.studentId || isClassInactive || finalized}
+                    onChange={(v) => updateLocalRow(row.studentId, { amount: v ?? 0 })}
+                    onBlur={() => saveRow(row)}
+                  />
+                </TableCell>
+                <TableCell>
+                  <CurrencyInput
+                    value={row.classFund}
+                    disabled={savingId === row.studentId || isClassInactive || finalized}
+                    onChange={(v) => updateLocalRow(row.studentId, { classFund: v ?? 0 })}
+                    onBlur={() => saveRow(row)}
+                  />
+                </TableCell>
+                <TableCell className="font-medium text-foreground">
+                  {formatCurrency(row.amount + row.classFund)}
+                </TableCell>
+                <TableCell className="text-center">
+                  {row.status === "PENDING" ? (
+                    <div className="flex flex-col items-center gap-1.5">
+                      <Badge variant="outline" className={PENDING_BADGE_CLASS}>
+                        {STATUS_LABEL.PENDING}
+                      </Badge>
+                      <div className="flex gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              disabled={savingId === row.studentId || isClassInactive}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
+                              onClick={() => handleMarkPaid(row)}
+                            >
+                              <Check className="size-3.5" />
+                              {t("common:actions.confirm")}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{t("teacher:tuition.markPaidDialog.title")}</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              disabled={savingId === row.studentId || isClassInactive}
+                              className="inline-flex items-center gap-1 text-xs font-semibold text-destructive underline-offset-4 hover:underline"
+                              onClick={() => openRejectDialog(row)}
+                            >
+                              <Ban className="size-3.5" />
+                              {t("teacher:tuition.reject")}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>{t("teacher:tuition.rejectDialog.title")}</TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
+                  ) : row.status === "PAID" ? (
+                    <Badge variant="default" title={t("teacher:tuition.paidBadgeTitle")}>
+                      {STATUS_LABEL.PAID}
+                    </Badge>
+                  ) : (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          disabled={savingId === row.studentId || isClassInactive}
+                          onClick={() => handleMarkPaid(row)}
+                        >
+                          <Badge variant="secondary" className="cursor-pointer">
+                            {STATUS_LABEL.UNPAID}
+                          </Badge>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent>{t("teacher:tuition.markPaidDialog.title")}</TooltipContent>
+                    </Tooltip>
+                  )}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {row.status === "PENDING" ? (
+                    <span className="text-xs text-amber-700">
+                      {t("teacher:tuition.requestedAt", { time: formatDate(row.requestedAt, locale) })}
+                    </span>
+                  ) : (
+                    formatDate(row.paidAt, locale)
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={row.note ?? ""}
+                    disabled={savingId === row.studentId || isClassInactive}
+                    placeholder="—"
+                    onChange={(e) => updateLocalRow(row.studentId, { note: e.target.value })}
+                    onBlur={() => saveRow(row)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    );
   }
 
   return (
@@ -308,14 +439,20 @@ function TuitionSection() {
               </span>
             </div>
             {!finalized && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setIsFinalizeDialogOpen(true)}
-                disabled={isClassInactive}
-              >
-                {t("teacher:tuition.finalizeButton")}
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={() => setIsFinalizeDialogOpen(true)}
+                    disabled={isClassInactive}
+                  >
+                    <Lock />
+                    {t("teacher:tuition.finalizeButton")}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t("teacher:tuition.finalizeDialog.description")}</TooltipContent>
+              </Tooltip>
             )}
           </div>
 
@@ -352,108 +489,30 @@ function TuitionSection() {
             </div>
           )}
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("teacher:tuition.table.fullName")}</TableHead>
-                  <TableHead className="text-center">{t("teacher:tuition.table.sessionCount")}</TableHead>
-                  <TableHead className="w-[160px]">{t("teacher:tuition.table.amount")}</TableHead>
-                  <TableHead className="w-[160px]">{t("teacher:tuition.table.classFund")}</TableHead>
-                  <TableHead className="w-[140px]">{t("teacher:tuition.table.totalAmount")}</TableHead>
-                  <TableHead className="text-center">{t("teacher:tuition.table.status")}</TableHead>
-                  <TableHead>{t("teacher:tuition.table.time")}</TableHead>
-                  <TableHead>{t("teacher:tuition.table.note")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.studentId}>
-                    <TableCell className="font-medium">{row.fullName}</TableCell>
-                    <TableCell className="text-center text-muted-foreground">{row.sessionCount}</TableCell>
-                    <TableCell>
-                      <CurrencyInput
-                        value={row.amount}
-                        disabled={savingId === row.studentId || isClassInactive || finalized}
-                        onChange={(v) => updateLocalRow(row.studentId, { amount: v ?? 0 })}
-                        onBlur={() => saveRow(row)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <CurrencyInput
-                        value={row.classFund}
-                        disabled={savingId === row.studentId || isClassInactive || finalized}
-                        onChange={(v) => updateLocalRow(row.studentId, { classFund: v ?? 0 })}
-                        onBlur={() => saveRow(row)}
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium text-foreground">
-                      {formatCurrency(row.amount + row.classFund)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      {row.status === "PENDING" ? (
-                        <div className="flex flex-col items-center gap-1.5">
-                          <Badge variant="outline" className={PENDING_BADGE_CLASS}>
-                            {STATUS_LABEL.PENDING}
-                          </Badge>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              disabled={savingId === row.studentId || isClassInactive}
-                              className="text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
-                              onClick={() => handleMarkPaid(row)}
-                            >
-                              {t("common:actions.confirm")}
-                            </button>
-                            <button
-                              type="button"
-                              disabled={savingId === row.studentId || isClassInactive}
-                              className="text-xs font-semibold text-destructive underline-offset-4 hover:underline"
-                              onClick={() => openRejectDialog(row)}
-                            >
-                              {t("teacher:tuition.reject")}
-                            </button>
-                          </div>
-                        </div>
-                      ) : row.status === "PAID" ? (
-                        <Badge variant="default" title={t("teacher:tuition.paidBadgeTitle")}>
-                          {STATUS_LABEL.PAID}
-                        </Badge>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={savingId === row.studentId || isClassInactive}
-                          onClick={() => handleMarkPaid(row)}
-                        >
-                          <Badge variant="secondary" className="cursor-pointer">
-                            {STATUS_LABEL.UNPAID}
-                          </Badge>
-                        </button>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {row.status === "PENDING" ? (
-                        <span className="text-xs text-amber-700">
-                          {t("teacher:tuition.requestedAt", { time: formatDate(row.requestedAt, locale) })}
-                        </span>
-                      ) : (
-                        formatDate(row.paidAt, locale)
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Input
-                        value={row.note ?? ""}
-                        disabled={savingId === row.studentId || isClassInactive}
-                        placeholder="—"
-                        onChange={(e) => updateLocalRow(row.studentId, { note: e.target.value })}
-                        onBlur={() => saveRow(row)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <Tabs value={statusTab} onValueChange={(v) => setStatusTab(v as "unpaid" | "paid")}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="unpaid">
+                {t("teacher:tuition.tabs.unpaid")} ({unpaidRows.length})
+              </TabsTrigger>
+              <TabsTrigger value="paid">
+                {t("teacher:tuition.tabs.paid")} ({paidRows.length})
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="unpaid">
+              {unpaidRows.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t("teacher:tuition.noUnpaidStudents")}</p>
+              ) : (
+                renderTable(unpaidRows)
+              )}
+            </TabsContent>
+            <TabsContent value="paid">
+              {paidRows.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{t("teacher:tuition.noPaidStudents")}</p>
+              ) : (
+                renderTable(paidRows)
+              )}
+            </TabsContent>
+          </Tabs>
         </>
       )}
     </div>
@@ -493,7 +552,14 @@ function TuitionSection() {
               >
                 {t("common:actions.cancel")}
               </Button>
-              <Button type="button" className="flex-1" onClick={handleSubmitReject} disabled={isRejecting}>
+              <Button
+                type="button"
+                variant="destructive"
+                className="flex-1"
+                onClick={handleSubmitReject}
+                disabled={isRejecting}
+              >
+                <Ban />
                 {isRejecting ? t("common:status.sending") : t("teacher:tuition.reject")}
               </Button>
             </div>

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Pencil, Plus, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import RequiredMark from "@/components/RequiredMark";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { removeStudentFromClass } from "./classesApi";
 import AddClassDialog from "./AddClassDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
@@ -173,9 +175,15 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
               </div>
             </dl>
 
-            <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
-              {t("common:actions.edit")}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
+                  <Pencil />
+                  {t("common:actions.edit")}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("teacher:studentDetail.titleEdit")}</TooltipContent>
+            </Tooltip>
 
             <div className="flex flex-col gap-3 border-t border-border pt-4">
               <h3 className="text-sm font-semibold text-foreground">
@@ -192,14 +200,20 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                       className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
                     >
                       <span className="text-sm font-medium text-foreground">{c.name}</span>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={() => setRemovingClass({ id: c.id, name: c.name })}
-                        disabled={isClassBusy}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                            onClick={() => setRemovingClass({ id: c.id, name: c.name })}
+                            disabled={isClassBusy}
+                          >
+                            <X className="size-4" />
+                            {t("common:actions.delete")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("teacher:studentDetail.removeClassDialog.title")}</TooltipContent>
+                      </Tooltip>
                     </li>
                   ))}
                 </ul>
@@ -211,6 +225,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 onClick={() => setIsAddClassOpen(true)}
                 disabled={isClassBusy}
               >
+                <Plus />
                 {t("teacher:studentDetail.addClassLabel")}
               </Button>
             </div>
@@ -306,9 +321,11 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
+                <X />
                 {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                <Save />
                 {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>

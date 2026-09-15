@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { CalendarClock, CalendarDays, ClipboardCheck, Layers, Users, Wallet } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -127,9 +128,9 @@ function TeacherOverviewPage() {
     classes?.filter((c) => c.active).reduce((sum, c) => sum + c.schedules.length, 0) ?? 0;
 
   const stats = [
-    { label: t("teacher:overview.stats.classes"), value: activeClassCount },
-    { label: t("teacher:overview.stats.students"), value: studentCount },
-    { label: t("teacher:overview.stats.sessionsThisWeek"), value: weeklySessionCount },
+    { label: t("teacher:overview.stats.classes"), value: activeClassCount, icon: Layers },
+    { label: t("teacher:overview.stats.students"), value: studentCount, icon: Users },
+    { label: t("teacher:overview.stats.sessionsThisWeek"), value: weeklySessionCount, icon: CalendarDays },
   ];
 
   return (
@@ -143,14 +144,20 @@ function TeacherOverviewPage() {
       <section className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-xl border border-border bg-background p-5">
-            <div className="mb-2 text-sm text-muted-foreground">{stat.label}</div>
+            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-[#6B4423] text-white">
+              <stat.icon className="h-4.5 w-4.5" />
+            </div>
+            <div className="mb-1 text-sm text-muted-foreground">{stat.label}</div>
             <div className="text-3xl font-bold text-foreground">{stat.value}</div>
           </div>
         ))}
       </section>
 
       <section className="mb-6 rounded-xl border border-border bg-background p-5">
-        <h2 className="mb-4 font-heading text-lg font-semibold text-foreground">
+        <h2 className="mb-4 flex items-center gap-2.5 font-heading text-lg font-semibold text-foreground">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#6B4423] text-white">
+            <CalendarClock className="h-4 w-4" />
+          </span>
           {t("teacher:overview.todaySchedule.title")}
         </h2>
         {isLoading ? (
@@ -182,7 +189,12 @@ function TeacherOverviewPage() {
                             total: session.totalCount,
                           })}
                     </Badge>
-                    <Button size="sm" variant="outline" onClick={() => navigate("/admin/attendance")}>
+                    <Button
+                      size="sm"
+                      className="bg-[#6B4423] text-white hover:bg-[#5A3A1D]"
+                      onClick={() => navigate("/admin/attendance")}
+                    >
+                      <ClipboardCheck />
                       {t("teacher:overview.todaySchedule.markButton")}
                     </Button>
                   </div>
@@ -194,7 +206,10 @@ function TeacherOverviewPage() {
       </section>
 
       <section className="rounded-xl border border-border bg-background p-5">
-        <h2 className="mb-4 font-heading text-lg font-semibold text-foreground">
+        <h2 className="mb-4 flex items-center gap-2.5 font-heading text-lg font-semibold text-foreground">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#6B4423] text-white">
+            <Wallet className="h-4 w-4" />
+          </span>
           {t("teacher:overview.tuition.title")}
         </h2>
         {isLoading ? (

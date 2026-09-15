@@ -134,6 +134,7 @@ function ChangePasswordPage() {
 
           <div className="flex justify-end border-t border-border pt-5">
             <Button type="submit" disabled={isSubmitting} className="w-full gap-2 sm:w-auto sm:px-8">
+              <KeyRound className="h-4 w-4" />
               {isSubmitting ? t("profile:changePassword.saving") : t("profile:changePassword.submit")}
             </Button>
           </div>

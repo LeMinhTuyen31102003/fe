@@ -59,7 +59,13 @@
     "subtitle": "See tuition by month and confirm payment",
     "emptyState": "No finalized tuition months yet.",
     "loadError": "Couldn't load tuition history.",
-    "monthLabel": "Month {{month}}/{{year}}"
+    "monthLabel": "Month {{month}}/{{year}}",
+    "tabs": {
+      "unpaid": "Unpaid",
+      "paid": "Paid"
+    },
+    "noUnpaid": "You have no unpaid tuition.",
+    "noPaid": "No paid tuition yet."
   },
   "schedule": {
     "title": "Schedule",

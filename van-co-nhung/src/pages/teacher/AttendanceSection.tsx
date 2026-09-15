@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { MessageSquare } from "lucide-react";
+import { Check, MessageSquare, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DatePicker from "@/components/DatePicker";
 import {
@@ -245,6 +245,7 @@ function AttendanceSection() {
             size="sm"
             onClick={() => setEditingPastKey((prev) => (prev === currentKey ? null : currentKey))}
           >
+            {isEditingPast ? <Check /> : <Pencil />}
             {isEditingPast ? t("teacher:attendance.doneEditingPast") : t("teacher:attendance.editPast")}
           </Button>
         </div>
@@ -373,9 +374,11 @@ function AttendanceSection() {
               onClick={cancelNoteDialog}
               disabled={isSavingNote}
             >
+              <X />
               {t("common:actions.cancel")}
             </Button>
             <Button type="button" className="flex-1" onClick={confirmNoteDialog} disabled={isSavingNote}>
+              <Check />
               {isSavingNote ? t("common:status.saving") : t("common:actions.confirm")}
             </Button>
           </div>

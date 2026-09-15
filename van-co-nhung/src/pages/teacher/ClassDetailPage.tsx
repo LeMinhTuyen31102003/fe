@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { Crown, Medal } from "lucide-react";
+import { Crown, Medal, Pencil, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   fetchClassDetail,
   removeStudentFromClass,
@@ -290,9 +291,11 @@ function ClassDetailPage() {
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
+                <X />
                 {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                <Save />
                 {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>
@@ -366,9 +369,15 @@ function ClassDetailPage() {
               </div>
             </dl>
 
-            <Button type="button" variant="outline" className="mt-4" onClick={() => setIsEditing(true)}>
-              {t("common:actions.edit")}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="outline" className="mt-4" onClick={() => setIsEditing(true)}>
+                  <Pencil />
+                  {t("common:actions.edit")}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("teacher:classDetail.titleEdit")}</TooltipContent>
+            </Tooltip>
           </>
         )}
           </div>
@@ -402,13 +411,19 @@ function ClassDetailPage() {
                           <p className="text-xs text-muted-foreground">{student.username}</p>
                         </div>
                       </div>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={() => setRemovingStudent({ id: student.id, fullName: student.fullName })}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                            onClick={() => setRemovingStudent({ id: student.id, fullName: student.fullName })}
+                          >
+                            <X className="size-4" />
+                            {t("common:actions.delete")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("teacher:classDetail.removeStudentDialog.title")}</TooltipContent>
+                      </Tooltip>
                     </li>
                     );
                   })}

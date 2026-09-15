@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ChangeEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { CalendarClock, ClipboardList, Mail, Paperclip, Phone } from "lucide-react";
+import { CalendarClock, ClipboardList, Eye, Mail, Paperclip, Phone, Upload } from "lucide-react";
 import PageBanner from "@/components/PageBanner";
 import Pagination from "@/components/Pagination";
 import { Badge } from "@/components/ui/badge";
@@ -19,9 +19,9 @@ import {
 } from "./myAssignmentsApi";
 import { fetchMyClassmates, fetchMyTeacher, type MyClassmates, type TeacherContact } from "./studentApi";
 
-function formatDate(iso: string) {
+function formatDueDate(iso: string, time: string | null) {
   const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  return time ? `${d}/${m}/${y} ${time.slice(0, 5)}` : `${d}/${m}/${y}`;
 }
 
 const STATUS_VARIANT: Record<MyAssignment["status"], "default" | "secondary" | "outline"> = {
@@ -204,7 +204,8 @@ function StudentAssignmentsPage() {
                               <h3 className="font-heading text-base font-bold text-foreground">{a.title}</h3>
                               <p className="text-xs text-muted-foreground">
                                 {a.className}
-                                {a.dueDate && ` · ${t("student:assignments.dueDate", { date: formatDate(a.dueDate) })}`}
+                                {a.dueDate &&
+                                  ` · ${t("student:assignments.dueDate", { date: formatDueDate(a.dueDate, a.dueTime) })}`}
                               </p>
                             </div>
                             <Badge variant={STATUS_VARIANT[a.status]}>
@@ -215,16 +216,22 @@ function StudentAssignmentsPage() {
 
                           {a.content && <p className="mb-3 text-sm whitespace-pre-wrap text-foreground">{a.content}</p>}
 
-                          {a.attachmentUrl && (
-                            <a
-                              href={apiUrl(a.attachmentUrl)}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="mb-3 flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
-                            >
-                              <Paperclip className="h-4 w-4" />
-                              {t("student:assignments.viewAttachment")}
-                            </a>
+                          {a.attachments.length > 0 && (
+                            <div className="mb-3 flex flex-col gap-1.5">
+                              {a.attachments.map((att, index) => (
+                                <a
+                                  key={att.id ?? att.fileUrl}
+                                  href={apiUrl(att.fileUrl)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
+                                >
+                                  <Paperclip className="h-4 w-4" />
+                                  {t("student:assignments.viewAttachment")}
+                                  {a.attachments.length > 1 ? ` ${index + 1}` : ""}
+                                </a>
+                              ))}
+                            </div>
                           )}
 
                           <div className="flex flex-wrap items-center gap-3">
@@ -232,8 +239,9 @@ function StudentAssignmentsPage() {
                               <button
                                 type="button"
                                 onClick={() => setPreviewAssignment(a)}
-                                className="text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
+                                className="inline-flex items-center gap-1 text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
                               >
+                                <Eye className="size-4" />
                                 {t("student:assignments.viewSubmission")}
                               </button>
                             )}
@@ -250,6 +258,7 @@ function StudentAssignmentsPage() {
                                 />
                                 <Button type="button" size="sm" variant={a.fileUrl ? "outline" : "default"} disabled={isUploading} asChild>
                                   <label htmlFor={inputId} className="cursor-pointer">
+                                    <Upload />
                                     {isUploading
                                       ? t("student:assignments.uploading")
                                       : a.fileUrl
@@ -381,7 +390,7 @@ function StudentAssignmentsPage() {
                   <li key={a.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
                     <p className="truncate text-sm font-medium text-foreground">{a.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {a.className} · {formatDate(a.dueDate!)}
+                      {a.className} · {formatDueDate(a.dueDate!, a.dueTime)}
                     </p>
                   </li>
                 ))}

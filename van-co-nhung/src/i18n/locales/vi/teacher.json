@@ -98,7 +98,7 @@
     "searchPlaceholder": "Tìm theo họ tên hoặc tên đăng nhập...",
     "statusFilterAll": "Tất cả trạng thái",
     "classFilterAll": "Tất cả lớp",
-    "add": "+ Thêm học sinh",
+    "add": "Thêm học sinh",
     "loadError": "Không thể tải danh sách học sinh.",
     "empty": "Chưa có học sinh nào.",
     "noResults": "Không tìm thấy học sinh phù hợp.",
@@ -163,7 +163,7 @@
     "classesTitle": "Lớp học",
     "noClasses": "Chưa thuộc lớp học nào.",
     "classPlaceholder": "Chọn lớp",
-    "addClassLabel": "+ Thêm vào lớp",
+    "addClassLabel": "Thêm vào lớp",
     "addClassDialogTitle": "Thêm học sinh vào lớp",
     "addClassSearchPlaceholder": "Tìm theo tên lớp học...",
     "noClassesToAdd": "Không còn lớp nào để thêm.",
@@ -176,7 +176,7 @@
     "listTitle": "Danh sách lớp học",
     "searchPlaceholder": "Tìm theo tên lớp học...",
     "statusFilterAll": "Tất cả trạng thái",
-    "add": "+ Thêm lớp học",
+    "add": "Thêm lớp học",
     "loadError": "Không thể tải danh sách lớp học.",
     "empty": "Chưa có lớp học nào.",
     "noResults": "Không tìm thấy lớp học phù hợp.",
@@ -246,7 +246,7 @@
   },
   "assignments": {
     "listTitle": "Bài tập môn Văn",
-    "add": "+ Giao bài tập",
+    "add": "Giao bài tập",
     "loadError": "Không thể tải danh sách bài tập.",
     "empty": "Chưa có bài tập nào được giao.",
     "dueDate": "Hạn nộp: {{date}}",
@@ -270,9 +270,10 @@
         "content": "Nội dung / đề bài",
         "contentPlaceholder": "Nhập đề bài, yêu cầu cho học sinh...",
         "dueDate": "Hạn nộp (không bắt buộc)",
-        "attachment": "File / hình ảnh đính kèm (không bắt buộc)"
+        "dueTimeHint": "Chọn thêm giờ để cố định chính xác thời điểm hết hạn nộp bài (mặc định là cuối ngày).",
+        "attachment": "File / hình ảnh đính kèm (không bắt buộc, có thể chọn nhiều file)"
       },
-      "attachmentAdd": "+ Đính kèm file / ảnh",
+      "attachmentAdd": "Đính kèm file / ảnh",
       "attachmentUploading": "Đang tải lên...",
       "attachmentView": "Xem file đính kèm",
       "attachmentUploadError": "Không thể tải file lên. Vui lòng thử lại.",
@@ -299,7 +300,8 @@
       "gradingDialogTitle": "Chấm bài cho {{name}}",
       "viewFile": "Xem bài nộp",
       "openOriginal": "Mở ảnh gốc trong tab mới",
-      "updateStatusError": "Không thể cập nhật trạng thái nộp bài."
+      "updateStatusError": "Không thể cập nhật trạng thái nộp bài.",
+      "gradeTooltip": "Chấm điểm và ghi nhận xét cho bài nộp"
     }
   },
   "attendance": {
@@ -336,6 +338,12 @@
     "noClasses": "Chưa có lớp học nào. Hãy tạo lớp học trước.",
     "loadError": "Không thể tải dữ liệu học phí.",
     "noStudents": "Lớp học chưa có học sinh nào.",
+    "tabs": {
+      "unpaid": "Chưa thanh toán",
+      "paid": "Đã thanh toán"
+    },
+    "noUnpaidStudents": "Không có học sinh nào chưa thanh toán.",
+    "noPaidStudents": "Chưa có học sinh nào thanh toán trong tháng này.",
     "feeInfoBefore": "Học phí/buổi:",
     "feeNotSet": "chưa đặt",
     "feeInfoMiddle": "· Học phí mỗi học sinh được tự tính theo số buổi",

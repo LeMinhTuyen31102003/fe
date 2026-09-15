@@ -2,14 +2,21 @@ import { apiFetch, apiUrl, authHeaders } from "./apiClient";
 
 export type AssignmentSubmissionStatus = "PENDING" | "SUBMITTED" | "GRADED";
 
+export interface AssignmentAttachment {
+  id: number | null;
+  fileUrl: string;
+  filePublicId: string;
+}
+
 export interface Assignment {
   id: number;
   classId: number;
   title: string;
   content: string | null;
   dueDate: string | null;
+  dueTime: string | null;
   createdAt: string;
-  attachmentUrl: string | null;
+  attachments: AssignmentAttachment[];
   totalStudents: number;
   submittedCount: number;
   gradedCount: number;
@@ -32,8 +39,9 @@ export interface AssignmentDetail {
   title: string;
   content: string | null;
   dueDate: string | null;
+  dueTime: string | null;
   createdAt: string;
-  attachmentUrl: string | null;
+  attachments: AssignmentAttachment[];
   students: AssignmentStudentRow[];
 }
 
@@ -41,8 +49,8 @@ export interface AssignmentInput {
   title: string;
   content: string;
   dueDate: string | null;
-  attachmentUrl: string | null;
-  attachmentPublicId: string | null;
+  dueTime: string | null;
+  attachments: { fileUrl: string; filePublicId: string }[];
 }
 
 export async function fetchAssignments(classId: number): Promise<Assignment[]> {

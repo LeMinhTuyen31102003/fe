@@ -1,5 +1,5 @@
 import { apiFetch, apiUrl, authHeaders } from "../teacher/apiClient";
-import type { AssignmentSubmissionStatus } from "../teacher/assignmentsApi";
+import type { AssignmentAttachment, AssignmentSubmissionStatus } from "../teacher/assignmentsApi";
 
 export interface MyAssignment {
   id: number;
@@ -8,8 +8,9 @@ export interface MyAssignment {
   title: string;
   content: string | null;
   dueDate: string | null;
+  dueTime: string | null;
   createdAt: string;
-  attachmentUrl: string | null;
+  attachments: AssignmentAttachment[];
   status: AssignmentSubmissionStatus;
   submittedAt: string | null;
   fileUrl: string | null;

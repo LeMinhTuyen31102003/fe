@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/Pagination";
@@ -11,9 +12,9 @@ import { fetchAssignments, type Assignment } from "./assignmentsApi";
 
 const PAGE_SIZE = 10;
 
-function formatDate(iso: string) {
+function formatDueDate(iso: string, time: string | null) {
   const [y, m, d] = iso.split("-");
-  return `${d}/${m}/${y}`;
+  return time ? `${d}/${m}/${y} ${time.slice(0, 5)}` : `${d}/${m}/${y}`;
 }
 
 interface ClassAssignmentsSectionProps {
@@ -92,6 +93,7 @@ function ClassAssignmentsSection({ classId }: ClassAssignmentsSectionProps) {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">{t("teacher:assignments.listTitle")}</h2>
         <Button type="button" onClick={openCreate}>
+          <Plus />
           {t("teacher:assignments.add")}
         </Button>
       </div>
@@ -114,7 +116,7 @@ function ClassAssignmentsSection({ classId }: ClassAssignmentsSectionProps) {
                     <p className="text-sm font-medium text-foreground">{a.title}</p>
                     {a.dueDate && (
                       <p className="text-xs text-muted-foreground">
-                        {t("teacher:assignments.dueDate", { date: formatDate(a.dueDate) })}
+                        {t("teacher:assignments.dueDate", { date: formatDueDate(a.dueDate, a.dueTime) })}
                       </p>
                     )}
                   </div>

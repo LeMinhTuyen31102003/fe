@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import {
@@ -165,9 +165,10 @@ function NotificationButton() {
           {unreadCount > 0 && (
             <button
               type="button"
-              className="text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
               onClick={handleMarkAllRead}
             >
+              <CheckCheck className="size-3.5" />
               {t("header.markAllRead")}
             </button>
           )}

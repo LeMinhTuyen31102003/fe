@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import { Toaster } from './components/ui/sonner'
+import { TooltipProvider } from './components/ui/tooltip'
 import { useTheme } from './hooks/useTheme'
 import ChangePasswordPage from './pages/ChangePasswordPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
@@ -25,7 +26,7 @@ function App() {
   const { theme } = useTheme()
 
   return (
-    <>
+    <TooltipProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -52,7 +53,7 @@ function App() {
         </Route>
       </Routes>
       <Toaster position="top-right" closeButton duration={5000} theme={theme} richColors />
-    </>
+    </TooltipProvider>
   )
 }
 
