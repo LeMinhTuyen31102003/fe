@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,10 +54,11 @@ function ScheduleSlotEditor({ slots, onChange, disabled }: ScheduleSlotEditorPro
               <span>{formatScheduleSlot(slot, t)}</span>
               <button
                 type="button"
-                className="text-xs font-semibold text-destructive underline-offset-4 hover:underline"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-destructive underline-offset-4 hover:underline"
                 onClick={() => handleRemove(i)}
                 disabled={disabled}
               >
+                <Trash2 className="size-3.5" />
                 {t("common:actions.delete")}
               </button>
             </li>
@@ -112,6 +114,7 @@ function ScheduleSlotEditor({ slots, onChange, disabled }: ScheduleSlotEditorPro
           onClick={handleAdd}
           disabled={disabled || !dayOfWeek || !startTime || !endTime || endTime <= startTime}
         >
+          <Plus />
           {t("common:actions.add")}
         </Button>
       </div>

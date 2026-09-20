@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +37,7 @@ function BankSettingsSection() {
   useEffect(() => {
     fetchBankSettings()
       .then((settings) => {
-        setBankId(settings.bankId ?? "MB");
+        setBankId(settings.bankId ?? "");
         setAccountNumber(settings.accountNumber ?? "");
         setAccountName(settings.accountName ?? "");
       })
@@ -117,6 +118,7 @@ function BankSettingsSection() {
             </div>
 
             <Button type="submit" disabled={isSubmitting} className="w-fit">
+              <Save />
               {isSubmitting ? t("common:status.saving") : t("teacher:bankSettings.submit")}
             </Button>
           </form>

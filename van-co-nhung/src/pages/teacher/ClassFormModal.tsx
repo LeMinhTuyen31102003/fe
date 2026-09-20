@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CurrencyInput from "@/components/CurrencyInput";
 import {
@@ -37,6 +38,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
   const [feePerSession, setFeePerSession] = useState<number | null>(60000);
+  const [classFund, setClassFund] = useState<number | null>(50000);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function resetForm() {
@@ -45,6 +47,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
     setSchedules([]);
     setNote("");
     setFeePerSession(60000);
+    setClassFund(50000);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -63,6 +66,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
         schedules,
         note: note.trim(),
         feePerSession,
+        classFund,
       });
       onCreated(created);
       resetForm();
@@ -81,53 +85,68 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
         onOpenChange(next);
       }}
     >
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t("teacher:classForm.createTitle")}</DialogTitle>
         </DialogHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="c-name">
-              {t("teacher:classForm.fields.name")}
-              <RequiredMark />
-            </Label>
-            <Input
-              id="c-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={isSubmitting}
-              autoFocus
-            />
-          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-[2fr_1fr]">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="c-name">
+                {t("teacher:classForm.fields.name")}
+                <RequiredMark />
+              </Label>
+              <Input
+                id="c-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                disabled={isSubmitting}
+                autoFocus
+              />
+            </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="c-grade">{t("teacher:classForm.fields.grade")}</Label>
-            <Select value={grade} onValueChange={setGrade}>
-              <SelectTrigger id="c-grade" className="w-full" disabled={isSubmitting}>
-                <SelectValue placeholder={t("teacher:classForm.fields.gradePlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {GRADE_OPTIONS.map((g) => (
-                  <SelectItem key={g} value={g}>
-                    {displayGrade(g, t)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="c-grade">{t("teacher:classForm.fields.grade")}</Label>
+              <Select value={grade} onValueChange={setGrade}>
+                <SelectTrigger id="c-grade" className="w-full" disabled={isSubmitting}>
+                  <SelectValue placeholder={t("teacher:classForm.fields.gradePlaceholder")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {GRADE_OPTIONS.map((g) => (
+                    <SelectItem key={g} value={g}>
+                      {displayGrade(g, t)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <ScheduleSlotEditor slots={schedules} onChange={setSchedules} disabled={isSubmitting} />
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="c-fee-per-session">{t("teacher:classForm.fields.feePerSession")}</Label>
-            <CurrencyInput
-              id="c-fee-per-session"
-              value={feePerSession}
-              onChange={setFeePerSession}
-              disabled={isSubmitting}
-              placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
-            />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="c-fee-per-session">{t("teacher:classForm.fields.feePerSession")}</Label>
+              <CurrencyInput
+                id="c-fee-per-session"
+                value={feePerSession}
+                onChange={setFeePerSession}
+                disabled={isSubmitting}
+                placeholder={t("teacher:classForm.fields.feePerSessionPlaceholder")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="c-class-fund">{t("teacher:classForm.fields.classFund")}</Label>
+              <CurrencyInput
+                id="c-class-fund"
+                value={classFund}
+                onChange={setClassFund}
+                disabled={isSubmitting}
+                placeholder={t("teacher:classForm.fields.classFundPlaceholder")}
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -142,6 +161,7 @@ function ClassFormModal({ open, onOpenChange, onCreated }: ClassFormModalProps) 
           </div>
 
           <Button type="submit" disabled={isSubmitting} className="w-full">
+            <Plus />
             {isSubmitting ? t("teacher:classForm.submitting") : t("teacher:classForm.submit")}
           </Button>
         </form>

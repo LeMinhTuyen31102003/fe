@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "schedule": "Schedule",
+    "tuition": "Tuition",
     "assignments": "Assignments"
   },
   "days": {
@@ -15,13 +16,43 @@
   },
   "home": {
     "title": "My Learning",
-    "subtitle": "Attendance and tuition by month",
+    "subtitle": "Your to-dos, attendance, assignments and scores",
+    "greeting": "Hi {{name}}, today is {{weekday}} {{date}}",
     "emptyState": "You haven't been assigned to any class yet.",
+    "todo": {
+      "title": "To do",
+      "assignmentsPending": "{{count}} assignment(s) not submitted",
+      "assignmentsPendingDue": "Next one due {{when}}",
+      "assignmentsNone": "No assignments need submitting",
+      "tuitionUnpaid": "{{month}}'s tuition isn't paid yet",
+      "tuitionUnpaidDetail": "{{amount}} · see the Tuition page for details",
+      "tuitionPending": "Waiting for your teacher to confirm the payment",
+      "tuitionPaid": "{{month}}'s tuition is fully paid",
+      "tuitionNone": "No tuition billed this month",
+      "tonightSession": "Class today {{when}}",
+      "tonightSessionDetail": "{{className}}",
+      "noSessionToday": "No class today"
+    },
+    "dueSoon": {
+      "title": "Assignments due soon",
+      "empty": "No assignments due soon.",
+      "overdue": "Overdue",
+      "hoursLeft": "{{count}}h left",
+      "daysLeft": "{{count}}d left"
+    },
+    "scores": {
+      "title": "Recent scores",
+      "subtitle": "Average of the last {{count}} assignments",
+      "empty": "No assignments have been graded yet.",
+      "trendUp": "▲ {{diff}} vs. last month",
+      "trendDown": "▼ {{diff}} vs. last month",
+      "trendFlat": "Same as last month"
+    },
     "attendanceSection": "Attendance",
-    "tuitionSection": "Tuition",
     "attendanceCard": {
       "sessionsLearned": "{{count}} sessions attended",
-      "noSessions": "No sessions have been marked yet this month."
+      "noSessions": "No sessions have been marked yet this month.",
+      "viewNoteLabel": "View note"
     },
     "tuitionCard": {
       "status": {
@@ -34,6 +65,8 @@
       "feePerSession": "Rate",
       "feePerSessionValue": "{{amount}}/session",
       "amount": "Tuition",
+      "classFund": "Class fund",
+      "totalAmount": "Total",
       "paidNote": "Thanks for paying this month's tuition.",
       "paidNoteWithDate": "Thanks for paying this month's tuition ({{date}}).",
       "pendingNote": "Payment confirmation sent at {{date}}. Waiting for your teacher to review it.",
@@ -52,6 +85,19 @@
     },
     "loadError": "Couldn't load your learning data."
   },
+  "tuitionPage": {
+    "title": "Tuition",
+    "subtitle": "See tuition by month and confirm payment",
+    "emptyState": "No finalized tuition months yet.",
+    "loadError": "Couldn't load tuition history.",
+    "monthLabel": "Month {{month}}/{{year}}",
+    "tabs": {
+      "unpaid": "Unpaid",
+      "paid": "Paid"
+    },
+    "noUnpaid": "You have no unpaid tuition.",
+    "noPaid": "No paid tuition yet."
+  },
   "schedule": {
     "title": "Schedule",
     "subtitle": "Timetable and attendance status by month",
@@ -59,6 +105,7 @@
     "mobileHint": "Swipe sideways to see the full timetable.",
     "weekdayHeaders": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     "notMarked": "Not marked",
+    "noteLabel": "Teacher's note",
     "updatingAttendance": "Updating attendance...",
     "loadScheduleError": "Couldn't load your schedule.",
     "loadAttendanceError": "Couldn't load attendance."
@@ -81,12 +128,13 @@
     "submitError": "Couldn't submit the assignment. Please try again.",
     "submitSuccess": "Submitted successfully.",
     "fileTooLargeError": "The photo is too large (10MB max). Please choose another one.",
-    "uploadNotConfiguredError": "Submitting isn't set up yet. Please contact your teacher.",
     "dueDate": "Due: {{date}}",
     "submitButton": "Take/choose a photo to submit",
     "resubmitButton": "Resubmit",
     "uploading": "Uploading...",
     "viewSubmission": "View submission",
+    "viewAttachment": "View teacher's attachment",
+    "teacherNoteLabel": "Teacher's note",
     "lockedPastDue": "The due date has passed.",
     "status": {
       "PENDING": "Not submitted",

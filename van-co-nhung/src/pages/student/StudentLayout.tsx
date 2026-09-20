@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "../../hooks/useAuth";
 import { onAppEvent } from "@/eventStream";
 import { fetchMyPendingAssignmentCount } from "./myAssignmentsApi";
+import { fetchMyUnpaidTuitionCount } from "./myTuitionApi";
 
 function StudentLayout() {
   const { isLoggedIn, userName, fullName, role, logout } = useAuth();
   const { t } = useTranslation(["student", "common"]);
   useScopedDarkMode();
   const [pendingAssignmentCount, setPendingAssignmentCount] = useState(0);
+  const [unpaidTuitionCount, setUnpaidTuitionCount] = useState(0);
 
   useEffect(() => {
     if (!isLoggedIn || role !== "STUDENT") return;
@@ -36,6 +38,25 @@ function StudentLayout() {
     };
   }, [isLoggedIn, role]);
 
+  useEffect(() => {
+    if (!isLoggedIn || role !== "STUDENT") return;
+    let cancelled = false;
+    function poll() {
+      fetchMyUnpaidTuitionCount()
+        .then((count) => {
+          if (!cancelled) setUnpaidTuitionCount(count);
+        })
+        .catch(() => {});
+    }
+    const unsubscribe = onAppEvent((scope) => {
+      if (scope === "tuition") poll();
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
+  }, [isLoggedIn, role]);
+
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
@@ -46,8 +67,8 @@ function StudentLayout() {
 
   return (
     <div className="flex min-h-screen bg-cream">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-6 border-r border-border bg-background p-6">
-        <Link to="/" className="flex items-center gap-2.5 font-heading text-lg font-bold text-foreground">
+      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-6 bg-brand-brown-dark p-6">
+        <Link to="/" className="flex items-center gap-2.5 font-heading text-lg font-bold text-brand-brown-foreground">
           <img src="/images/logo.jpg" alt={t("common:appName")} className="h-9 w-auto rounded-lg" />
           <span>{t("common:appName")}</span>
         </Link>
@@ -58,7 +79,7 @@ function StudentLayout() {
             end
             className={({ isActive }) =>
               cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
                 isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
               )
             }
@@ -69,7 +90,7 @@ function StudentLayout() {
             to="/student/schedule"
             className={({ isActive }) =>
               cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
                 isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
               )
             }
@@ -77,17 +98,33 @@ function StudentLayout() {
             {t("student:nav.schedule")}
           </NavLink>
           <NavLink
+            to="/student/tuition"
+            className={({ isActive }) =>
+              cn(
+                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
+                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+              )
+            }
+          >
+            <span>{t("student:nav.tuition")}</span>
+            {unpaidTuitionCount > 0 && (
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-[10px] font-semibold text-status-warning-fg">
+                {unpaidTuitionCount > 9 ? "9+" : unpaidTuitionCount}
+              </span>
+            )}
+          </NavLink>
+          <NavLink
             to="/student/assignments"
             className={({ isActive }) =>
               cn(
-                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-cream hover:text-foreground",
+                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
                 isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
               )
             }
           >
             <span>{t("student:nav.assignments")}</span>
             {pendingAssignmentCount > 0 && (
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-amber-100 text-[10px] font-semibold text-amber-800">
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-[10px] font-semibold text-status-warning-fg">
                 {pendingAssignmentCount > 9 ? "9+" : pendingAssignmentCount}
               </span>
             )}
@@ -96,7 +133,7 @@ function StudentLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b border-border bg-background px-8 py-3 md:px-10">
+        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b-2 border-brand-brown/20 bg-background px-8 py-3 md:px-10">
           <LanguageToggle />
           <ThemeToggle />
           <NotificationButton />

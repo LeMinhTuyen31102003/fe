@@ -9,6 +9,7 @@ export const BANK_OPTIONS = [
   { id: "STB", name: "Sacombank" },
   { id: "VPB", name: "VPBank" },
   { id: "VBA", name: "Agribank" },
+  { id: "SHB", name: "SHB"}
 ];
 
 export function bankNameFromId(bankId: string) {

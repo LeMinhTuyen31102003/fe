@@ -4,36 +4,68 @@
     "pricing": "Tuition",
     "guide": "Enroll",
     "contact": "Contact",
-    "login": "Log in"
+    "login": "Log in",
+    "ctaTrial": "Book a trial",
+    "tagline": "Where words light up dreams",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "utilityBar": {
+    "announcement": "Now enrolling grades 5–11"
   },
   "hero": {
-    "tag": "● Literature tutoring · Grade 5 - Grade 11",
+    "tag": "Literature tutoring · Grade 5 through Grade 11",
     "titlePrefix": "Learn Literature",
-    "titleEmphasis": "fun - solid - high scores",
-    "description": "Văn Cô Nhung's tutoring class takes students from grade 5 to grade 11. Closely follows the school curriculum, builds structured paragraph and essay writing skills, and helps your child grow more confident in Literature every day.",
-    "ctaPrimary": "Enroll now",
-    "ctaSecondary": "See all grades",
-    "note": "Small classes, limited seats ·",
-    "imageAlt": "Ms. Nhung - Văn Cô Nhung"
+    "titleSegments": [
+      { "text": "the fun way", "emphasis": true },
+      { "text": "— write", "emphasis": false },
+      { "text": "clearly", "emphasis": true },
+      { "text": "— score", "emphasis": false },
+      { "text": "high", "emphasis": true }
+    ],
+    "description": "Closely follows the school curriculum, builds structured paragraph and essay writing skills. Small classes so every essay your child writes gets graded and corrected by hand.",
+    "ctaPrimary": "Book a free trial class",
+    "ctaSecondary": "See the path for each grade",
+    "imageAlt": "Ms. Nhung - Văn Cô Nhung",
+    "trust": [
+      { "value": "9+ yrs", "label": "Years teaching experience" },
+      { "value": "12", "label": "Max students per class" },
+      { "value": "Master's", "label": "Literature degree" }
+    ],
+    "scoreBadge": { "value": "8.7", "label": "Avg. grade-10 entrance score" }
   },
   "grades": {
-    "tag": "● Grades currently enrolling",
-    "title": "A learning path suited to every grade",
-    "description": "Each grade has its own curriculum, closely following the textbook and exam requirements for that level.",
+    "tag": "Grades currently enrolling",
+    "title": "Three stages, each with a clear goal",
+    "description": "Each stage has its own curriculum, closely following the textbook and exam requirements for that level.",
     "items": [
-      { "badge": "5", "title": "Grade 5", "desc": "Builds paragraph-writing fundamentals and introduces literary appreciation ahead of secondary school." },
-      { "badge": "6", "title": "Grade 6", "desc": "Introduces the secondary curriculum, building reading comprehension and full essay-writing skills." },
-      { "badge": "7", "title": "Grade 7", "desc": "Reinforces Vietnamese language fundamentals and sharpens argumentative and expressive writing." },
-      { "badge": "8", "title": "Grade 8", "desc": "Practices social and literary argumentative essays following a standard structure." },
-      { "badge": "9", "title": "Grade 9", "desc": "Focuses on high school entrance exam prep, with practice tests matching the real exam format." },
-      { "badge": "10", "title": "Grade 10", "desc": "Introduces the high school curriculum and sharpens literary analysis skills." },
-      { "badge": "11", "title": "Grade 11", "desc": "Builds a solid foundation, preparing early for the high school graduation exam." },
-      { "badge": "✎", "title": "Custom support classes", "desc": "1-on-1 or small-group tutoring tailored to your needs, with flexible timing and pace." }
+      {
+        "badge": "5",
+        "title": "Elementary foundation",
+        "range": "Grade 5",
+        "desc": "Builds paragraph-writing fundamentals and introduces literary appreciation ahead of secondary school.",
+        "points": ["Correct paragraph structure", "Introduces literary appreciation", "Ready for secondary school"]
+      },
+      {
+        "badge": "6–9",
+        "title": "Secondary school",
+        "range": "Grade 6 through Grade 9",
+        "desc": "From basic reading comprehension to practice tests matching the grade-10 entrance exam.",
+        "points": ["Social & literary argumentative essays", "Grade-10 entrance exam practice", "Detailed grading and feedback"]
+      },
+      {
+        "badge": "10–11",
+        "title": "High school",
+        "range": "Grade 10 through Grade 11",
+        "desc": "Sharpens analytical thinking, building an early foundation for the graduation exam.",
+        "points": ["In-depth literary analysis", "Dedicated materials and practice tests", "Graduation exam preparation"]
+      }
     ]
   },
   "pricing": {
-    "tag": "● Tuition",
-    "title": "Clear tuition for every grade",
+    "tag": "Tuition",
+    "title": "One clear price, no hidden fees",
+    "description": "Tuition is charged for the sessions your child actually attends each month. The class fund is billed separately and itemized on the invoice.",
     "perSession": "/session",
     "mostPopular": "Most popular",
     "cta": "Enroll in this class",
@@ -59,7 +91,7 @@
     ]
   },
   "guide": {
-    "tag": "● Enroll",
+    "tag": "Enroll",
     "title": "Just 3 steps to get your child started",
     "steps": [
       { "title": "Get in touch", "desc": "Message or call Ms. Nhung to sign up for a trial class." },
@@ -76,6 +108,13 @@
     "address": "No. 243 - An Duong Vuong Street - Hoa Binh Ward - Phu Tho"
   },
   "footer": {
-    "tagline": "Learning is fun!"
+    "tagline": "Where words light up dreams",
+    "description": "Literature tutoring for students from grade 5 to grade 11 in Phu Tho.",
+    "classesHeading": "Grades",
+    "classesItems": ["Elementary · Grade 5", "Secondary · Grade 6–9", "High school · Grade 10–11"],
+    "studentsHeading": "For students",
+    "studentsItems": ["Log in", "Check tuition", "Submit assignments", "Forgot password"],
+    "contactHeading": "Contact",
+    "legal": "Learning is fun!"
   }
 }

@@ -5,6 +5,7 @@
     "classes": "Classes",
     "attendance": "Attendance",
     "tuition": "Tuition",
+    "resetPassword": "Reset password",
     "settings": "Bank"
   },
   "classStatus": {
@@ -27,30 +28,62 @@
     "startTimeLabel": "Start time",
     "endTimeLabel": "End time",
     "days": {
-      "MONDAY": { "label": "Monday", "short": "Mon" },
-      "TUESDAY": { "label": "Tuesday", "short": "Tue" },
-      "WEDNESDAY": { "label": "Wednesday", "short": "Wed" },
-      "THURSDAY": { "label": "Thursday", "short": "Thu" },
-      "FRIDAY": { "label": "Friday", "short": "Fri" },
-      "SATURDAY": { "label": "Saturday", "short": "Sat" },
-      "SUNDAY": { "label": "Sunday", "short": "Sun" }
+      "MONDAY": {
+        "label": "Monday",
+        "short": "Mon"
+      },
+      "TUESDAY": {
+        "label": "Tuesday",
+        "short": "Tue"
+      },
+      "WEDNESDAY": {
+        "label": "Wednesday",
+        "short": "Wed"
+      },
+      "THURSDAY": {
+        "label": "Thursday",
+        "short": "Thu"
+      },
+      "FRIDAY": {
+        "label": "Friday",
+        "short": "Fri"
+      },
+      "SATURDAY": {
+        "label": "Saturday",
+        "short": "Sat"
+      },
+      "SUNDAY": {
+        "label": "Sunday",
+        "short": "Sun"
+      }
     }
   },
   "overview": {
     "title": "Overview",
     "greeting": "Hello, {{name}}",
+    "greetingWithSessions": "Hello {{name}}, you have {{count}} session(s) today",
     "loadError": "Couldn't load the overview data.",
     "stats": {
       "classes": "Classes taught",
       "students": "Students",
-      "sessionsThisWeek": "Sessions this week"
+      "sessionsThisWeek": "Sessions this week",
+      "needsAction": "Needs action"
     },
     "todaySchedule": {
       "title": "Today's schedule",
+      "viewAll": "View attendance →",
       "empty": "No classes scheduled today.",
       "complete": "Fully marked",
       "progress": "Marked {{marked}}/{{total}}",
       "markButton": "Mark attendance"
+    },
+    "needsAction": {
+      "title": "Needs action",
+      "empty": "Nothing needs your attention right now.",
+      "tuitionItem": "{{name}} · {{className}}",
+      "tuitionItemAmount": "Asked you to confirm a payment of {{amount}}",
+      "assignmentItem": "{{title}} · {{className}}",
+      "assignmentItemCount": "{{count}} submission(s) awaiting grading"
     },
     "tuition": {
       "title": "Tuition this month",
@@ -62,6 +95,7 @@
     "username": "Username",
     "password": "Password",
     "fullName": "Student's full name",
+    "email": "Student email",
     "grade": "Grade",
     "gradePlaceholder": "Select grade",
     "school": "School",
@@ -75,7 +109,7 @@
     "searchPlaceholder": "Search by name or username...",
     "statusFilterAll": "All statuses",
     "classFilterAll": "All classes",
-    "add": "+ Add student",
+    "add": "Add student",
     "loadError": "Couldn't load the student list.",
     "empty": "No students yet.",
     "noResults": "No matching students found.",
@@ -90,7 +124,9 @@
     },
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "deleteDialog": { "title": "Delete student" },
+    "deleteDialog": {
+      "title": "Delete student"
+    },
     "deleteConfirm": "Delete the account for \"{{name}}\"?",
     "toggleActiveError": "Couldn't update the student's status.",
     "deleteError": "Couldn't delete the student.",
@@ -98,23 +134,24 @@
   },
   "studentForm": {
     "title": "Create student account",
-    "description": "Enter the student's registration details. By default the account stays inactive until it's added to a class, unless you choose to activate it now.",
+    "description": "Enter the student's registration details. The account will be activated immediately after creation.",
     "loadClassesError": "Couldn't load the class list.",
-    "classesLabel": "Class (optional)",
+    "classesLabel": "Class",
     "classPlaceholder": "Select class",
     "classPickerTitle": "Select a class",
     "classSearchPlaceholder": "Search by class name...",
     "noClasses": "No classes yet.",
     "oneClassHint": "Each student can only belong to one active class at a time.",
-    "activateNow": "Activate account now",
     "submit": "Create account",
     "submitting": "Creating...",
-    "requiredFieldsError": "Please enter both a username and the student's full name.",
+    "requiredFieldsError": "Please fill in all required fields and select a class for the student.",
     "passwordTooShort": "Password must be at least 6 characters.",
     "addToClassFailed": "Account created, but adding it to the class failed.",
     "createSuccess": "Student account created.",
     "duplicateUsername": "This username is already taken.",
-    "createError": "Couldn't create the account. Please try again."
+    "createError": "Couldn't create the account. Please try again.",
+    "emailHint": "Used to email a new password when the student forgets theirs.",
+    "invalidEmail": "Invalid email address."
   },
   "studentDetail": {
     "titleView": "Student details",
@@ -128,15 +165,21 @@
     "addedToClassAutoActivated": "Added to the class and the account was activated automatically.",
     "addedToClass": "Added to the class.",
     "addToClassError": "Couldn't add the student to the class.",
+    "removeClassDialog": {
+      "title": "Remove from class"
+    },
+    "removeClassConfirm": "Remove this student from \"{{name}}\"?",
     "removedFromClass": "Removed from the class.",
     "removeFromClassError": "Couldn't remove the student from the class.",
     "classesTitle": "Classes",
     "noClasses": "Not enrolled in any class yet.",
     "classPlaceholder": "Select class",
-    "addClassLabel": "+ Add to class",
+    "addClassLabel": "Add to class",
     "addClassDialogTitle": "Add student to a class",
     "addClassSearchPlaceholder": "Search by class name...",
-    "noClassesToAdd": "No more classes available to add."
+    "noClassesToAdd": "No more classes available to add.",
+    "emailHint": "Used to email a new password when the student forgets theirs.",
+    "invalidEmail": "Invalid email address."
   },
   "classes": {
     "pageTitle": "Manage classes",
@@ -144,7 +187,7 @@
     "listTitle": "Class list",
     "searchPlaceholder": "Search by class name...",
     "statusFilterAll": "All statuses",
-    "add": "+ Add class",
+    "add": "Add class",
     "loadError": "Couldn't load the class list.",
     "empty": "No classes yet.",
     "noResults": "No matching classes found.",
@@ -157,7 +200,9 @@
       "actions": "Actions"
     },
     "activate": "Activate",
-    "deleteDialog": { "title": "Delete class" },
+    "deleteDialog": {
+      "title": "Delete class"
+    },
     "deleteConfirm": "Delete the class \"{{name}}\"?",
     "toggleActiveError": "Couldn't update the class's status.",
     "deleteError": "Couldn't delete the class.",
@@ -171,6 +216,8 @@
       "gradePlaceholder": "Select grade",
       "feePerSession": "Fee per session (VND)",
       "feePerSessionPlaceholder": "e.g. 60000",
+      "classFund": "Class fund / month (VND, optional)",
+      "classFundPlaceholder": "e.g. 50000",
       "note": "Note"
     },
     "nameRequiredError": "Please enter a class name.",
@@ -194,33 +241,32 @@
       "grade": "Grade",
       "schedule": "Schedule",
       "feePerSession": "Fee per session",
+      "classFund": "Class fund / month",
       "note": "Note",
       "status": "Status"
     },
     "studentsTitle": "Students in class ({{count}})",
     "noStudents": "No students in this class yet.",
-    "addStudentLabel": "+ Add student",
-    "addStudentDialogTitle": "Add student to class",
-    "addStudentSearchPlaceholder": "Search by name or username...",
-    "studentPlaceholder": "Select student",
     "addingStudent": "Adding...",
-    "noStudentsToAdd": "No more students available to add.",
-    "addedStudentAutoActivated": "Student added to the class and their account was activated automatically.",
-    "addedStudent": "Student added to the class.",
-    "addStudentError": "Couldn't add the student to the class.",
+    "removeStudentDialog": {
+      "title": "Remove student from class"
+    },
+    "removeStudentConfirm": "Remove \"{{name}}\" from this class?",
     "removedStudent": "Student removed from the class.",
     "removeStudentError": "Couldn't remove the student from the class."
   },
   "assignments": {
     "listTitle": "Literature assignments",
-    "add": "+ Assign homework",
+    "add": "Assign homework",
     "loadError": "Couldn't load the assignment list.",
     "empty": "No assignments given yet.",
     "dueDate": "Due: {{date}}",
     "submittedCount": "{{submitted}}/{{total}} submitted",
     "deleteSuccess": "Assignment deleted.",
     "deleteError": "Couldn't delete the assignment.",
-    "deleteDialog": { "title": "Delete assignment" },
+    "deleteDialog": {
+      "title": "Delete assignment"
+    },
     "deleteConfirm": "Delete the assignment \"{{title}}\"?",
     "status": {
       "PENDING": "Not submitted",
@@ -234,8 +280,14 @@
         "title": "Title",
         "content": "Content / prompt",
         "contentPlaceholder": "Enter the prompt or instructions for students...",
-        "dueDate": "Due date (optional)"
+        "dueDate": "Due date (optional)",
+        "dueTimeHint": "Add a time to pin the exact submission deadline (defaults to end of day).",
+        "attachment": "Attached files / photos (optional, multiple allowed)"
       },
+      "attachmentAdd": "Attach file / photo",
+      "attachmentUploading": "Uploading...",
+      "attachmentView": "View attachment",
+      "attachmentUploadError": "Couldn't upload the file. Please try again.",
       "titleRequiredError": "Please enter a title for the assignment.",
       "createSuccess": "Assignment created.",
       "createError": "Couldn't create the assignment. Please try again.",
@@ -245,12 +297,22 @@
     "detail": {
       "loadError": "Couldn't load the assignment details.",
       "dueDate": "Due: {{date}}",
+      "viewAttachment": "View attachment",
       "studentsTitle": "Students ({{count}})",
       "submittedAt": "Submitted at {{date}}",
       "notePlaceholder": "Note / feedback...",
+      "noteLabel": "Note",
+      "scoreLabel": "Score (out of 10)",
+      "scorePlaceholder": "Enter a score...",
+      "scoreRequired": "Please enter a score before confirming.",
+      "scoreInvalid": "Score must be a number from 0 to 10, with at most 2 decimal places.",
+      "gradeButton": "Grade",
+      "editGradeButton": "Edit grade",
+      "gradingDialogTitle": "Grade {{name}}'s submission",
       "viewFile": "View submission",
       "openOriginal": "Open original photo in a new tab",
-      "updateStatusError": "Couldn't update the submission status."
+      "updateStatusError": "Couldn't update the submission status.",
+      "gradeTooltip": "Grade and leave feedback on this submission"
     }
   },
   "attendance": {
@@ -263,10 +325,19 @@
     "loadError": "Couldn't load attendance data.",
     "noStudents": "This class has no students yet.",
     "noScheduleThisDay": "This class has no scheduled session on this day. Please pick another date.",
+    "addNoteLabel": "Add note",
+    "noteDialogTitle": "Attendance note for {{name}}",
+    "notePlaceholder": "E.g. Makeup session for the class missed on 9/5...",
+    "noteSaveError": "Couldn't save the note.",
     "viewOnlyPastDateNotice": "Viewing attendance for a past date (read-only).",
     "editingPastDateNotice": "Editing attendance for a past date.",
     "editPast": "Edit",
     "doneEditingPast": "Done",
+    "markAllButton": "Mark whole class present",
+    "markAllConfirmTitle": "Mark the whole class present?",
+    "markAllConfirmDescription": "Every student will be set to \"Present\" for the selected date, overwriting any status already set. Each student's note is kept as-is.",
+    "markAllSuccess": "Marked the whole class present.",
+    "markAllError": "Couldn't mark the class. Please try again.",
     "table": {
       "fullName": "Full name",
       "parentName": "Parent",
@@ -283,12 +354,19 @@
     "noClasses": "No classes yet. Create a class first.",
     "loadError": "Couldn't load tuition data.",
     "noStudents": "This class has no students yet.",
+    "tabs": {
+      "unpaid": "Unpaid",
+      "paid": "Paid"
+    },
+    "noUnpaidStudents": "No unpaid students.",
+    "noPaidStudents": "No one has paid yet this month.",
     "feeInfoBefore": "Fee per session:",
     "feeNotSet": "not set",
     "feeInfoMiddle": "· Each student's tuition is calculated automatically from their",
     "presentWord": "Present",
     "lateWord": "Late",
     "feeInfoAfter": "sessions this month, and can be adjusted manually when needed.",
+    "classFundInfo": "This class also charges a {{amount}}/month class fund, billed in full every month regardless of session count.",
     "finalizedBadge": "Finalized",
     "notFinalizedBadge": "Not finalized",
     "finalizedHint": "Students/parents can now see the QR code to pay for this month.",
@@ -313,6 +391,8 @@
       "fullName": "Full name",
       "sessionCount": "Sessions",
       "amount": "Tuition (VND)",
+      "classFund": "Class fund (VND)",
+      "totalAmount": "Total",
       "status": "Status",
       "time": "Time",
       "note": "Note"
@@ -325,7 +405,9 @@
     "reject": "Reject",
     "paidBadgeTitle": "Already confirmed, status can't be reverted",
     "requestedAt": "Requested at {{time}}",
-    "markPaidDialog": { "title": "Confirm payment" },
+    "markPaidDialog": {
+      "title": "Confirm payment"
+    },
     "markPaidConfirm": "Confirm you've received the payment of {{amount}} from {{name}}?",
     "updateError": "Couldn't update tuition.",
     "rejectReasonRequired": "Please enter a reason for rejecting.",
@@ -364,5 +446,35 @@
       "incomplete": "Fill in the bank, account number, and account holder name to see a preview.",
       "qrAlt": "Sample payment QR code"
     }
+  },
+  "resetPassword": {
+    "pageTitle": "Reset a student's password",
+    "pageSubtitle": "Issue a new password for students who forgot theirs and don't remember their registered email",
+    "formTitle": "Pick a student",
+    "formHint": "Type a name or username to search",
+    "fields": {
+      "username": "Student's username",
+      "usernamePlaceholder": "e.g. nguyenvana"
+    },
+    "usernameRequired": "Please enter the student's username.",
+    "submit": "Reset password",
+    "submitting": "Resetting...",
+    "confirmTitle": "Reset this password?",
+    "confirmDescription": "A new random password will be issued for \"{{username}}\". Their old password will stop working.",
+    "success": "Password reset for {{name}}.",
+    "notFound": "No student found with that username.",
+    "error": "Couldn't reset the password. Please try again.",
+    "copyError": "Couldn't copy. Please copy it manually.",
+    "copied": "Copied",
+    "resultTitle": "Password reset",
+    "resultStudent": "Student",
+    "resultPassword": "New password",
+    "resultReminder": "This password is shown only once — copy it and send it to the student now. If you lose it, just reset again. Remind them to change it under \"Change password\" after logging in.",
+    "howItWorksTitle": "How it works",
+    "step1": "The student contacts you saying they forgot their password and gives you their username.",
+    "step2": "Enter their username (or pick one from the suggestions) and press <b>Reset password</b>.",
+    "step3": "Copy the new password shown on screen, send it to the student, and remind them to change it right away.",
+    "noteTitle": "Heads up",
+    "noteBody": "The new password is a random 6-character string shown exactly once after the reset — nothing stores it for later viewing. Only reset once you're sure who you're talking to."
   }
 }

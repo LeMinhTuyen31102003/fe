@@ -4,36 +4,68 @@
     "pricing": "Học phí",
     "guide": "Đăng ký",
     "contact": "Liên hệ",
-    "login": "Đăng nhập"
+    "login": "Đăng nhập",
+    "ctaTrial": "Đăng ký học thử",
+    "tagline": "Nơi con chữ thắp lên ước mơ",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu"
+  },
+  "utilityBar": {
+    "announcement": "Đang nhận học sinh lớp 5 – 11"
   },
   "hero": {
-    "tag": "● Lớp học thêm Văn · Lớp 5 - Lớp 11",
+    "tag": "Lớp học thêm Ngữ Văn · Lớp 5 đến lớp 11",
     "titlePrefix": "Học Văn",
-    "titleEmphasis": "vui - chắc - điểm cao",
-    "description": "Lớp học thêm Văn Cô Nhung nhận học sinh từ lớp 5 đến lớp 11. Bám sát chương trình trên lớp, luyện viết đoạn - viết bài bài bản, giúp con tự tin hơn với môn Văn mỗi ngày đến lớp.",
-    "ctaPrimary": "Đăng ký học ngay",
-    "ctaSecondary": "Xem các khối lớp",
-    "note": "Lớp học nhỏ, sĩ số giới hạn ·",
-    "imageAlt": "Cô Nhung - Văn Cô Nhung"
+    "titleSegments": [
+      { "text": "vui", "emphasis": true },
+      { "text": "— viết", "emphasis": false },
+      { "text": "chắc", "emphasis": true },
+      { "text": "— thi", "emphasis": false },
+      { "text": "điểm cao", "emphasis": true }
+    ],
+    "description": "Bám sát chương trình trên lớp, luyện viết đoạn và viết bài bài bản theo từng khối. Sĩ số nhỏ để mỗi bài viết của con đều được chấm và chữa tay.",
+    "ctaPrimary": "Đăng ký học thử miễn phí",
+    "ctaSecondary": "Xem lộ trình từng khối",
+    "imageAlt": "Cô Nhung - Văn Cô Nhung",
+    "trust": [
+      { "value": "9+ năm", "label": "Kinh nghiệm đứng lớp" },
+      { "value": "12", "label": "Học sinh tối đa mỗi lớp" },
+      { "value": "Thạc sĩ", "label": "Ngữ Văn" }
+    ],
+    "scoreBadge": { "value": "8,7", "label": "Điểm TB thi vào 10" }
   },
   "grades": {
-    "tag": "● Các khối lớp đang nhận học sinh",
-    "title": "Lộ trình phù hợp cho từng khối lớp",
-    "description": "Mỗi khối lớp có giáo trình riêng, bám sát sách giáo khoa và định hướng thi cử của từng cấp học.",
+    "tag": "Khối lớp đang nhận",
+    "title": "Ba chặng, mỗi chặng một mục tiêu rõ ràng",
+    "description": "Giáo trình riêng cho từng cấp, bám sách giáo khoa và định hướng thi cử của chặng đó.",
     "items": [
-      { "badge": "5", "title": "Lớp 5", "desc": "Rèn nền tảng viết đoạn văn, làm quen cảm thụ văn học, chuẩn bị vào cấp 2." },
-      { "badge": "6", "title": "Lớp 6", "desc": "Làm quen chương trình THCS, luyện kỹ năng đọc hiểu và viết bài văn hoàn chỉnh." },
-      { "badge": "7", "title": "Lớp 7", "desc": "Củng cố kiến thức tiếng Việt, nâng cao kỹ năng nghị luận và biểu cảm." },
-      { "badge": "8", "title": "Lớp 8", "desc": "Luyện viết văn nghị luận xã hội, nghị luận văn học theo cấu trúc chuẩn." },
-      { "badge": "9", "title": "Lớp 9", "desc": "Ôn luyện trọng tâm thi vào lớp 10, luyện đề sát cấu trúc đề thi thực tế." },
-      { "badge": "10", "title": "Lớp 10", "desc": "Làm quen chương trình THPT, nâng cao tư duy phân tích tác phẩm văn học." },
-      { "badge": "11", "title": "Lớp 11", "desc": "Xây dựng nền tảng vững chắc, chuẩn bị sớm cho kỳ thi tốt nghiệp THPT." },
-      { "badge": "✎", "title": "Lớp bổ trợ riêng", "desc": "Kèm 1-1 hoặc nhóm nhỏ theo nhu cầu, linh hoạt thời gian và tiến độ học." }
+      {
+        "badge": "5",
+        "title": "Nền tảng tiểu học",
+        "range": "Lớp 5",
+        "desc": "Rèn nền tảng viết đoạn văn và cảm thụ văn học, chuẩn bị vào cấp 2.",
+        "points": ["Viết đoạn văn đúng cấu trúc", "Làm quen cảm thụ văn học", "Chuẩn bị chuyển cấp"]
+      },
+      {
+        "badge": "6–9",
+        "title": "Trung học cơ sở",
+        "range": "Lớp 6 đến lớp 9",
+        "desc": "Từ đọc hiểu cơ bản đến luyện đề sát cấu trúc thi vào 10.",
+        "points": ["Nghị luận xã hội & văn học", "Luyện đề thi vào 10", "Chấm và chữa bài chi tiết"]
+      },
+      {
+        "badge": "10–11",
+        "title": "Trung học phổ thông",
+        "range": "Lớp 10 đến lớp 11",
+        "desc": "Nâng cao tư duy phân tích, xây nền sớm cho kỳ thi tốt nghiệp.",
+        "points": ["Phân tích tác phẩm chuyên sâu", "Tài liệu và đề luyện riêng", "Định hướng thi TN THPT"]
+      }
     ]
   },
   "pricing": {
-    "tag": "● Học phí",
-    "title": "Học phí rõ ràng theo từng khối lớp",
+    "tag": "Học phí",
+    "title": "Một mức giá, không phụ phí ẩn",
+    "description": "Học phí tính theo số buổi con thực học trong tháng. Quỹ lớp thu riêng, ghi rõ trên hoá đơn.",
     "perSession": "/buổi",
     "mostPopular": "Nhiều học sinh chọn nhất",
     "cta": "Đăng ký lớp này",
@@ -59,7 +91,7 @@
     ]
   },
   "guide": {
-    "tag": "● Đăng ký học",
+    "tag": "Đăng ký học",
     "title": "Chỉ 3 bước để con bắt đầu học",
     "steps": [
       { "title": "Liên hệ đăng ký", "desc": "Nhắn tin hoặc gọi điện cho cô Nhung để đăng ký học thử." },
@@ -76,6 +108,13 @@
     "address": "Số 243 - Đường An Dương Vương - Phường Hòa Bình - Phú Thọ"
   },
   "footer": {
-    "tagline": "Học Là Vui!"
+    "tagline": "Nơi con chữ thắp lên ước mơ",
+    "description": "Lớp học thêm Ngữ Văn cho học sinh lớp 5 đến lớp 11 tại Phú Thọ.",
+    "classesHeading": "Khối lớp",
+    "classesItems": ["Tiểu học · Lớp 5", "THCS · Lớp 6–9", "THPT · Lớp 10–11"],
+    "studentsHeading": "Dành cho học sinh",
+    "studentsItems": ["Đăng nhập", "Tra cứu học phí", "Nộp bài tập", "Quên mật khẩu"],
+    "contactHeading": "Liên hệ",
+    "legal": "Học Là Vui!"
   }
 }

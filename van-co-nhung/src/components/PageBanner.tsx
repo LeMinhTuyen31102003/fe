@@ -16,7 +16,7 @@ function PageBanner({ title, subtitle, className, backTo }: PageBannerProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--brand-yellow)] to-[var(--brand-yellow-dark)] px-8 py-10 text-primary-foreground",
+        "relative overflow-hidden rounded-2xl bg-brand-brown-dark px-8 py-10 text-brand-brown-foreground",
         className,
       )}
     >
@@ -25,14 +25,14 @@ function PageBanner({ title, subtitle, className, backTo }: PageBannerProps) {
           <Link
             to={backTo}
             aria-label={t("actions.back")}
-            className="shrink-0 text-primary-foreground transition-opacity hover:opacity-70"
+            className="shrink-0 text-brand-brown-foreground transition-opacity hover:opacity-70"
           >
             <ArrowLeft className="h-6 w-6" />
           </Link>
         )}
         <div>
           <h1 className="font-heading text-2xl font-bold">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-primary-foreground/85">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-sm text-brand-brown-foreground/80">{subtitle}</p>}
         </div>
       </div>
     </div>

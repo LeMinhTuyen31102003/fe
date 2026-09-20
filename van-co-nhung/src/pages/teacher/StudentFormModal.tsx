@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { ChevronDown, UserPlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import RequiredMark from "@/components/RequiredMark";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { addStudentToClass, ClassConflictError, type ClassSummary } from "./classesApi";
 import ClassPickerDialog from "./ClassPickerDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
@@ -36,11 +37,11 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [grade, setGrade] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [parentName, setParentName] = useState("");
   const [parentPhone, setParentPhone] = useState("");
-  const [activateNow, setActivateNow] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [selectedClass, setSelectedClass] = useState<ClassSummary | null>(null);
@@ -50,11 +51,11 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
     setUsername("");
     setPassword("");
     setFullName("");
+    setEmail("");
     setGrade("");
     setSchoolName("");
     setParentName("");
     setParentPhone("");
-    setActivateNow(false);
     setSelectedClass(null);
   }
 
@@ -64,16 +65,22 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
     if (
       !username.trim() ||
       !fullName.trim() ||
+      !email.trim() ||
       !grade.trim() ||
       !schoolName.trim() ||
       !parentName.trim() ||
-      !parentPhone.trim()
+      !parentPhone.trim() ||
+      !selectedClass
     ) {
       toast.error(t("teacher:studentForm.requiredFieldsError"));
       return;
     }
     if (password.length < 6) {
       toast.error(t("teacher:studentForm.passwordTooShort"));
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error(t("teacher:studentForm.invalidEmail"));
       return;
     }
 
@@ -83,11 +90,12 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
         username: username.trim(),
         password,
         fullName: fullName.trim(),
+        email: email.trim(),
         grade,
         schoolName: schoolName.trim(),
         parentName: parentName.trim(),
         parentPhone: parentPhone.trim(),
-        active: activateNow,
+        active: true,
       });
 
       if (selectedClass) {
@@ -172,6 +180,22 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
             />
           </div>
 
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="s-email">
+              {t("teacher:studentFields.email")}
+              <RequiredMark />
+            </Label>
+            <Input
+              id="s-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
+              placeholder="hocsinh@gmail.com"
+            />
+            <p className="text-xs text-muted-foreground">{t("teacher:studentForm.emailHint")}</p>
+          </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-grade">
@@ -234,11 +258,14 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>{t("teacher:studentForm.classesLabel")}</Label>
+            <Label>
+              {t("teacher:studentForm.classesLabel")}
+              <RequiredMark />
+            </Label>
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="flex h-8 flex-1 items-center rounded-md border border-input bg-transparent px-2.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-8 flex-1 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-2.5 text-sm text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                 onClick={() => setIsClassPickerOpen(true)}
                 disabled={isSubmitting}
               >
@@ -247,32 +274,30 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
                 ) : (
                   <span className="text-muted-foreground">{t("teacher:studentForm.classPlaceholder")}</span>
                 )}
+                <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
               </button>
               {selectedClass && (
-                <button
-                  type="button"
-                  className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                  onClick={() => setSelectedClass(null)}
-                  disabled={isSubmitting}
-                >
-                  {t("common:actions.clear")}
-                </button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                      onClick={() => setSelectedClass(null)}
+                      disabled={isSubmitting}
+                    >
+                      <X className="size-4" />
+                      {t("common:actions.clear")}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("teacher:studentForm.classPlaceholder")}</TooltipContent>
+                </Tooltip>
               )}
             </div>
             <p className="text-xs text-muted-foreground">{t("teacher:studentForm.oneClassHint")}</p>
           </div>
 
-          <Label htmlFor="s-active" className="font-normal">
-            <Checkbox
-              id="s-active"
-              checked={activateNow}
-              onCheckedChange={(checked) => setActivateNow(checked === true)}
-              disabled={isSubmitting}
-            />
-            {t("teacher:studentForm.activateNow")}
-          </Label>
-
           <Button type="submit" disabled={isSubmitting} className="w-full">
+            <UserPlus />
             {isSubmitting ? t("teacher:studentForm.submitting") : t("teacher:studentForm.submit")}
           </Button>
         </form>

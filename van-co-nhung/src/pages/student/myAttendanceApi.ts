@@ -4,6 +4,7 @@ import type { AttendanceStatus } from "../teacher/attendanceApi";
 export interface MySessionEntry {
   date: string;
   status: AttendanceStatus;
+  note: string | null;
 }
 
 export interface MyClassAttendance {

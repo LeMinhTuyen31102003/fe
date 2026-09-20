@@ -7,6 +7,8 @@ export interface StudentTuitionRow {
   fullName: string;
   sessionCount: number;
   amount: number;
+  classFund: number;
+  totalAmount: number;
   status: TuitionStatus;
   requestedAt: string | null;
   paidAt: string | null;
@@ -26,6 +28,7 @@ export interface MonthlyTuition {
   classId: number;
   className: string;
   feePerSession: number | null;
+  classFund: number | null;
   year: number;
   month: number;
   finalized: boolean;
@@ -35,6 +38,7 @@ export interface MonthlyTuition {
 
 export interface TuitionUpdateInput {
   amount: number;
+  classFund: number;
   status: TuitionStatus;
   note: string | null;
 }

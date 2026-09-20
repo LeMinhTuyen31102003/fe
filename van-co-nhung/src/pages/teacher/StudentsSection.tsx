@@ -1,11 +1,19 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { MoreHorizontal, Plus, Power, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import Pagination from "@/components/Pagination";
 import { Input } from "@/components/ui/input";
+import { initialsFrom } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -225,6 +233,7 @@ function StudentsSection() {
             </SelectContent>
           </Select>
           <Button type="button" onClick={() => setIsModalOpen(true)}>
+            <Plus />
             {t("teacher:students.add")}
           </Button>
         </div>
@@ -255,7 +264,14 @@ function StudentsSection() {
                   className="cursor-pointer"
                   onClick={() => setSelectedStudent(student)}
                 >
-                  <TableCell className="font-medium">{student.fullName}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-brown/10 text-xs font-bold text-brand-brown-dark">
+                        {initialsFrom(student.fullName)}
+                      </span>
+                      {student.fullName}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {student.grade ? displayGrade(student.grade, t) : "—"}
                   </TableCell>
@@ -266,7 +282,7 @@ function StudentsSection() {
                       : "—"}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={student.active ? "default" : "secondary"}>
+                    <Badge variant={student.active ? "success" : "neutral"}>
                       {student.active ? t("teacher:studentStatus.active") : t("teacher:studentStatus.inactive")}
                     </Badge>
                   </TableCell>
@@ -274,22 +290,25 @@ function StudentsSection() {
                     {formatDate(student.createdAt, i18n.language === "en" ? "en-US" : "vi-VN")}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-4">
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-brand-dark underline-offset-4 hover:underline"
-                        onClick={(e) => handleToggleActive(student, e)}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label={t("teacher:students.table.actions")}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50"
                       >
-                        {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
-                      </button>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={(e) => handleRemove(student, e)}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
-                    </div>
+                        <MoreHorizontal className="size-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={(e) => handleToggleActive(student, e)}>
+                          <Power />
+                          {student.active ? t("teacher:students.deactivate") : t("teacher:students.activate")}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem variant="destructive" onClick={(e) => handleRemove(student, e)}>
+                          <Trash2 />
+                          {t("common:actions.delete")}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

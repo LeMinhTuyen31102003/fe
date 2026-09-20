@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell } from "lucide-react";
+import { Bell, CheckCheck } from "lucide-react";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import {
@@ -42,6 +42,12 @@ function buildMessage(n: AppNotification, t: TFunction): string {
         className: n.className,
         amount: n.amount != null ? formatCurrency(n.amount) : "",
       });
+    case "TUITION_FINALIZED":
+      return t("header.notificationTypes.tuitionFinalized", {
+        className: n.className,
+        month: n.month,
+        year: n.year,
+      });
     case "ASSIGNMENT_CREATED":
       return t("header.notificationTypes.assignmentCreated", {
         title: n.assignmentTitle,
@@ -61,6 +67,8 @@ function notificationTarget(n: AppNotification): string {
   switch (n.type) {
     case "TUITION_PAYMENT_REQUESTED":
       return "/admin/tuition";
+    case "TUITION_FINALIZED":
+      return "/student/tuition";
     case "ASSIGNMENT_CREATED":
       return "/student/assignments";
     case "ASSIGNMENT_FULLY_SUBMITTED":
@@ -146,7 +154,7 @@ function NotificationButton() {
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-amber-100 text-[10px] font-semibold text-amber-800">
+          <span className="absolute top-1 right-1 flex size-4 items-center justify-center rounded-full bg-status-warning-bg text-[10px] font-semibold text-status-warning-fg">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -157,9 +165,10 @@ function NotificationButton() {
           {unreadCount > 0 && (
             <button
               type="button"
-              className="text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-brand-dark underline-offset-4 hover:underline"
               onClick={handleMarkAllRead}
             >
+              <CheckCheck className="size-3.5" />
               {t("header.markAllRead")}
             </button>
           )}
@@ -171,7 +180,11 @@ function NotificationButton() {
           ) : notifications.length === 0 ? (
             <p className="px-2 py-6 text-center text-sm text-muted-foreground">{t("header.noNotifications")}</p>
           ) : (
-            notifications.map((n) => (
+            // Unread first, read pushed down — a stable sort so each group keeps the
+            // API's createdAt-desc order (newest first) within itself.
+            [...notifications]
+              .sort((a, b) => Number(a.read) - Number(b.read))
+              .map((n) => (
               <DropdownMenuItem
                 key={n.id}
                 className="flex-col items-start gap-0.5 whitespace-normal"

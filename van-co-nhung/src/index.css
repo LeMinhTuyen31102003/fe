@@ -5,15 +5,29 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --brand-yellow: #f9d423;
-  --brand-yellow-dark: #e5c100;
-  --ink: #1a1a1a;
-  --brand-muted: #6b6b6b;
-  --cream: #faf6ec;
+  /* Gold: brand identity + action accent (CTAs, active states, highlights). */
+  --brand-yellow: #f5c518;
+  --brand-yellow-dark: #d9a400;
+  /* Brown: structural chrome (nav bar, page headers, table frames).
+     Mahogany family, matched against the "Van Co Nhung - Thiet ke moi"
+     design file: #6B4423 (step numbers, trust stats, nav accents), #3B2A18
+     (dark chrome bg) and #8C6A45 (muted tagline/label text). The previous
+     walnut set (#5c4033/#3a2820/#8f6b52) was a cooler, less saturated
+     family — mixing it with the new #6b4423 in a gradient (contact card,
+     login brand panel) read as muddy/inconsistent, hence updating the
+     whole trio together rather than just the one shade. */
+  --brand-brown: #6b4423;
+  --brand-brown-dark: #3b2a18;
+  --brand-brown-light: #8c6a45;
+  --brand-brown-foreground: #faf6ec;
+  --ink: #2b2118;
+  --brand-muted: #7a6b5c;
+  /* White/cream: content backgrounds, kept lightest so reading material wins. */
+  --cream: #fbf8f1;
   --cream-foreground: var(--ink);
-  --brand-border: #ececec;
-  --muted: oklch(0.97 0 0);
-  --border: oklch(0.922 0 0);
+  --brand-border: #eae3d6;
+  --muted: oklch(0.97 0.006 65);
+  --border: #eae3d6;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -22,14 +36,30 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: var(--brand-yellow);
   --primary-foreground: var(--ink);
-  --secondary: oklch(0.97 0 0);
+  --secondary: oklch(0.97 0.004 65);
   --secondary-foreground: oklch(0.205 0 0);
   --muted-foreground: var(--brand-muted);
-  --accent: oklch(0.97 0 0);
+  --accent: oklch(0.97 0.004 65);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
+  --destructive: #b3261e;
+  --input: #d8cdba;
   --ring: var(--brand-yellow-dark);
+  /* Status semantics: reserved for state (attendance/tuition/account status),
+     never used for brand/structure so they don't compete with gold/brown. */
+  --status-success: #1e7a4d;
+  --status-success-bg: #e6f2eb;
+  --status-success-fg: #146b42;
+  --status-warning: #d9a400;
+  --status-warning-bg: #fff6da;
+  --status-warning-fg: #8a5a1e;
+  --status-danger: #b3261e;
+  --status-danger-bg: #fdecea;
+  --status-danger-fg: #b3261e;
+  --status-info: #2a6b8f;
+  --status-info-bg: #eaf3f7;
+  --status-info-fg: #2a6b8f;
+  --status-neutral-bg: #f1ebe0;
+  --status-neutral-fg: #7a6b5c;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -51,7 +81,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   background: var(--cream);
   color: var(--cream-foreground);
   margin: 0;
@@ -63,12 +93,30 @@ a {
 }
 
 @theme inline {
-  --font-heading: 'Playfair Display', serif;
-  --font-sans: 'Inter', sans-serif;
+  --font-heading: 'Lora', serif;
+  --font-sans: 'Be Vietnam Pro', sans-serif;
   --color-cream: var(--cream);
   --color-cream-foreground: var(--cream-foreground);
   --color-brand: var(--brand-yellow);
   --color-brand-dark: var(--brand-yellow-dark);
+  --color-brand-brown: var(--brand-brown);
+  --color-brand-brown-dark: var(--brand-brown-dark);
+  --color-brand-brown-light: var(--brand-brown-light);
+  --color-brand-brown-foreground: var(--brand-brown-foreground);
+  --color-status-success: var(--status-success);
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-success-fg: var(--status-success-fg);
+  --color-status-warning: var(--status-warning);
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-warning-fg: var(--status-warning-fg);
+  --color-status-danger: var(--status-danger);
+  --color-status-danger-bg: var(--status-danger-bg);
+  --color-status-danger-fg: var(--status-danger-fg);
+  --color-status-info: var(--status-info);
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-fg: var(--status-info-fg);
+  --color-status-neutral-bg: var(--status-neutral-bg);
+  --color-status-neutral-fg: var(--status-neutral-fg);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -115,6 +163,12 @@ a {
   --cream: oklch(0.2 0.016 75);
   --cream-foreground: oklch(0.95 0.012 75);
   --brand-border: oklch(0.34 0.018 75);
+  /* Structural brown lightened so it still reads as a distinct panel against
+     the dark charcoal background instead of blending into it — same walnut
+     family as the light-mode base, just brightened for contrast. */
+  --brand-brown: #8f6b52;
+  --brand-brown-dark: #6b4c3a;
+  --brand-brown-light: #c2a186;
   --background: oklch(0.235 0.018 75);
   --foreground: oklch(0.95 0.012 75);
   --card: oklch(0.235 0.018 75);
@@ -146,6 +200,22 @@ a {
   --sidebar-accent-foreground: oklch(0.95 0.012 75);
   --sidebar-border: oklch(1 0.012 75 / 12%);
   --sidebar-ring: var(--brand-yellow-dark);
+  /* Status semantics, lightened so each still reads on the dark charcoal
+     background instead of the light-mode pastel washes going muddy. */
+  --status-success: #4fbb85;
+  --status-success-bg: oklch(0.4 0.09 155 / 30%);
+  --status-success-fg: #7fd4a8;
+  --status-warning: #e0ac2b;
+  --status-warning-bg: oklch(0.45 0.1 75 / 30%);
+  --status-warning-fg: #f0c766;
+  --status-danger: #e8776d;
+  --status-danger-bg: oklch(0.4 0.12 25 / 30%);
+  --status-danger-fg: #f0968d;
+  --status-info: #6fa8c4;
+  --status-info-bg: oklch(0.4 0.06 230 / 30%);
+  --status-info-fg: #93c1d9;
+  --status-neutral-bg: oklch(0.31 0.018 75);
+  --status-neutral-fg: oklch(0.7 0.015 75);
 }
 
 @layer base {

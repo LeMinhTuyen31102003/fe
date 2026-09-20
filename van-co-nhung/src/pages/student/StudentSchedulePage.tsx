@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { MessageSquare } from "lucide-react";
 import MonthYearPicker from "@/components/MonthYearPicker";
 import PageBanner from "@/components/PageBanner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { getAttendanceStatusMeta } from "../teacher/attendanceOptions";
 import type { AttendanceStatus } from "../teacher/attendanceApi";
@@ -18,11 +20,17 @@ interface DayEntry {
   startTime: string;
   endTime: string;
   status: AttendanceStatus | null;
+  note: string | null;
 }
 
 function today() {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1 };
+}
+
+function formatDateKey(dateKey: string): string {
+  const [y, m, d] = dateKey.split("-");
+  return `${d}/${m}/${y}`;
 }
 
 function toDateKey(d: Date): string {
@@ -62,6 +70,7 @@ function StudentSchedulePage() {
   const [schedule, setSchedule] = useState<MySchedule | null>(null);
   const [attendance, setAttendance] = useState<MyClassAttendance[]>([]);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  const [noteDialog, setNoteDialog] = useState<{ className: string; dateKey: string; note: string } | null>(null);
 
   const currentKey = `${year}-${month}`;
   const isLoading = loadedKey !== currentKey;
@@ -94,10 +103,10 @@ function StudentSchedulePage() {
   }, [year, month]);
 
   const attendanceByKey = useMemo(() => {
-    const map = new Map<string, AttendanceStatus>();
+    const map = new Map<string, { status: AttendanceStatus; note: string | null }>();
     for (const c of attendance) {
       for (const s of c.sessions) {
-        map.set(`${c.classId}_${s.date}`, s.status);
+        map.set(`${c.classId}_${s.date}`, { status: s.status, note: s.note });
       }
     }
     return map;
@@ -114,12 +123,14 @@ function StudentSchedulePage() {
     for (const group of schedule?.classes ?? []) {
       for (const slot of group.slots) {
         if (slot.dayOfWeek === dayName) {
+          const entry = attendanceByKey.get(`${group.classId}_${dateKey}`);
           byClassId.set(group.classId, {
             classId: group.classId,
             className: group.className,
             startTime: slot.startTime,
             endTime: slot.endTime,
-            status: attendanceByKey.get(`${group.classId}_${dateKey}`) ?? null,
+            status: entry?.status ?? null,
+            note: entry?.note ?? null,
           });
         }
       }
@@ -133,6 +144,7 @@ function StudentSchedulePage() {
       const existing = byClassId.get(c.classId);
       if (existing) {
         existing.status = session.status;
+        existing.note = session.note;
       } else {
         byClassId.set(c.classId, {
           classId: c.classId,
@@ -140,6 +152,7 @@ function StudentSchedulePage() {
           startTime: "",
           endTime: "",
           status: session.status,
+          note: session.note,
         });
       }
     }
@@ -219,22 +232,41 @@ function StudentSchedulePage() {
                     <div className="flex flex-col gap-1">
                       {entries.map((entry) => {
                         const meta = entry.status ? getAttendanceStatusMeta(t, entry.status) : null;
-                        return (
-                          <span
+                        const baseLabel = entry.startTime
+                          ? `${entry.className} · ${formatTime(entry.startTime)}–${formatTime(entry.endTime)}`
+                          : entry.className;
+                        const badgeClassName = cn(
+                          "flex items-center gap-1 truncate rounded px-1.5 py-0.5 text-[10px] leading-tight font-semibold",
+                          meta ? meta.className : "bg-muted text-muted-foreground",
+                        );
+                        const badgeContent = (
+                          <>
+                            <span className="truncate">
+                              {entry.className}
+                              {entry.startTime ? ` · ${formatTime(entry.startTime)}` : ""}
+                              {meta ? ` · ${meta.short}` : ""}
+                            </span>
+                            {entry.note && <MessageSquare className="h-2.5 w-2.5 shrink-0" fill="currentColor" />}
+                          </>
+                        );
+                        return entry.note ? (
+                          <button
                             key={`${entry.classId}-${entry.startTime}`}
-                            className={cn(
-                              "truncate rounded px-1.5 py-0.5 text-[10px] leading-tight font-semibold",
-                              meta ? meta.className : "bg-muted text-muted-foreground",
-                            )}
-                            title={
-                              entry.startTime
-                                ? `${entry.className} · ${formatTime(entry.startTime)}–${formatTime(entry.endTime)}`
-                                : entry.className
+                            type="button"
+                            className={badgeClassName}
+                            onClick={() =>
+                              setNoteDialog({ className: entry.className, dateKey, note: entry.note! })
                             }
                           >
-                            {entry.className}
-                            {entry.startTime ? ` · ${formatTime(entry.startTime)}` : ""}
-                            {meta ? ` · ${meta.short}` : ""}
+                            {badgeContent}
+                          </button>
+                        ) : (
+                          <span
+                            key={`${entry.classId}-${entry.startTime}`}
+                            className={badgeClassName}
+                            title={baseLabel}
+                          >
+                            {badgeContent}
                           </span>
                         );
                       })}
@@ -248,6 +280,20 @@ function StudentSchedulePage() {
           {isLoading && <p className="text-xs text-muted-foreground">{t("student:schedule.updatingAttendance")}</p>}
         </>
       )}
+
+      <Dialog open={noteDialog !== null} onOpenChange={(open) => !open && setNoteDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{noteDialog?.className}</DialogTitle>
+          </DialogHeader>
+          {noteDialog && (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-muted-foreground">{formatDateKey(noteDialog.dateKey)}</p>
+              <p className="text-sm whitespace-pre-wrap text-foreground">{noteDialog.note}</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

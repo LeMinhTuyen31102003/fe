@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Pencil, Plus, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import RequiredMark from "@/components/RequiredMark";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { removeStudentFromClass } from "./classesApi";
 import AddClassDialog from "./AddClassDialog";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
@@ -36,6 +39,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [fullName, setFullName] = useState(student?.fullName ?? "");
+  const [email, setEmail] = useState(student?.email ?? "");
   const [grade, setGrade] = useState(student?.grade ?? "");
   const [schoolName, setSchoolName] = useState(student?.schoolName ?? "");
   const [parentName, setParentName] = useState(student?.parentName ?? "");
@@ -43,6 +47,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
 
   const [isClassBusy, setIsClassBusy] = useState(false);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
+  const [removingClass, setRemovingClass] = useState<{ id: number; name: string } | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -52,11 +57,16 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
       toast.error(t("teacher:studentDetail.requiredNameError"));
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error(t("teacher:studentDetail.invalidEmail"));
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       const updated = await updateStudent(student.id, {
         fullName: fullName.trim(),
+        email: email.trim(),
         grade,
         schoolName: schoolName.trim(),
         parentName: parentName.trim(),
@@ -72,12 +82,13 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
     }
   }
 
-  async function handleRemoveClass(classId: number) {
-    if (!student) return;
+  async function confirmRemoveClass() {
+    if (!student || !removingClass) return;
     setIsClassBusy(true);
     try {
-      await removeStudentFromClass(classId, student.id);
-      onUpdated({ ...student, classes: student.classes.filter((c) => c.id !== classId) });
+      await removeStudentFromClass(removingClass.id, student.id);
+      onUpdated({ ...student, classes: student.classes.filter((c) => c.id !== removingClass.id) });
+      setRemovingClass(null);
       toast.success(t("teacher:studentDetail.removedFromClass"));
     } catch {
       toast.error(t("teacher:studentDetail.removeFromClassError"));
@@ -109,6 +120,12 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                   {t("teacher:studentFields.username")}
                 </dt>
                 <dd className="text-sm font-medium text-foreground">{student.username}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:studentFields.email")}
+                </dt>
+                <dd className="text-sm font-medium text-foreground">{student.email || "—"}</dd>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -151,16 +168,22 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                   {t("teacher:studentDetail.labelStatus")}
                 </dt>
                 <dd>
-                  <Badge variant={student.active ? "default" : "secondary"}>
+                  <Badge variant={student.active ? "success" : "neutral"}>
                     {student.active ? t("teacher:studentStatus.active") : t("teacher:studentStatus.inactive")}
                   </Badge>
                 </dd>
               </div>
             </dl>
 
-            <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
-              {t("common:actions.edit")}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="outline" onClick={() => setIsEditing(true)}>
+                  <Pencil />
+                  {t("common:actions.edit")}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("teacher:studentDetail.titleEdit")}</TooltipContent>
+            </Tooltip>
 
             <div className="flex flex-col gap-3 border-t border-border pt-4">
               <h3 className="text-sm font-semibold text-foreground">
@@ -177,14 +200,20 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                       className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
                     >
                       <span className="text-sm font-medium text-foreground">{c.name}</span>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={() => handleRemoveClass(c.id)}
-                        disabled={isClassBusy}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                            onClick={() => setRemovingClass({ id: c.id, name: c.name })}
+                            disabled={isClassBusy}
+                          >
+                            <X className="size-4" />
+                            {t("common:actions.delete")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("teacher:studentDetail.removeClassDialog.title")}</TooltipContent>
+                      </Tooltip>
                     </li>
                   ))}
                 </ul>
@@ -196,6 +225,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 onClick={() => setIsAddClassOpen(true)}
                 disabled={isClassBusy}
               >
+                <Plus />
                 {t("teacher:studentDetail.addClassLabel")}
               </Button>
             </div>
@@ -216,6 +246,22 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 disabled={isSubmitting}
                 autoFocus
               />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="d-email">
+                {t("teacher:studentFields.email")}
+                <RequiredMark />
+              </Label>
+              <Input
+                id="d-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                placeholder="hocsinh@gmail.com"
+              />
+              <p className="text-xs text-muted-foreground">{t("teacher:studentDetail.emailHint")}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -275,9 +321,11 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
+                <X />
                 {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                <Save />
                 {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>
@@ -290,6 +338,19 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
         student={student}
         onOpenChange={setIsAddClassOpen}
         onStudentUpdated={onUpdated}
+      />
+
+      <ConfirmDialog
+        open={removingClass !== null}
+        onOpenChange={(open) => !open && setRemovingClass(null)}
+        title={t("teacher:studentDetail.removeClassDialog.title")}
+        description={
+          removingClass ? t("teacher:studentDetail.removeClassConfirm", { name: removingClass.name }) : undefined
+        }
+        confirmLabel={t("common:actions.delete")}
+        variant="destructive"
+        isConfirming={isClassBusy}
+        onConfirm={confirmRemoveClass}
       />
     </Dialog>
   );

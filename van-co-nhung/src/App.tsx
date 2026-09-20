@@ -1,6 +1,9 @@
 import { Route, Routes } from 'react-router-dom'
 import { Toaster } from './components/ui/sonner'
+import { TooltipProvider } from './components/ui/tooltip'
 import { useTheme } from './hooks/useTheme'
+import ChangePasswordPage from './pages/ChangePasswordPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
@@ -9,6 +12,7 @@ import ClassDetailPage from './pages/teacher/ClassDetailPage'
 import TeacherClassesPage from './pages/teacher/TeacherClassesPage'
 import TeacherLayout from './pages/teacher/TeacherLayout'
 import TeacherOverviewPage from './pages/teacher/TeacherOverviewPage'
+import TeacherResetPasswordPage from './pages/teacher/TeacherResetPasswordPage'
 import TeacherSettingsPage from './pages/teacher/TeacherSettingsPage'
 import TeacherStudentsPage from './pages/teacher/TeacherStudentsPage'
 import TeacherTuitionPage from './pages/teacher/TeacherTuitionPage'
@@ -16,15 +20,17 @@ import StudentAssignmentsPage from './pages/student/StudentAssignmentsPage'
 import StudentHomePage from './pages/student/StudentHomePage'
 import StudentLayout from './pages/student/StudentLayout'
 import StudentSchedulePage from './pages/student/StudentSchedulePage'
+import StudentTuitionPage from './pages/student/StudentTuitionPage'
 
 function App() {
   const { theme } = useTheme()
 
   return (
-    <>
+    <TooltipProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/admin" element={<TeacherLayout />}>
           <Route index element={<TeacherOverviewPage />} />
           <Route path="students" element={<TeacherStudentsPage />} />
@@ -32,18 +38,22 @@ function App() {
           <Route path="classes/:classId" element={<ClassDetailPage />} />
           <Route path="attendance" element={<TeacherAttendancePage />} />
           <Route path="tuition" element={<TeacherTuitionPage />} />
+          <Route path="reset-password" element={<TeacherResetPasswordPage />} />
           <Route path="settings" element={<TeacherSettingsPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
         <Route path="/student" element={<StudentLayout />}>
           <Route index element={<StudentHomePage />} />
           <Route path="schedule" element={<StudentSchedulePage />} />
+          <Route path="tuition" element={<StudentTuitionPage />} />
           <Route path="assignments" element={<StudentAssignmentsPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="change-password" element={<ChangePasswordPage />} />
         </Route>
       </Routes>
       <Toaster position="top-right" closeButton duration={5000} theme={theme} richColors />
-    </>
+    </TooltipProvider>
   )
 }
 

@@ -1,5 +1,5 @@
 import { apiFetch, apiUrl, authHeaders } from "../teacher/apiClient";
-import type { AssignmentSubmissionStatus } from "../teacher/assignmentsApi";
+import type { AssignmentAttachment, AssignmentSubmissionStatus } from "../teacher/assignmentsApi";
 
 export interface MyAssignment {
   id: number;
@@ -8,10 +8,14 @@ export interface MyAssignment {
   title: string;
   content: string | null;
   dueDate: string | null;
+  dueTime: string | null;
   createdAt: string;
+  attachments: AssignmentAttachment[];
   status: AssignmentSubmissionStatus;
   submittedAt: string | null;
   fileUrl: string | null;
+  note: string | null;
+  score: number | null;
   locked: boolean;
 }
 
@@ -42,8 +46,6 @@ export async function fetchMyPendingAssignmentCount(): Promise<number> {
   return data.count;
 }
 
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string | undefined;
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string | undefined;
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
 const COMPRESS_MAX_DIMENSION = 1600;
@@ -52,7 +54,7 @@ const COMPRESS_SKIP_UNDER_BYTES = 500 * 1024;
 
 // Phone camera photos are often 3000-4000px and several MB — way more than
 // needed to read handwritten text. Resizing + re-encoding client-side before
-// upload keeps long-term Cloudinary storage usage low. Falls back to the
+// upload keeps long-term server disk usage low. Falls back to the
 // original file on any failure (e.g. HEIC isn't decodable via canvas on
 // non-Safari browsers) so a compression hiccup never blocks a submission.
 async function compressImage(file: File): Promise<File> {
@@ -93,10 +95,7 @@ export interface UploadedFile {
   publicId: string;
 }
 
-export async function uploadSubmissionFile(file: File): Promise<UploadedFile> {
-  if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_UPLOAD_PRESET) {
-    throw new Error("CLOUDINARY_NOT_CONFIGURED");
-  }
+export async function uploadSubmissionFile(assignmentId: number, file: File): Promise<UploadedFile> {
   if (file.size > MAX_FILE_SIZE_BYTES) {
     throw new Error("FILE_TOO_LARGE");
   }
@@ -105,13 +104,16 @@ export async function uploadSubmissionFile(file: File): Promise<UploadedFile> {
 
   const formData = new FormData();
   formData.append("file", uploadFile);
-  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+  // Deliberately not authHeaders() here — it forces Content-Type: application/json,
+  // which would stop the browser from setting the multipart boundary itself.
+  const token = localStorage.getItem("token");
+  const res = await apiFetch(apiUrl(`/api/me/assignments/${assignmentId}/submission-file`), {
     method: "POST",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
     body: formData,
   });
   if (!res.ok) throw new Error("UPLOAD_FAILED");
-  const data: { secure_url: string; public_id: string } = await res.json();
-  return { url: data.secure_url, publicId: data.public_id };
+  const data: { fileUrl: string; filePublicId: string } = await res.json();
+  return { url: data.fileUrl, publicId: data.filePublicId };
 }

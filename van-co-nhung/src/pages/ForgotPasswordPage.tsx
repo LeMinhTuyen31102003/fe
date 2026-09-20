@@ -1,62 +1,55 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styles from './LoginPage.module.css'
 import { apiUrl } from './teacher/apiClient'
-
-interface FieldErrors {
-  username?: string
-  password?: string
-}
 
 interface TrustItem {
   value: string
   label: string
 }
 
-function LoginPage() {
-  const navigate = useNavigate()
+function ForgotPasswordPage() {
   const { t } = useTranslation(['auth', 'home'])
   const trust = t('home:hero.trust', { returnObjects: true }) as TrustItem[]
   const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+  const [fieldError, setFieldError] = useState('')
   const [formError, setFormError] = useState('')
+  const [sentTo, setSentTo] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  function validate(): boolean {
-    const errors: FieldErrors = {}
-    if (!username.trim()) errors.username = t('usernameRequired')
-    if (!password) errors.password = t('passwordRequired')
-    setFieldErrors(errors)
-    return Object.keys(errors).length === 0
-  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setFormError('')
-    if (!validate()) return
+    setSentTo('')
+
+    if (!username.trim()) {
+      setFieldError(t('usernameRequired'))
+      return
+    }
+    setFieldError('')
 
     setIsSubmitting(true)
     try {
-      const res = await fetch(apiUrl('/api/auth/login'), {
+      const res = await fetch(apiUrl('/api/auth/forgot-password'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: username.trim() }),
       })
 
       if (!res.ok) {
-        setFormError(res.status === 401 ? t('invalidCredentials') : t('loginFailed'))
+        // Each failure mode has its own status so the message stays localized here.
+        if (res.status === 404) setFormError(t('forgot.userNotFound'))
+        else if (res.status === 423) setFormError(t('forgot.accountDisabled'))
+        else if (res.status === 409) setFormError(t('forgot.noEmail'))
+        else if (res.status === 503) setFormError(t('forgot.mailUnavailable'))
+        else setFormError(t('forgot.failed'))
         return
       }
 
       const data = await res.json()
-      localStorage.setItem('token', data.token)
-      localStorage.setItem('userName', data.userName)
-      localStorage.setItem('fullName', data.fullName ?? '')
-      localStorage.setItem('role', data.role)
-      navigate(data.role === 'TEACHER' ? '/admin' : '/student')
+      setSentTo(data.maskedEmail)
+      setUsername('')
     } catch {
       setFormError(t('connectionError'))
     } finally {
@@ -91,14 +84,17 @@ function LoginPage() {
 
         <div className={styles.formPanel}>
           <div className={styles.formPanelInner}>
-            <Link to="/" className={styles.formPanelBack}>
-              ← {t('backToHome')}
+            <Link to="/login" className={styles.formPanelBack}>
+              ← {t('forgot.backToLogin')}
             </Link>
-            <h1 className={styles.heading}>{t('title')}</h1>
-            <p className={styles.subheading}>{t('subtitle')}</p>
+            <h1 className={styles.heading}>{t('forgot.title')}</h1>
+            <p className={styles.subheading}>{t('forgot.subtitle')}</p>
 
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
               {formError && <div className={styles.formError}>{formError}</div>}
+              {sentTo && (
+                <div className={styles.formSuccess}>{t('forgot.success', { email: sentTo })}</div>
+              )}
 
               <div className={styles.field}>
                 <label htmlFor="username">
@@ -111,56 +107,22 @@ function LoginPage() {
                     autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className={fieldErrors.username ? styles.inputError : ''}
+                    className={fieldError ? styles.inputError : ''}
                     disabled={isSubmitting}
                   />
                 </div>
-                {fieldErrors.username && (
-                  <span className={styles.fieldError}>{fieldErrors.username}</span>
-                )}
+                {fieldError && <span className={styles.fieldError}>{fieldError}</span>}
               </div>
 
-              <div className={styles.field}>
-                <label htmlFor="password">
-                  {t('password')} <span className={styles.required}>*</span>
-                </label>
-                <div className={styles.inputWrap}>
-                  <input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={fieldErrors.password ? styles.inputError : ''}
-                    disabled={isSubmitting}
-                  />
-                  <button
-                    type="button"
-                    className={styles.toggleVisibility}
-                    onClick={() => setShowPassword((v) => !v)}
-                    tabIndex={-1}
-                  >
-                    {showPassword ? t('hidePassword') : t('showPassword')}
-                  </button>
-                </div>
-                {fieldErrors.password && (
-                  <span className={styles.fieldError}>{fieldErrors.password}</span>
-                )}
-              </div>
-
-              <div className={styles.forgotRow}>
-                <Link to="/forgot-password" className={styles.forgotLink}>
-                  {t('forgot.link')}
-                </Link>
-              </div>
+              <p className={styles.helperText}>{t('forgot.hint')}</p>
 
               <button type="submit" className={styles.submitBtn} disabled={isSubmitting}>
-                {isSubmitting ? t('submitting') : t('submit')}
+                {isSubmitting ? t('forgot.submitting') : t('forgot.submit')}
               </button>
             </form>
 
             <p className={styles.footerNote}>
-              {t('noAccount')}
+              {t('forgot.footerNote')}
               <br />
               {t('contactSupportBefore')} <strong>0933621222</strong> {t('contactSupportAfter')}
             </p>
@@ -171,4 +133,4 @@ function LoginPage() {
   )
 }
 
-export default LoginPage
+export default ForgotPasswordPage

@@ -2,6 +2,7 @@
   "nav": {
     "home": "Trang chủ",
     "schedule": "Lịch học",
+    "tuition": "Học phí",
     "assignments": "Bài tập"
   },
   "days": {
@@ -15,13 +16,43 @@
   },
   "home": {
     "title": "Học tập của tôi",
-    "subtitle": "Điểm danh và học phí theo từng tháng",
+    "subtitle": "Việc cần làm, điểm danh, bài tập và điểm số của bạn",
+    "greeting": "Chào {{name}}, hôm nay là {{weekday}} {{date}}",
     "emptyState": "Bạn chưa được xếp vào lớp học nào.",
+    "todo": {
+      "title": "Việc cần làm",
+      "assignmentsPending": "{{count}} bài tập chưa nộp",
+      "assignmentsPendingDue": "Gần nhất hết hạn {{when}}",
+      "assignmentsNone": "Không có bài tập nào cần nộp",
+      "tuitionUnpaid": "Học phí tháng {{month}} chưa đóng",
+      "tuitionUnpaidDetail": "{{amount}} · xem chi tiết ở trang Học phí",
+      "tuitionPending": "Đang chờ giáo viên xác nhận thanh toán",
+      "tuitionPaid": "Đã đóng đủ học phí tháng {{month}}",
+      "tuitionNone": "Chưa có học phí tháng này",
+      "tonightSession": "Buổi học hôm nay {{when}}",
+      "tonightSessionDetail": "{{className}}",
+      "noSessionToday": "Hôm nay không có buổi học nào"
+    },
+    "dueSoon": {
+      "title": "Bài tập sắp đến hạn",
+      "empty": "Không có bài tập nào sắp đến hạn.",
+      "overdue": "Đã quá hạn",
+      "hoursLeft": "Còn {{count}} giờ",
+      "daysLeft": "Còn {{count}} ngày"
+    },
+    "scores": {
+      "title": "Điểm gần đây",
+      "subtitle": "Trung bình {{count}} bài gần nhất",
+      "empty": "Chưa có bài nào được chấm điểm.",
+      "trendUp": "▲ {{diff}} so với tháng trước",
+      "trendDown": "▼ {{diff}} so với tháng trước",
+      "trendFlat": "Bằng tháng trước"
+    },
     "attendanceSection": "Điểm danh",
-    "tuitionSection": "Học phí",
     "attendanceCard": {
       "sessionsLearned": "{{count}} buổi đã học",
-      "noSessions": "Chưa có buổi học nào được điểm danh trong tháng này."
+      "noSessions": "Chưa có buổi học nào được điểm danh trong tháng này.",
+      "viewNoteLabel": "Xem ghi chú"
     },
     "tuitionCard": {
       "status": {
@@ -34,6 +65,8 @@
       "feePerSession": "Đơn giá",
       "feePerSessionValue": "{{amount}}/buổi",
       "amount": "Học phí",
+      "classFund": "Quỹ lớp",
+      "totalAmount": "Tổng cộng",
       "paidNote": "Cảm ơn bạn đã đóng học phí tháng này.",
       "paidNoteWithDate": "Cảm ơn bạn đã đóng học phí tháng này ({{date}}).",
       "pendingNote": "Đã gửi xác nhận chuyển khoản lúc {{date}}. Đang chờ giáo viên kiểm tra lại.",
@@ -52,6 +85,19 @@
     },
     "loadError": "Không thể tải dữ liệu học tập."
   },
+  "tuitionPage": {
+    "title": "Học phí",
+    "subtitle": "Xem học phí từng tháng và xác nhận thanh toán",
+    "emptyState": "Chưa có tháng học phí nào được chốt.",
+    "loadError": "Không thể tải lịch sử học phí.",
+    "monthLabel": "Tháng {{month}}/{{year}}",
+    "tabs": {
+      "unpaid": "Chưa thanh toán",
+      "paid": "Đã thanh toán"
+    },
+    "noUnpaid": "Bạn không có khoản học phí nào chưa thanh toán.",
+    "noPaid": "Chưa có khoản học phí nào đã thanh toán."
+  },
   "schedule": {
     "title": "Lịch học",
     "subtitle": "Thời khóa biểu và tình trạng điểm danh theo tháng",
@@ -59,6 +105,7 @@
     "mobileHint": "Vuốt ngang để xem đầy đủ thời khóa biểu.",
     "weekdayHeaders": ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
     "notMarked": "Chưa điểm danh",
+    "noteLabel": "Ghi chú của giáo viên",
     "updatingAttendance": "Đang cập nhật điểm danh...",
     "loadScheduleError": "Không thể tải lịch học.",
     "loadAttendanceError": "Không thể tải điểm danh."
@@ -81,12 +128,13 @@
     "submitError": "Không thể nộp bài. Vui lòng thử lại.",
     "submitSuccess": "Đã nộp bài thành công.",
     "fileTooLargeError": "Ảnh quá lớn (tối đa 10MB). Vui lòng chọn ảnh khác.",
-    "uploadNotConfiguredError": "Chức năng nộp bài chưa được cấu hình. Vui lòng liên hệ giáo viên.",
     "dueDate": "Hạn nộp: {{date}}",
     "submitButton": "Chụp/chọn ảnh nộp bài",
     "resubmitButton": "Nộp lại bài",
     "uploading": "Đang tải lên...",
     "viewSubmission": "Xem bài đã nộp",
+    "viewAttachment": "Xem file giáo viên gửi",
+    "teacherNoteLabel": "Nhận xét của giáo viên",
     "lockedPastDue": "Đã quá hạn nộp bài.",
     "status": {
       "PENDING": "Chưa nộp",

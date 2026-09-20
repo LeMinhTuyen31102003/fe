@@ -5,6 +5,7 @@
     "classes": "Lớp học",
     "attendance": "Điểm danh",
     "tuition": "Học phí",
+    "resetPassword": "Đặt lại mật khẩu",
     "settings": "Ngân Hàng"
   },
   "classStatus": {
@@ -27,30 +28,62 @@
     "startTimeLabel": "Giờ bắt đầu",
     "endTimeLabel": "Giờ kết thúc",
     "days": {
-      "MONDAY": { "label": "Thứ 2", "short": "T2" },
-      "TUESDAY": { "label": "Thứ 3", "short": "T3" },
-      "WEDNESDAY": { "label": "Thứ 4", "short": "T4" },
-      "THURSDAY": { "label": "Thứ 5", "short": "T5" },
-      "FRIDAY": { "label": "Thứ 6", "short": "T6" },
-      "SATURDAY": { "label": "Thứ 7", "short": "T7" },
-      "SUNDAY": { "label": "Chủ nhật", "short": "CN" }
+      "MONDAY": {
+        "label": "Thứ 2",
+        "short": "T2"
+      },
+      "TUESDAY": {
+        "label": "Thứ 3",
+        "short": "T3"
+      },
+      "WEDNESDAY": {
+        "label": "Thứ 4",
+        "short": "T4"
+      },
+      "THURSDAY": {
+        "label": "Thứ 5",
+        "short": "T5"
+      },
+      "FRIDAY": {
+        "label": "Thứ 6",
+        "short": "T6"
+      },
+      "SATURDAY": {
+        "label": "Thứ 7",
+        "short": "T7"
+      },
+      "SUNDAY": {
+        "label": "Chủ nhật",
+        "short": "CN"
+      }
     }
   },
   "overview": {
     "title": "Tổng quan",
     "greeting": "Xin chào, {{name}}",
+    "greetingWithSessions": "Chào {{name}}, hôm nay có {{count}} buổi dạy",
     "loadError": "Không thể tải dữ liệu tổng quan.",
     "stats": {
       "classes": "Lớp đang dạy",
       "students": "Học sinh",
-      "sessionsThisWeek": "Buổi học tuần này"
+      "sessionsThisWeek": "Buổi học tuần này",
+      "needsAction": "Việc cần xử lý"
     },
     "todaySchedule": {
       "title": "Lịch dạy hôm nay",
+      "viewAll": "Xem điểm danh →",
       "empty": "Hôm nay không có lớp nào theo lịch.",
       "complete": "Đã điểm danh đủ",
       "progress": "Đã điểm danh {{marked}}/{{total}}",
       "markButton": "Điểm danh"
+    },
+    "needsAction": {
+      "title": "Cần xử lý",
+      "empty": "Không có việc cần xử lý.",
+      "tuitionItem": "{{name}} · {{className}}",
+      "tuitionItemAmount": "Yêu cầu xác nhận đã đóng {{amount}}",
+      "assignmentItem": "{{title}} · {{className}}",
+      "assignmentItemCount": "{{count}} bài chờ chấm"
     },
     "tuition": {
       "title": "Học phí tháng này",
@@ -62,6 +95,7 @@
     "username": "Tên đăng nhập",
     "password": "Mật khẩu",
     "fullName": "Họ tên học sinh",
+    "email": "Email học sinh",
     "grade": "Khối lớp",
     "gradePlaceholder": "Chọn khối",
     "school": "Trường học",
@@ -75,7 +109,7 @@
     "searchPlaceholder": "Tìm theo họ tên hoặc tên đăng nhập...",
     "statusFilterAll": "Tất cả trạng thái",
     "classFilterAll": "Tất cả lớp",
-    "add": "+ Thêm học sinh",
+    "add": "Thêm học sinh",
     "loadError": "Không thể tải danh sách học sinh.",
     "empty": "Chưa có học sinh nào.",
     "noResults": "Không tìm thấy học sinh phù hợp.",
@@ -90,7 +124,9 @@
     },
     "activate": "Kích hoạt",
     "deactivate": "Vô hiệu hoá",
-    "deleteDialog": { "title": "Xoá học sinh" },
+    "deleteDialog": {
+      "title": "Xoá học sinh"
+    },
     "deleteConfirm": "Xoá tài khoản của \"{{name}}\"?",
     "toggleActiveError": "Không thể cập nhật trạng thái học sinh.",
     "deleteError": "Không thể xoá học sinh.",
@@ -98,23 +134,24 @@
   },
   "studentForm": {
     "title": "Tạo tài khoản học sinh",
-    "description": "Nhập thông tin đăng ký cho học sinh. Mặc định tài khoản sẽ ở trạng thái chưa kích hoạt cho đến khi được thêm vào lớp, trừ khi bạn chọn kích hoạt ngay.",
+    "description": "Nhập thông tin đăng ký cho học sinh. Tài khoản sẽ được kích hoạt ngay sau khi tạo.",
     "loadClassesError": "Không thể tải danh sách lớp học.",
-    "classesLabel": "Lớp học (không bắt buộc)",
+    "classesLabel": "Lớp học",
     "classPlaceholder": "Chọn lớp",
     "classPickerTitle": "Chọn lớp học",
     "classSearchPlaceholder": "Tìm theo tên lớp học...",
     "noClasses": "Chưa có lớp học nào.",
     "oneClassHint": "Mỗi học sinh chỉ có thể thuộc 1 lớp đang hoạt động tại một thời điểm.",
-    "activateNow": "Kích hoạt tài khoản ngay",
     "submit": "Tạo tài khoản",
     "submitting": "Đang tạo...",
-    "requiredFieldsError": "Vui lòng nhập đầy đủ tên đăng nhập và họ tên học sinh.",
+    "requiredFieldsError": "Vui lòng nhập đầy đủ thông tin bắt buộc và chọn lớp học cho học sinh.",
     "passwordTooShort": "Mật khẩu phải có ít nhất 6 ký tự.",
     "addToClassFailed": "Đã tạo tài khoản nhưng thêm vào lớp học thất bại.",
     "createSuccess": "Đã tạo tài khoản học sinh.",
     "duplicateUsername": "Tên đăng nhập đã tồn tại.",
-    "createError": "Tạo tài khoản thất bại. Vui lòng thử lại."
+    "createError": "Tạo tài khoản thất bại. Vui lòng thử lại.",
+    "emailHint": "Dùng để gửi lại mật khẩu khi học sinh quên mật khẩu.",
+    "invalidEmail": "Email không hợp lệ."
   },
   "studentDetail": {
     "titleView": "Thông tin học sinh",
@@ -128,15 +165,21 @@
     "addedToClassAutoActivated": "Đã thêm vào lớp và tự động kích hoạt tài khoản.",
     "addedToClass": "Đã thêm vào lớp.",
     "addToClassError": "Không thể thêm vào lớp học.",
+    "removeClassDialog": {
+      "title": "Xoá khỏi lớp học"
+    },
+    "removeClassConfirm": "Xoá học sinh này khỏi lớp \"{{name}}\"?",
     "removedFromClass": "Đã xoá khỏi lớp học.",
     "removeFromClassError": "Không thể xoá khỏi lớp học.",
     "classesTitle": "Lớp học",
     "noClasses": "Chưa thuộc lớp học nào.",
     "classPlaceholder": "Chọn lớp",
-    "addClassLabel": "+ Thêm vào lớp",
+    "addClassLabel": "Thêm vào lớp",
     "addClassDialogTitle": "Thêm học sinh vào lớp",
     "addClassSearchPlaceholder": "Tìm theo tên lớp học...",
-    "noClassesToAdd": "Không còn lớp nào để thêm."
+    "noClassesToAdd": "Không còn lớp nào để thêm.",
+    "emailHint": "Dùng để gửi lại mật khẩu khi học sinh quên mật khẩu.",
+    "invalidEmail": "Email không hợp lệ."
   },
   "classes": {
     "pageTitle": "Quản lý lớp học",
@@ -144,7 +187,7 @@
     "listTitle": "Danh sách lớp học",
     "searchPlaceholder": "Tìm theo tên lớp học...",
     "statusFilterAll": "Tất cả trạng thái",
-    "add": "+ Thêm lớp học",
+    "add": "Thêm lớp học",
     "loadError": "Không thể tải danh sách lớp học.",
     "empty": "Chưa có lớp học nào.",
     "noResults": "Không tìm thấy lớp học phù hợp.",
@@ -157,7 +200,9 @@
       "actions": "Thao tác"
     },
     "activate": "Kích hoạt",
-    "deleteDialog": { "title": "Xoá lớp học" },
+    "deleteDialog": {
+      "title": "Xoá lớp học"
+    },
     "deleteConfirm": "Xoá lớp học \"{{name}}\"?",
     "toggleActiveError": "Không thể cập nhật trạng thái lớp học.",
     "deleteError": "Không thể xoá lớp học.",
@@ -171,6 +216,8 @@
       "gradePlaceholder": "Chọn khối",
       "feePerSession": "Học phí / buổi (VNĐ)",
       "feePerSessionPlaceholder": "Ví dụ: 60000",
+      "classFund": "Quỹ lớp / tháng (VNĐ, không bắt buộc)",
+      "classFundPlaceholder": "Ví dụ: 50000",
       "note": "Ghi chú"
     },
     "nameRequiredError": "Vui lòng nhập tên lớp học.",
@@ -194,33 +241,32 @@
       "grade": "Khối lớp",
       "schedule": "Lịch học",
       "feePerSession": "Học phí / buổi",
+      "classFund": "Quỹ lớp / tháng",
       "note": "Ghi chú",
       "status": "Trạng thái"
     },
     "studentsTitle": "Học sinh trong lớp ({{count}})",
     "noStudents": "Chưa có học sinh nào trong lớp.",
-    "addStudentLabel": "+ Thêm học sinh",
-    "addStudentDialogTitle": "Thêm học sinh vào lớp",
-    "addStudentSearchPlaceholder": "Tìm theo họ tên hoặc tên đăng nhập...",
-    "studentPlaceholder": "Chọn học sinh",
     "addingStudent": "Đang thêm...",
-    "noStudentsToAdd": "Không còn học sinh nào để thêm vào lớp.",
-    "addedStudentAutoActivated": "Đã thêm học sinh vào lớp và tự động kích hoạt tài khoản.",
-    "addedStudent": "Đã thêm học sinh vào lớp.",
-    "addStudentError": "Không thể thêm học sinh vào lớp.",
+    "removeStudentDialog": {
+      "title": "Xoá học sinh khỏi lớp"
+    },
+    "removeStudentConfirm": "Xoá \"{{name}}\" khỏi lớp này?",
     "removedStudent": "Đã xoá học sinh khỏi lớp.",
     "removeStudentError": "Không thể xoá học sinh khỏi lớp."
   },
   "assignments": {
     "listTitle": "Bài tập môn Văn",
-    "add": "+ Giao bài tập",
+    "add": "Giao bài tập",
     "loadError": "Không thể tải danh sách bài tập.",
     "empty": "Chưa có bài tập nào được giao.",
     "dueDate": "Hạn nộp: {{date}}",
     "submittedCount": "{{submitted}}/{{total}} đã nộp",
     "deleteSuccess": "Đã xoá bài tập.",
     "deleteError": "Không thể xoá bài tập.",
-    "deleteDialog": { "title": "Xoá bài tập" },
+    "deleteDialog": {
+      "title": "Xoá bài tập"
+    },
     "deleteConfirm": "Xoá bài tập \"{{title}}\"?",
     "status": {
       "PENDING": "Chưa nộp",
@@ -234,8 +280,14 @@
         "title": "Tiêu đề",
         "content": "Nội dung / đề bài",
         "contentPlaceholder": "Nhập đề bài, yêu cầu cho học sinh...",
-        "dueDate": "Hạn nộp (không bắt buộc)"
+        "dueDate": "Hạn nộp (không bắt buộc)",
+        "dueTimeHint": "Chọn thêm giờ để cố định chính xác thời điểm hết hạn nộp bài (mặc định là cuối ngày).",
+        "attachment": "File / hình ảnh đính kèm (không bắt buộc, có thể chọn nhiều file)"
       },
+      "attachmentAdd": "Đính kèm file / ảnh",
+      "attachmentUploading": "Đang tải lên...",
+      "attachmentView": "Xem file đính kèm",
+      "attachmentUploadError": "Không thể tải file lên. Vui lòng thử lại.",
       "titleRequiredError": "Vui lòng nhập tiêu đề bài tập.",
       "createSuccess": "Đã giao bài tập.",
       "createError": "Giao bài tập thất bại. Vui lòng thử lại.",
@@ -245,12 +297,22 @@
     "detail": {
       "loadError": "Không thể tải chi tiết bài tập.",
       "dueDate": "Hạn nộp: {{date}}",
+      "viewAttachment": "Xem file đính kèm",
       "studentsTitle": "Học sinh ({{count}})",
       "submittedAt": "Đã nộp lúc {{date}}",
       "notePlaceholder": "Ghi chú / nhận xét...",
+      "noteLabel": "Nhận xét",
+      "scoreLabel": "Điểm (thang 10)",
+      "scorePlaceholder": "Nhập điểm...",
+      "scoreRequired": "Vui lòng nhập điểm trước khi xác nhận.",
+      "scoreInvalid": "Điểm phải là số từ 0 đến 10, tối đa 2 chữ số thập phân.",
+      "gradeButton": "Chấm bài",
+      "editGradeButton": "Sửa điểm",
+      "gradingDialogTitle": "Chấm bài cho {{name}}",
       "viewFile": "Xem bài nộp",
       "openOriginal": "Mở ảnh gốc trong tab mới",
-      "updateStatusError": "Không thể cập nhật trạng thái nộp bài."
+      "updateStatusError": "Không thể cập nhật trạng thái nộp bài.",
+      "gradeTooltip": "Chấm điểm và ghi nhận xét cho bài nộp"
     }
   },
   "attendance": {
@@ -263,10 +325,19 @@
     "loadError": "Không thể tải dữ liệu điểm danh.",
     "noStudents": "Lớp học chưa có học sinh nào.",
     "noScheduleThisDay": "Lớp không có lịch học vào ngày này. Hãy chọn một ngày khác.",
+    "addNoteLabel": "Thêm ghi chú",
+    "noteDialogTitle": "Ghi chú điểm danh cho {{name}}",
+    "notePlaceholder": "Ví dụ: Học bù buổi nghỉ ngày 5/9...",
+    "noteSaveError": "Không thể lưu ghi chú.",
     "viewOnlyPastDateNotice": "Đang xem lại điểm danh của một ngày đã qua (chỉ xem).",
     "editingPastDateNotice": "Đang chỉnh sửa điểm danh của một ngày đã qua.",
     "editPast": "Chỉnh sửa",
     "doneEditingPast": "Xong",
+    "markAllButton": "Đánh dấu cả lớp có mặt",
+    "markAllConfirmTitle": "Đánh dấu cả lớp có mặt?",
+    "markAllConfirmDescription": "Tất cả học sinh sẽ được đặt trạng thái \"Có mặt\" cho ngày đã chọn, ghi đè trạng thái trước đó nếu có. Ghi chú của từng học sinh vẫn được giữ nguyên.",
+    "markAllSuccess": "Đã đánh dấu cả lớp có mặt.",
+    "markAllError": "Không thể đánh dấu cả lớp. Vui lòng thử lại.",
     "table": {
       "fullName": "Họ tên",
       "parentName": "Phụ huynh",
@@ -283,12 +354,19 @@
     "noClasses": "Chưa có lớp học nào. Hãy tạo lớp học trước.",
     "loadError": "Không thể tải dữ liệu học phí.",
     "noStudents": "Lớp học chưa có học sinh nào.",
+    "tabs": {
+      "unpaid": "Chưa thanh toán",
+      "paid": "Đã thanh toán"
+    },
+    "noUnpaidStudents": "Không có học sinh nào chưa thanh toán.",
+    "noPaidStudents": "Chưa có học sinh nào thanh toán trong tháng này.",
     "feeInfoBefore": "Học phí/buổi:",
     "feeNotSet": "chưa đặt",
     "feeInfoMiddle": "· Học phí mỗi học sinh được tự tính theo số buổi",
     "presentWord": "Có mặt",
     "lateWord": "Trễ",
     "feeInfoAfter": "trong tháng, có thể chỉnh tay khi cần.",
+    "classFundInfo": "Ngoài ra, lớp có quỹ lớp {{amount}}/tháng, thu đủ mỗi tháng không phụ thuộc số buổi học.",
     "finalizedBadge": "Đã chốt",
     "notFinalizedBadge": "Chưa chốt",
     "finalizedHint": "Học sinh/phụ huynh đã có thể xem mã QR để thanh toán tháng này.",
@@ -313,6 +391,8 @@
       "fullName": "Họ tên",
       "sessionCount": "Số buổi",
       "amount": "Học phí (VNĐ)",
+      "classFund": "Quỹ lớp (VNĐ)",
+      "totalAmount": "Tổng",
       "status": "Trạng thái",
       "time": "Thời gian",
       "note": "Ghi chú"
@@ -325,7 +405,9 @@
     "reject": "Từ chối",
     "paidBadgeTitle": "Đã xác nhận, không thể chuyển lại trạng thái",
     "requestedAt": "Yêu cầu lúc {{time}}",
-    "markPaidDialog": { "title": "Xác nhận thanh toán" },
+    "markPaidDialog": {
+      "title": "Xác nhận thanh toán"
+    },
     "markPaidConfirm": "Xác nhận đã nhận được khoản thanh toán {{amount}} của {{name}}?",
     "updateError": "Không thể cập nhật học phí.",
     "rejectReasonRequired": "Vui lòng nhập lý do từ chối.",
@@ -364,5 +446,35 @@
       "incomplete": "Điền đầy đủ ngân hàng, số tài khoản và tên chủ tài khoản để xem trước.",
       "qrAlt": "Mã QR thanh toán mẫu"
     }
+  },
+  "resetPassword": {
+    "pageTitle": "Đặt lại mật khẩu học sinh",
+    "pageSubtitle": "Cấp mật khẩu mới cho học sinh quên mật khẩu và không nhớ email đã đăng ký",
+    "formTitle": "Chọn học sinh",
+    "formHint": "Gõ tên hoặc tên đăng nhập để tìm nhanh",
+    "fields": {
+      "username": "Tên đăng nhập của học sinh",
+      "usernamePlaceholder": "Ví dụ: nguyenvana"
+    },
+    "usernameRequired": "Vui lòng nhập tên đăng nhập của học sinh.",
+    "submit": "Đặt lại mật khẩu",
+    "submitting": "Đang đặt lại...",
+    "confirmTitle": "Đặt lại mật khẩu?",
+    "confirmDescription": "Hệ thống sẽ cấp một mật khẩu ngẫu nhiên mới cho tài khoản \"{{username}}\". Mật khẩu cũ sẽ không dùng được nữa.",
+    "success": "Đã đặt lại mật khẩu cho {{name}}.",
+    "notFound": "Không tìm thấy học sinh với tên đăng nhập này.",
+    "error": "Không đặt lại được mật khẩu. Vui lòng thử lại.",
+    "copyError": "Không sao chép được. Vui lòng copy thủ công.",
+    "copied": "Đã chép",
+    "resultTitle": "Đặt lại thành công",
+    "resultStudent": "Học sinh",
+    "resultPassword": "Mật khẩu mới",
+    "resultReminder": "Mật khẩu này chỉ hiển thị một lần — hãy sao chép và gửi cho học sinh ngay. Nếu làm mất, bạn chỉ cần đặt lại lần nữa. Nhắc học sinh đổi mật khẩu trong mục \"Đổi mật khẩu\" sau khi đăng nhập.",
+    "howItWorksTitle": "Cách thực hiện",
+    "step1": "Học sinh liên hệ báo quên mật khẩu và đọc tên đăng nhập của mình.",
+    "step2": "Nhập tên đăng nhập (hoặc chọn từ danh sách gợi ý) rồi bấm <b>Đặt lại mật khẩu</b>.",
+    "step3": "Sao chép mật khẩu mới hiện trên màn hình, gửi cho học sinh và nhắc các em đổi lại ngay.",
+    "noteTitle": "Lưu ý",
+    "noteBody": "Mật khẩu mới là chuỗi ngẫu nhiên 6 ký tự và chỉ hiện đúng một lần sau khi đặt lại — hệ thống không lưu lại để xem lại được. Chỉ đặt lại khi đã chắc chắn danh tính người yêu cầu."
   }
 }

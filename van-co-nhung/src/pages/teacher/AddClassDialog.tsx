@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -136,6 +137,7 @@ function AddClassDialog({ open, student, onOpenChange, onStudentUpdated }: AddCl
                     onClick={() => handleAdd(c)}
                     disabled={addingId === c.id}
                   >
+                    <Plus />
                     {addingId === c.id ? t("teacher:classDetail.addingStudent") : t("common:actions.add")}
                   </Button>
                 </li>

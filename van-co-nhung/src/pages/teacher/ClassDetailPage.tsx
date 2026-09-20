@@ -1,9 +1,11 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { Crown, Medal, Pencil, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import CurrencyInput from "@/components/CurrencyInput";
 import PageBanner from "@/components/PageBanner";
 import Pagination from "@/components/Pagination";
@@ -19,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   fetchClassDetail,
   removeStudentFromClass,
@@ -26,13 +29,41 @@ import {
   type ClassDetail,
   type ScheduleSlotInput,
 } from "./classesApi";
-import AddStudentDialog from "./AddStudentDialog";
 import ClassAssignmentsSection from "./ClassAssignmentsSection";
 import { displayGrade, GRADE_OPTIONS } from "./gradeOptions";
 import ScheduleSlotEditor from "./ScheduleSlotEditor";
 import { formatScheduleSlot, sortSchedules } from "./scheduleOptions";
+import type { Student } from "./studentsApi";
 
 const STUDENTS_PAGE_SIZE = 10;
+
+// Top-3 ranking by average graded-assignment score within this class — ties share the
+// same rank (standard competition ranking: 1, 1, 3), and only students with at least one
+// graded submission are eligible.
+function computeTopRanks(students: Student[]): Map<number, 1 | 2 | 3> {
+  const ranked = students
+    .filter((s): s is Student & { averageScore: number } => s.averageScore != null)
+    .sort((a, b) => b.averageScore - a.averageScore);
+
+  const ranks = new Map<number, 1 | 2 | 3>();
+  let rank = 0;
+  let previousScore: number | null = null;
+  for (const s of ranked) {
+    if (s.averageScore !== previousScore) {
+      rank += 1;
+      previousScore = s.averageScore;
+    }
+    if (rank > 3) break;
+    ranks.set(s.id, rank as 1 | 2 | 3);
+  }
+  return ranks;
+}
+
+function RankBadge({ rank }: { rank: 1 | 2 | 3 }) {
+  if (rank === 1) return <Crown className="h-4 w-4 shrink-0 text-yellow-500" fill="currentColor" />;
+  if (rank === 2) return <Medal className="h-4 w-4 shrink-0 text-slate-400" fill="currentColor" />;
+  return <Medal className="h-4 w-4 shrink-0 text-amber-700" fill="currentColor" />;
+}
 
 function ClassDetailPage() {
   const { t } = useTranslation(["teacher", "common"]);
@@ -47,14 +78,16 @@ function ClassDetailPage() {
   const [loadError, setLoadError] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
   const [studentsPage, setStudentsPage] = useState(1);
+  const [removingStudent, setRemovingStudent] = useState<{ id: number; fullName: string } | null>(null);
+  const [isRemovingStudent, setIsRemovingStudent] = useState(false);
 
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [schedules, setSchedules] = useState<ScheduleSlotInput[]>([]);
   const [note, setNote] = useState("");
   const [feePerSession, setFeePerSession] = useState<number | null>(null);
+  const [classFund, setClassFund] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +111,7 @@ function ClassDetailPage() {
         );
         setNote(classDetail.note ?? "");
         setFeePerSession(classDetail.feePerSession);
+        setClassFund(classDetail.classFund);
       })
       .catch(() => {
         if (cancelled) return;
@@ -110,6 +144,7 @@ function ClassDetailPage() {
         schedules,
         note: note.trim(),
         feePerSession,
+        classFund,
       });
       setDetail((prev) => (prev ? { ...prev, ...updated } : prev));
       setIsEditing(false);
@@ -121,22 +156,35 @@ function ClassDetailPage() {
     }
   }
 
-  function handleStudentAdded(updated: ClassDetail) {
-    setDetail(updated);
-  }
-
-  async function handleRemoveStudent(studentId: number) {
-    if (!detail) return;
+  async function confirmRemoveStudent() {
+    if (!detail || !removingStudent) return;
+    setIsRemovingStudent(true);
     try {
-      const updated = await removeStudentFromClass(detail.id, studentId);
+      const updated = await removeStudentFromClass(detail.id, removingStudent.id);
       setDetail(updated);
+      setRemovingStudent(null);
       toast.success(t("teacher:classDetail.removedStudent"));
     } catch {
       toast.error(t("teacher:classDetail.removeStudentError"));
+    } finally {
+      setIsRemovingStudent(false);
     }
   }
 
-  const students = detail?.students ?? [];
+  // Ranked first (highest average score first), then everyone without a graded
+  // submission yet, alphabetically within each group.
+  const students = useMemo(() => {
+    const list = detail?.students ?? [];
+    return [...list].sort((a, b) => {
+      if (a.averageScore != null && b.averageScore != null && a.averageScore !== b.averageScore) {
+        return b.averageScore - a.averageScore;
+      }
+      if (a.averageScore != null && b.averageScore == null) return -1;
+      if (a.averageScore == null && b.averageScore != null) return 1;
+      return a.fullName.localeCompare(b.fullName, "vi");
+    });
+  }, [detail]);
+  const topRanks = useMemo(() => computeTopRanks(students), [students]);
   const studentsTotalPages = Math.max(1, Math.ceil(students.length / STUDENTS_PAGE_SIZE));
   const studentsCurrentPage = Math.min(studentsPage, studentsTotalPages);
   const studentsPageItems = students.slice(
@@ -214,6 +262,17 @@ function ClassDetailPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ce-class-fund">{t("teacher:classForm.fields.classFund")}</Label>
+              <CurrencyInput
+                id="ce-class-fund"
+                value={classFund}
+                onChange={setClassFund}
+                disabled={isSubmitting}
+                placeholder={t("teacher:classForm.fields.classFundPlaceholder")}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
               <Label htmlFor="ce-note">{t("teacher:classForm.fields.note")}</Label>
               <Textarea
                 id="ce-note"
@@ -232,9 +291,11 @@ function ClassDetailPage() {
                 onClick={() => setIsEditing(false)}
                 disabled={isSubmitting}
               >
+                <X />
                 {t("common:actions.cancel")}
               </Button>
               <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                <Save />
                 {isSubmitting ? t("common:status.saving") : t("common:actions.save")}
               </Button>
             </div>
@@ -280,6 +341,14 @@ function ClassDetailPage() {
                   {detail.feePerSession != null ? `${detail.feePerSession.toLocaleString("vi-VN")}đ` : "—"}
                 </dd>
               </div>
+              <div>
+                <dt className="text-xs font-medium text-muted-foreground">
+                  {t("teacher:classDetail.labels.classFund")}
+                </dt>
+                <dd className="text-sm font-medium text-foreground">
+                  {detail.classFund != null ? `${detail.classFund.toLocaleString("vi-VN")}đ` : "—"}
+                </dd>
+              </div>
               {detail.note && (
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground">
@@ -293,16 +362,22 @@ function ClassDetailPage() {
                   {t("teacher:classDetail.labels.status")}
                 </dt>
                 <dd>
-                  <Badge variant={detail.active ? "default" : "secondary"}>
+                  <Badge variant={detail.active ? "success" : "neutral"}>
                     {detail.active ? t("teacher:classStatus.active") : t("teacher:classStatus.inactive")}
                   </Badge>
                 </dd>
               </div>
             </dl>
 
-            <Button type="button" variant="outline" className="mt-4" onClick={() => setIsEditing(true)}>
-              {t("common:actions.edit")}
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button type="button" variant="outline" className="mt-4" onClick={() => setIsEditing(true)}>
+                  <Pencil />
+                  {t("common:actions.edit")}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t("teacher:classDetail.titleEdit")}</TooltipContent>
+            </Tooltip>
           </>
         )}
           </div>
@@ -315,9 +390,6 @@ function ClassDetailPage() {
                 <h2 className="font-heading text-xl font-bold text-foreground">
                   {t("teacher:classDetail.studentsTitle", { count: detail.students.length })}
                 </h2>
-                <Button type="button" onClick={() => setIsAddStudentOpen(true)}>
-                  {t("teacher:classDetail.addStudentLabel")}
-                </Button>
               </div>
 
               {detail.students.length === 0 ? (
@@ -325,24 +397,36 @@ function ClassDetailPage() {
               ) : (
                 <>
                 <ul className="flex flex-col gap-2">
-                  {studentsPageItems.map((student) => (
+                  {studentsPageItems.map((student) => {
+                    const rank = topRanks.get(student.id);
+                    return (
                     <li
                       key={student.id}
                       className="flex items-center justify-between rounded-lg border border-border px-3 py-2"
                     >
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{student.fullName}</p>
-                        <p className="text-xs text-muted-foreground">{student.username}</p>
+                      <div className="flex items-center gap-2">
+                        {rank && <RankBadge rank={rank} />}
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{student.fullName}</p>
+                          <p className="text-xs text-muted-foreground">{student.username}</p>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        className="text-sm font-semibold text-destructive underline-offset-4 hover:underline"
-                        onClick={() => handleRemoveStudent(student.id)}
-                      >
-                        {t("common:actions.delete")}
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            type="button"
+                            className="inline-flex items-center gap-1 text-sm font-semibold text-destructive underline-offset-4 hover:underline"
+                            onClick={() => setRemovingStudent({ id: student.id, fullName: student.fullName })}
+                          >
+                            <X className="size-4" />
+                            {t("common:actions.delete")}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>{t("teacher:classDetail.removeStudentDialog.title")}</TooltipContent>
+                      </Tooltip>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
 
                 <Pagination
@@ -361,11 +445,19 @@ function ClassDetailPage() {
         </TabsContent>
       </Tabs>
 
-      <AddStudentDialog
-        open={isAddStudentOpen}
-        classId={detail?.id ?? null}
-        onOpenChange={setIsAddStudentOpen}
-        onStudentAdded={handleStudentAdded}
+      <ConfirmDialog
+        open={removingStudent !== null}
+        onOpenChange={(open) => !open && setRemovingStudent(null)}
+        title={t("teacher:classDetail.removeStudentDialog.title")}
+        description={
+          removingStudent
+            ? t("teacher:classDetail.removeStudentConfirm", { name: removingStudent.fullName })
+            : undefined
+        }
+        confirmLabel={t("common:actions.delete")}
+        variant="destructive"
+        isConfirming={isRemovingStudent}
+        onConfirm={confirmRemoveStudent}
       />
     </>
   );

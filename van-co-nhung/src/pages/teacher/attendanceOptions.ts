@@ -10,10 +10,10 @@ export const ATTENDANCE_CYCLE: (AttendanceStatus | null)[] = [
 ];
 
 const ATTENDANCE_STATUS_CLASSNAME: Record<AttendanceStatus, string> = {
-  PRESENT: "bg-emerald-100 text-emerald-700 hover:bg-emerald-200",
-  ABSENT: "bg-red-100 text-red-700 hover:bg-red-200",
-  LATE: "bg-amber-100 text-amber-700 hover:bg-amber-200",
-  EXCUSED: "bg-sky-100 text-sky-700 hover:bg-sky-200",
+  PRESENT: "bg-status-success-bg text-status-success-fg hover:bg-status-success-bg/70",
+  ABSENT: "bg-status-danger-bg text-status-danger-fg hover:bg-status-danger-bg/70",
+  LATE: "bg-status-warning-bg text-status-warning-fg hover:bg-status-warning-bg/70",
+  EXCUSED: "bg-status-info-bg text-status-info-fg hover:bg-status-info-bg/70",
 };
 
 export function getAttendanceStatusMeta(t: TFunction, status: AttendanceStatus) {
