@@ -58,7 +58,7 @@ interface SectionCardProps {
 
 function SectionCard({ icon: Icon, title, description, children }: SectionCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-5 flex items-center gap-2.5">
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary-foreground/80">
           <Icon className="h-4 w-4 text-[color-mix(in_oklch,var(--brand-yellow-dark),black_25%)]" />

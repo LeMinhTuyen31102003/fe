@@ -89,7 +89,7 @@ function ClassAssignmentsSection({ classId }: ClassAssignmentsSectionProps) {
   const pageItems = assignments.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">{t("teacher:assignments.listTitle")}</h2>
         <Button type="button" onClick={openCreate}>

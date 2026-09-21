@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import LanguageToggle from "@/components/LanguageToggle";
-import NotificationButton from "@/components/NotificationButton";
-import ThemeToggle from "@/components/ThemeToggle";
-import UserMenu from "@/components/UserMenu";
 import { useScopedDarkMode } from "@/hooks/useScopedDarkMode";
-import { cn } from "@/lib/utils";
+import { BookOpenCheck, CalendarDays, Home, Wallet } from "lucide-react";
+import AppShell, { type ShellNavItem } from "@/components/AppShell";
 import { useAuth } from "../../hooks/useAuth";
 import { onAppEvent } from "@/eventStream";
 import { fetchMyPendingAssignmentCount } from "./myAssignmentsApi";
@@ -65,87 +62,19 @@ function StudentLayout() {
     return <Navigate to="/" replace />;
   }
 
-  return (
-    <div className="flex min-h-screen bg-cream">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-6 bg-brand-brown-dark p-6">
-        <Link to="/" className="flex items-center gap-2.5 font-heading text-lg font-bold text-brand-brown-foreground">
-          <img src="/images/logo.jpg" alt={t("common:appName")} className="h-9 w-auto rounded-lg" />
-          <span>{t("common:appName")}</span>
-        </Link>
+  const navItems: ShellNavItem[] = [
+    { to: "/student", end: true, label: t("student:nav.home"), icon: <Home /> },
+    { to: "/student/schedule", label: t("student:nav.schedule"), icon: <CalendarDays /> },
+    { to: "/student/tuition", label: t("student:nav.tuition"), icon: <Wallet />, badgeCount: unpaidTuitionCount },
+    {
+      to: "/student/assignments",
+      label: t("student:nav.assignments"),
+      icon: <BookOpenCheck />,
+      badgeCount: pendingAssignmentCount,
+    },
+  ];
 
-        <nav className="flex flex-1 flex-col gap-1">
-          <NavLink
-            to="/student"
-            end
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("student:nav.home")}
-          </NavLink>
-          <NavLink
-            to="/student/schedule"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("student:nav.schedule")}
-          </NavLink>
-          <NavLink
-            to="/student/tuition"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            <span>{t("student:nav.tuition")}</span>
-            {unpaidTuitionCount > 0 && (
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-[10px] font-semibold text-status-warning-fg">
-                {unpaidTuitionCount > 9 ? "9+" : unpaidTuitionCount}
-              </span>
-            )}
-          </NavLink>
-          <NavLink
-            to="/student/assignments"
-            className={({ isActive }) =>
-              cn(
-                "flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            <span>{t("student:nav.assignments")}</span>
-            {pendingAssignmentCount > 0 && (
-              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-status-warning-bg text-[10px] font-semibold text-status-warning-fg">
-                {pendingAssignmentCount > 9 ? "9+" : pendingAssignmentCount}
-              </span>
-            )}
-          </NavLink>
-        </nav>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b-2 border-brand-brown/20 bg-background px-8 py-3 md:px-10">
-          <LanguageToggle />
-          <ThemeToggle />
-          <NotificationButton />
-          <UserMenu fullName={fullName} userName={userName} role={role} onLogout={logout} />
-        </header>
-
-        <main className="flex-1 p-8 md:p-10">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
+  return <AppShell navItems={navItems} fullName={fullName} userName={userName} role={role} onLogout={logout} />;
 }
 
 export default StudentLayout;

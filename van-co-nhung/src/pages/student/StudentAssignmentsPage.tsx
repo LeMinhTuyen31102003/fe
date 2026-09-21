@@ -297,7 +297,7 @@ function StudentAssignmentsPage() {
               ) : (
                 <>
                   {teacher && (
-                    <section className="rounded-xl border border-border bg-background p-6">
+                    <section className="rounded-xl border border-border bg-background p-4 sm:p-6">
                       <h2 className="mb-4 font-heading text-lg font-bold text-foreground">{t("student:class.teacherSection")}</h2>
                       <div className="flex items-center gap-4">
                         <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
@@ -340,7 +340,7 @@ function StudentAssignmentsPage() {
                       </div>
                     ) : (
                       classmates?.classes.map((group) => (
-                        <div key={group.classId} className="rounded-xl border border-border bg-background p-6">
+                        <div key={group.classId} className="rounded-xl border border-border bg-background p-4 sm:p-6">
                           <div className="mb-1 flex items-center justify-between border-b border-border pb-3">
                             <h3 className="font-heading text-base font-bold text-foreground">{group.className}</h3>
                             <span className="text-sm text-muted-foreground">

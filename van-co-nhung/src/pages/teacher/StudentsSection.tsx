@@ -193,16 +193,16 @@ function StudentsSection() {
   );
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">
           {t("teacher:students.listTitle")}
         </h2>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto">
           <Input
             type="search"
             placeholder={t("teacher:students.searchPlaceholder")}
-            className="w-[280px]"
+            className="w-full sm:w-[280px]"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -210,7 +210,7 @@ function StudentsSection() {
             value={statusFilter}
             onValueChange={(v) => handleStatusFilterChange(v as StatusFilter)}
           >
-            <SelectTrigger className="w-[170px]">
+            <SelectTrigger className="w-full sm:w-[170px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -220,7 +220,7 @@ function StudentsSection() {
             </SelectContent>
           </Select>
           <Select value={classFilter} onValueChange={handleClassFilterChange}>
-            <SelectTrigger className="w-[170px]">
+            <SelectTrigger className="w-full sm:w-[170px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -125,7 +125,7 @@ function TuitionCard({
   );
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       {collapsible ? (
         <button
           type="button"

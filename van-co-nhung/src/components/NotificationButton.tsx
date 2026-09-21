@@ -159,7 +159,7 @@ function NotificationButton() {
           </span>
         )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80" onCloseAutoFocus={(e) => e.preventDefault()}>
+      <DropdownMenuContent align="end" className="w-[min(20rem,calc(100vw-2rem))]" onCloseAutoFocus={(e) => e.preventDefault()}>
         <div className="flex items-center justify-between px-2 py-1">
           <DropdownMenuLabel className="p-0">{t("header.notifications")}</DropdownMenuLabel>
           {unreadCount > 0 && (

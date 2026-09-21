@@ -236,7 +236,7 @@ function TuitionSection() {
   function renderTable(rowsToRender: StudentTuitionRow[]) {
     return (
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow>
               <TableHead>{t("teacher:tuition.table.fullName")}</TableHead>
@@ -359,12 +359,12 @@ function TuitionSection() {
 
   return (
     <>
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">{t("teacher:tuition.title")}</h2>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto">
           <Select value={selectedClassId} onValueChange={setSelectedClassId}>
-            <SelectTrigger className="w-[220px]">
+            <SelectTrigger className="w-full sm:w-[220px]">
               <SelectValue placeholder={t("teacher:tuition.classPlaceholder")} />
             </SelectTrigger>
             <SelectContent>

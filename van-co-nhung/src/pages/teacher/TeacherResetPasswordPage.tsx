@@ -113,7 +113,7 @@ function TeacherResetPasswordPage() {
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <div className="rounded-xl border border-border bg-background p-6">
+          <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
             <div className="mb-5 flex items-center gap-2.5">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
                 <Search className="h-4 w-4 text-[color-mix(in_oklch,var(--brand-yellow-dark),black_25%)]" />
@@ -226,7 +226,7 @@ function TeacherResetPasswordPage() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <div className="rounded-xl border border-border bg-background p-6">
+          <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
             <h2 className="mb-4 font-heading text-base font-bold text-foreground">
               {t("teacher:resetPassword.howItWorksTitle")}
             </h2>

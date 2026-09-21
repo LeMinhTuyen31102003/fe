@@ -159,16 +159,16 @@ function ClassesSection() {
   );
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-heading text-xl font-bold text-foreground">
           {t("teacher:classes.listTitle")}
         </h2>
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto">
           <Input
             type="search"
             placeholder={t("teacher:classes.searchPlaceholder")}
-            className="w-[260px]"
+            className="w-full sm:w-[260px]"
             value={searchInput}
             onChange={(e) => handleSearchInputChange(e.target.value)}
           />
@@ -176,7 +176,7 @@ function ClassesSection() {
             value={statusFilter}
             onValueChange={(v) => handleStatusFilterChange(v as StatusFilter)}
           >
-            <SelectTrigger className="w-[190px]">
+            <SelectTrigger className="w-full sm:w-[190px]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

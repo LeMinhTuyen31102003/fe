@@ -211,7 +211,7 @@ function ClassDetailPage() {
         </TabsList>
 
         <TabsContent value="info">
-          <div className="rounded-xl border border-border bg-background p-6">
+          <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
         {isLoading ? (
           <p className="text-sm text-muted-foreground">{t("common:status.loading")}</p>
         ) : loadError || !detail ? (
@@ -385,7 +385,7 @@ function ClassDetailPage() {
 
         <TabsContent value="students">
           {!isLoading && detail && (
-            <div className="rounded-xl border border-border bg-background p-6">
+            <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                 <h2 className="font-heading text-xl font-bold text-foreground">
                   {t("teacher:classDetail.studentsTitle", { count: detail.students.length })}

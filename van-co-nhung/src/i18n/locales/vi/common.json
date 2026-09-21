@@ -1,5 +1,11 @@
 {
   "appName": "Văn Cô Nhung",
+  "sidebar": {
+    "open": "Mở menu",
+    "close": "Đóng menu",
+    "collapse": "Thu gọn thanh bên",
+    "expand": "Mở rộng thanh bên"
+  },
   "genericUser": "Người dùng",
   "role": {
     "TEACHER": "Giáo viên",

@@ -143,7 +143,7 @@ function AttendanceCard({
   );
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h3 className="font-heading text-lg font-bold text-foreground">{className}</h3>
         <span className="text-sm font-semibold text-foreground">

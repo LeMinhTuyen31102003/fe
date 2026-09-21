@@ -1,11 +1,16 @@
-import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import LanguageToggle from "@/components/LanguageToggle";
-import NotificationButton from "@/components/NotificationButton";
-import ThemeToggle from "@/components/ThemeToggle";
-import UserMenu from "@/components/UserMenu";
+import {
+  CalendarCheck,
+  GraduationCap,
+  KeyRound,
+  LayoutDashboard,
+  Landmark,
+  Users,
+  Wallet,
+} from "lucide-react";
+import AppShell, { type ShellNavItem } from "@/components/AppShell";
 import { useScopedDarkMode } from "@/hooks/useScopedDarkMode";
-import { cn } from "@/lib/utils";
 import { useAuth } from "../../hooks/useAuth";
 
 function TeacherLayout() {
@@ -21,110 +26,17 @@ function TeacherLayout() {
     return <Navigate to="/" replace />;
   }
 
-  return (
-    <div className="flex min-h-screen bg-cream">
-      <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col gap-6 bg-brand-brown-dark p-6">
-        <Link to="/" className="flex items-center gap-2.5 font-heading text-lg font-bold text-brand-brown-foreground">
-          <img src="/images/logo.jpg" alt={t("common:appName")} className="h-9 w-auto rounded-lg" />
-          <span>{t("common:appName")}</span>
-        </Link>
+  const navItems: ShellNavItem[] = [
+    { to: "/admin", end: true, label: t("teacher:nav.overview"), icon: <LayoutDashboard /> },
+    { to: "/admin/students", label: t("teacher:nav.students"), icon: <Users /> },
+    { to: "/admin/classes", label: t("teacher:nav.classes"), icon: <GraduationCap /> },
+    { to: "/admin/attendance", label: t("teacher:nav.attendance"), icon: <CalendarCheck /> },
+    { to: "/admin/tuition", label: t("teacher:nav.tuition"), icon: <Wallet /> },
+    { to: "/admin/reset-password", label: t("teacher:nav.resetPassword"), icon: <KeyRound /> },
+    { to: "/admin/settings", label: t("teacher:nav.settings"), icon: <Landmark /> },
+  ];
 
-        <nav className="flex flex-1 flex-col gap-1">
-          <NavLink
-            to="/admin"
-            end
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.overview")}
-          </NavLink>
-          <NavLink
-            to="/admin/students"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.students")}
-          </NavLink>
-          <NavLink
-            to="/admin/classes"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.classes")}
-          </NavLink>
-          <NavLink
-            to="/admin/attendance"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.attendance")}
-          </NavLink>
-          <NavLink
-            to="/admin/tuition"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.tuition")}
-          </NavLink>
-          <NavLink
-            to="/admin/reset-password"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.resetPassword")}
-          </NavLink>
-          <NavLink
-            to="/admin/settings"
-            className={({ isActive }) =>
-              cn(
-                "rounded-lg px-3 py-2.5 text-sm font-medium text-brand-brown-foreground/70 hover:bg-white/10 hover:text-brand-brown-foreground",
-                isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              )
-            }
-          >
-            {t("teacher:nav.settings")}
-          </NavLink>
-        </nav>
-      </aside>
-
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex items-center justify-end gap-2 border-b-2 border-brand-brown/20 bg-background px-8 py-3 md:px-10">
-          <LanguageToggle />
-          <ThemeToggle />
-          <NotificationButton />
-          <UserMenu fullName={fullName} userName={userName} role={role} onLogout={logout} />
-        </header>
-
-        <main className="flex-1 p-8 md:p-10">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
+  return <AppShell navItems={navItems} fullName={fullName} userName={userName} role={role} onLogout={logout} />;
 }
 
 export default TeacherLayout;

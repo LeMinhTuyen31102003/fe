@@ -1,5 +1,11 @@
 {
   "appName": "Văn Cô Nhung",
+  "sidebar": {
+    "open": "Open menu",
+    "close": "Close menu",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar"
+  },
   "genericUser": "User",
   "role": {
     "TEACHER": "Teacher",

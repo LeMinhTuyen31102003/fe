@@ -127,7 +127,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                 </dt>
                 <dd className="text-sm font-medium text-foreground">{student.email || "—"}</dd>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground">
                     {t("teacher:studentFields.grade")}
@@ -145,7 +145,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
                   </dd>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <dt className="text-xs font-medium text-muted-foreground">
                     {t("teacher:studentFields.parentName")}
@@ -264,7 +264,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
               <p className="text-xs text-muted-foreground">{t("teacher:studentDetail.emailHint")}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="d-grade">{t("teacher:studentFields.grade")}</Label>
                 <Select value={grade} onValueChange={setGrade}>
@@ -291,7 +291,7 @@ function StudentDetailModal({ student, onOpenChange, onUpdated }: StudentDetailM
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="d-parent-name">{t("teacher:studentFields.parentName")}</Label>
                 <Input

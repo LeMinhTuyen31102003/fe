@@ -70,7 +70,7 @@ function BankSettingsSection() {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-background p-6">
+    <div className="rounded-xl border border-border bg-background p-4 sm:p-6">
       <h2 className="mb-1 font-heading text-xl font-bold text-foreground">{t("teacher:bankSettings.title")}</h2>
       <p className="mb-5 text-sm text-muted-foreground">{t("teacher:bankSettings.description")}</p>
 

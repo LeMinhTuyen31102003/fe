@@ -139,7 +139,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
         </DialogHeader>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-username">
                 {t("teacher:studentFields.username")}
@@ -196,7 +196,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
             <p className="text-xs text-muted-foreground">{t("teacher:studentForm.emailHint")}</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-grade">
                 {t("teacher:studentFields.grade")}
@@ -229,7 +229,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="s-parent-name">
                 {t("teacher:studentFields.parentName")}
