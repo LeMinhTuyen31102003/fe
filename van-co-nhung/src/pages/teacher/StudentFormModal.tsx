@@ -32,12 +32,14 @@ interface StudentFormModalProps {
   onCreated: () => void;
 }
 
+const DEFAULT_EMAIL = "example@gmail.com";
+
 function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalProps) {
   const { t } = useTranslation(["teacher", "common"]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(DEFAULT_EMAIL);
   const [grade, setGrade] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [parentName, setParentName] = useState("");
@@ -51,7 +53,7 @@ function StudentFormModal({ open, onOpenChange, onCreated }: StudentFormModalPro
     setUsername("");
     setPassword("");
     setFullName("");
-    setEmail("");
+    setEmail(DEFAULT_EMAIL);
     setGrade("");
     setSchoolName("");
     setParentName("");
